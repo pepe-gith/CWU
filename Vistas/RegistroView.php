@@ -17,12 +17,12 @@ $query = mysqli_query($con, $sql);
 </head>
 <body>
     
-  <div class="cajon">
+  <div class="cabecera">
     <img class="lin1" src="/cwu/CSS/Img/titulo.png"/>
     <nav>
         <a href="/cwu/index0.php">Inicio</a>
     </nav>
-    <body>
+  </div>  
     <div class="users-form">
         <form action="/cwu/controladores/insertarCliente.php" method="POST">
             <h1>Registrar Cliente</h1>
@@ -81,6 +81,6 @@ $query = mysqli_query($con, $sql);
             </tbody>
         </table>
     </div>    
-</body>  </div>  
+    
 </body>
 </html>
