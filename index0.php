@@ -1,3 +1,4 @@
+<!-- Esta es la página principal de la Web -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
