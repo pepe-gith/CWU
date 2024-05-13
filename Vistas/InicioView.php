@@ -10,29 +10,29 @@
     
     <div class="cajon">
     <nav>
-        <a href="/cwu/Vistas/InicioView.php">Inicio</a> |
-        <a href="/cwu/Vistas/RegistroView">Registro</a> |
-        <a href="/cwu/Vistas/AccesoView">Acceso</a> 
+        <a href="InicioView.php">Inicio</a> |
+        <a href="RegistroView.php">Registro</a> |
+        <a href="AccesoView.php">Acceso</a> 
     </nav>
 
       <div class="contenedor">
             <div class="caja">  
                 <router-link :to="{name: 'escape'}">
-                    <img class="opc" src="../assets/escape.png" height="200" >
+                    <img class="opc" src="../CSS/Img/escape.png" height="200" >
                 </router-link>   
                     
             </div>
             
             <div class="caja">   
                 <router-link :to="{name: 'feliz'}">
-                    <img class="opc" src="../assets/feliz.png" height="200" >
+                    <img class="opc" src="../CSS/Img/feliz.png" height="200" >
                 </router-link>   
                 
             </div>
                 
             <div class="caja">   
                 <router-link :to="{name: 'fiesta'}">
-                    <img class="opc" src="../assets/fiesta.png" height="200" >
+                    <img class="opc" src="../CSS/Img/fiesta.png" height="200" >
                 </router-link>   
         </div>
     </div>    
