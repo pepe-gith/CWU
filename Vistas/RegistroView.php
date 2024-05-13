@@ -37,7 +37,7 @@ $query = mysqli_query($con, $sql);
             <input type="text" name="direccion" id="direccion" placeholder="Dirección">
             <input type="text" name="como" id="como" placeholder="Como nos has conocido">
 
-            <button type="button" value="Enviar" onclick=" inserta()">Afechir</button>
+            <input type="submit" value="Enviar" onclick=" inserta()" value="Enviar"/>
         </form>
     </div>
     <div class="users-table">        
