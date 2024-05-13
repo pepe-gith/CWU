@@ -1,38 +1,28 @@
 <?php
-include("C:/xampp/htdocs/cwu/conexion.php");
+include("conectaBD.php");
 
-//Conecta la BD
-$con= conexion();
+if(isset($_POST["NIF"])){ 
+    $NIF = $_POST["NIF"];
+    $nombrecli = $_POST["nombrecli"];
+    $apellidos = $_POST["apellidos"];
+    $movil1 = $_POST["movil1"];
+    $movil2 = $_POST["movil2"];
+    $corre1 = $_POST["corre1"];
+    $corre2 = $_POST["corre2"];
+    $contra = $_POST["contra"];
+    $direccion = $_POST["direccion"];
+    $como = $_POST["como"];
 
-$nif = $_POST['nif'];
-$nombrecli = $_POST['nombrecli'];
-$apellidos = $_POST['apellidos'];
-$movil1 = $_POST['movil1'];
-$movil2 = $_POST['movil2'];
-$corre1 = $_POST['corre1'];
-$corre2 = $_POST['corre2'];
-$contra = $_POST['contra'];
-$direccion = $_POST['direccion'];
-$como = $_POST['como'];
+    $query = "INSERT INTO cliente (NIF, nombrecli, apellidos, movil1, movil2, corre1, corre2, contra, direccion, como) VALUES
+     ('$NIF', '$nombrecli', '$apellidos', '$movil1', '$movil2', '$corre1', '$corre2', '$contra', '$direccion', '$como')"; 
+    $result = mysqli_query($conexion, $query);
+    echo json_encode("He entrado en el if x el SIIIIII");
+    if(!$result){
+        die("Error en el alta del cliente").mysqli_error($conexion);
+    }
+    echo json_encode("Cliente dado de alta correctamente"); 
+} else echo json_encode("ERROR");
 
-$sql1 = "SELECT nif FROM cliente WHERE nif LIKE '$nif'";
-$query1 = mysqli_query($con, $sql1);
-//printf("numero de filas %d.\n", $query1->num_rows);
-$filas = $query1->num_rows;
-
-if ($filas == 0){
-    $sql2 = "INSERT INTO cliente VALUES ('$nif', '$nombrecli', '$apellidos', '$movil1', '$movil2',
-    '$corre1', '$corre2', '$contra', '$direccion', '$como' )"; 
-    $query2 = mysqli_query($con, $sql2);
-
-    /*if($query2){
-        
-        printf("El cliente ha sido dado de alta corréctamente");
-        //redirecciona a index.php
-        Header("Location: /cwu/index0.php");
-        
-    };*/
-} 
 ?> 
 <!DOCTYPE html>
 <html lang="en">
@@ -42,8 +32,8 @@ if ($filas == 0){
     <title>Document</title>
 </head>
 <body>
-   <h1> <?php if ($filas > 0) printf ("ERROR el nif " . $nif . " ya fue dado de alta"); ?> </h1>
-   <h1> <?php if ($filas == 0) printf ("El cliente con nif " . $nif . " ha sido dado de alta corréctamente"); ?> </h1>
-    <a href="/cwu/index0.php"><button>Regresar a Inicio</button></a>
+   <h1> He pasado por el insertarCliente pero no se inserta </h1>
+  
+    <a href="/cwu/index.php"><button>Regresar a Inicio</button></a>
 </body>
 </html>

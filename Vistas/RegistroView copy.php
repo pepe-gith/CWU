@@ -23,21 +23,21 @@ $query = mysqli_query($con, $sql);
         <a href="/cwu/index.php">Inicio</a>
     </nav>
   </div>  
-    <div class="users-form" id="users-form">
+    <div class="users-form">
         <form action="/cwu/controladores/insertarCliente.php" method="POST">
             <h1>Registrar Cliente</h1>
-            <input type="text" name="NIF" id="NIF" placeholder="NIF" required>
-            <input type="text" name="nombrecli" id="nombrecli" placeholder="Nombre">
-            <input type="text" name="apellidos" id="apellidos" placeholder="Apellidos">
-            <input type="text" name="movil1" id="movil1" placeholder="Teléfono móvil" required>
-            <input type="text" name="movil2" id="movil2" placeholder="Otro teléfono">
-            <input type="email" name="corre1" id="corre1" placeholder="e-mail" required>
-            <input type="email" name="corre2" id="corre2"placeholder="Otro e-mail">
-            <input type="password" name="contra" id="contra" placeholder="Contraseña">
-            <input type="text" name="direccion" id="direccion" placeholder="Dirección">
-            <input type="text" name="como" id="como" placeholder="Como nos has conocido">
+            <input type="text" name="nif" placeholder="NIF" required>
+            <input type="text" name="nombrecli" placeholder="Nombre">
+            <input type="text" name="apellidos" placeholder="Apellidos">
+            <input type="text" name="movil1" placeholder="Teléfono móvil" required>
+            <input type="text" name="movil2" placeholder="Otro teléfono">
+            <input type="email" name="corre1" placeholder="e-mail" required>
+            <input type="email" name="corre2" placeholder="Otro e-mail">
+            <input type="password" name="contra" placeholder="Contraseña">
+            <input type="text" name="direccion" placeholder="Dirección">
+            <input type="text" name="como" placeholder="Como nos has conocido">
 
-            <button type="button" value="Enviar" onclick=" inserta()">Afechir</button>
+            <input type="submit" value="Enviar">
         </form>
     </div>
     <div class="users-table">        
@@ -81,7 +81,7 @@ $query = mysqli_query($con, $sql);
             </tbody>
         </table>
     </div>    
-    <script src="../js/jquery.js"></script>
-    <script src="../js/anyade_cli.js"></script>
+    <script src="./js/jquery.js"></script>
+    <script src="./js/anyade_cli.js"></script>
 </body>
 </html>
