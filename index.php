@@ -8,7 +8,10 @@
     <title>CWU_PaginaPrincipal</title>
 </head>
 <body>  
+<video src="/cwu/css/Img/confeti.mp4" autoplay loop muted></video>
+
   <div class="cajon">    
+  
     <img class="lin1" src="/cwu/CSS/Img/titulo.png"/>
     <nav>
         <a href="/cwu/index0.php">Inicio</a> |

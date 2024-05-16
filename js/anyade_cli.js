@@ -34,7 +34,7 @@ $.ajax({
              if(!response.error){
                  $("#users-form").trigger("reset");
                  alert("Cliente dado de alta, ya puede acceder con NIF y contraseña.");
-                 location.href = "InicioView.php";
+                 location.href = "../index.php";
                 }else {
                     alert("Error al dar de alta Cliente.");
              

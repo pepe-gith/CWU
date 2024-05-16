@@ -9,6 +9,7 @@
 <body>
     
     <div class="cajon">
+    <img class="lin1" src="/cwu/CSS/Img/titulo.png"/>
     <nav>
         <a href="InicioView.php">Inicio</a> |
         <a href="RegistroView.php">Registro</a> |
