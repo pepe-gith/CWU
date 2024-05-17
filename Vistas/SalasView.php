@@ -11,7 +11,7 @@
   <div class="cajon">
     <img class="lin1" src="/cwu/CSS/Img/titulo.png"/>
     <nav>
-        <a href="/cwu/index0.php">Inicio</a> |
+        <a href="/cwu/index.php">Inicio</a> |
         <a href="/cwu/Vistas/RegistroView">Registro</a> |
         <a href="/cwu/Vistas/AccesoView">Acceso</a> 
     </nav>

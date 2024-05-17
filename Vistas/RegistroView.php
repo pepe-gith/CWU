@@ -26,16 +26,16 @@ $query = mysqli_query($con, $sql);
     <div class="users-form" id="users-form">
         <form action="/cwu/controladores/insertarCliente.php" method="POST">
             <h1>Registrar Cliente</h1>
-            <input type="text" name="NIF" id="NIF" placeholder="NIF" required>
-            <input type="text" name="nombrecli" id="nombrecli" placeholder="Nombre">
-            <input type="text" name="apellidos" id="apellidos" placeholder="Apellidos">
-            <input type="text" name="movil1" id="movil1" placeholder="Teléfono móvil" required>
-            <input type="text" name="movil2" id="movil2" placeholder="Otro teléfono">
-            <input type="email" name="corre1" id="corre1" placeholder="e-mail" required>
-            <input type="email" name="corre2" id="corre2"placeholder="Otro e-mail">
-            <input type="password" name="contra" id="contra" placeholder="Contraseña">
-            <input type="text" name="direccion" id="direccion" placeholder="Dirección">
-            <input type="text" name="como" id="como" placeholder="Como nos has conocido">
+            <input type="text" name="NIF" id="NIF" placeholder="NIF" title="CAMPO OBLIGATORIO - 8 números y la letra que corresponda en mayúscula" pattern="[0-9]{8}[A-Z]{1}" required>
+            <input type="text" name="nombrecli" id="nombrecli" pattern="[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð -]" title="Solo puedes introducir letras" placeholder="Nombre">
+            <input type="text" name="apellidos" id="apellidos" pattern="[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]" title="Solo letras" placeholder="Apellidos">
+            <input type="text" name="movil1" id="movil1" pattern="[0-9]{9}" title="CAMPO OBLIGATORIO - Solo 9 números" placeholder="Teléfono móvil" required>
+            <input type="text" name="movil2" id="movil2" pattern="[0-9]{9}" title="Solo 9 números" placeholder="Otro teléfono">
+            <input type="email" name="corre1" id="corre1" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" title="CAMPO OBLIGATORIO" placeholder="e-mail" required>
+            <input type="email" name="corre2" id="corre2" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" placeholder="Otro e-mail">
+            <input type="password" name="contra" id="contra" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Introduzca al menos un número, una letra mayúscula, una minúscula, y como mínimo 8 carácteres" placeholder="Contraseña" required>
+            <input type="text" name="direccion" id="direccion" pattern="[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]" title="Letras, números" placeholder="Dirección">
+            <input type="text" name="como" id="como" pattern="[a-zA-ZñÑ.,0-9\s]{4-8}" title="Letras, números. De 4 a 8 carácteres" placeholder="Como nos has conocido">
 
             <input type="submit" value="Enviar" onclick=" inserta()" value="Enviar"/>
         </form>
