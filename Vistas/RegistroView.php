@@ -81,7 +81,9 @@ $query = mysqli_query($con, $sql);
             </tbody>
         </table>
     </div>    
+    <!--
     <script src="../js/jquery.js"></script>
     <script src="../js/anyade_cli.js"></script>
+                -->
 </body>
 </html>

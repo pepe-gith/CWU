@@ -15,7 +15,7 @@ $contra = $_POST['contra'];
 $direccion = $_POST['direccion'];
 $como = $_POST['como'];
 
-$sql1 = "SELECT nif FROM cliente WHERE nif LIKE '$nif'";
+$sql1 = "SELECT * FROM cliente WHERE nif LIKE '$nif'";
 $query1 = mysqli_query($con, $sql1);
 printf("numero de filas-> %d.\n", $query1->num_rows);
 $filas = $query1->num_rows;
