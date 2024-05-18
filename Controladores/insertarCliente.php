@@ -39,8 +39,8 @@ if (compruebaNif($NIF)){
         $query2 = mysqli_query($con, $sql2);
     } 
     //cierra la conexión con la Base de Datos
-    $result1 = null;
-    $result2 = null;
+    $query1 = null;
+    $query2 = null;
     $conexion = null;
 } else $filas = 2;
 ?> 
