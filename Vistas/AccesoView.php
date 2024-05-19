@@ -26,7 +26,7 @@ $query = mysqli_query($con, $sql);
     <div class="users-form" id="users-form">
         <form action="/cwu/controladores/comprobarAcceso.php" method="POST">
             <h1>Acceso</h1>
-            <label>NIF</label><input type="text" name="NIF" id="NIF" title="CAMPO OBLIGATORIO - 8 números y la letra que corresponda en mayúscula" pattern="[0-9]{8}[A-Z]{1}" required>
+            <input type="text" name="NIF" id="NIF" title="CAMPO OBLIGATORIO" pattern="[0-9A-Z]{1-9}" placeholder="NIF - ID" required>
             <input type="password" name="contra" id="contra" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="OBLIGATORIO Al menos un número, una letra mayúscula, una minúscula, y como mínimo 8 carácteres" placeholder="Contraseña" required>
           
             <input type="submit" value="Comprobar" onclick=" inserta()" value="Comprobar"/>

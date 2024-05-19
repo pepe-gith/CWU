@@ -3,7 +3,7 @@
 include("conexion.php");
 
 //Conecta la BD
-$con= conexion();
+$con = conexion();
 
 if (isset($_POST["NIF"])){
     $NIF = $_POST['NIF'];
@@ -30,7 +30,7 @@ if (isset($_POST["NIF"])){
         } else $filas = 2;
     } 
     //cierra la conexión con la Base de Datos
-    $conexion -> close();
+    $con -> close();
 } else { 
   //tratamiento de empleado y administrador
   $filas = 3; }
@@ -50,7 +50,7 @@ if (isset($_POST["NIF"])){
    <h2 style="color:purple"> <?php if ($filas == 2) printf ("ERROR CONTRASEÑA INCORRECTA"); ?> </h2> 
    <h2 style="color:red"> <?php if ($filas == 0) printf ("ERROR NIF " . $NIF . " no ha sido registrado"); ?> </h2>
    <h2 style="color:green"> <?php if ($filas == 3) printf ("ERROR DE CONEXION - inténtalo de nuevo"); ?> </h2>
-    <a href="/cwu/index.php"><?php printf("comprobado vale " . $rdo . " es lo q da "); ?><button type="button" class="btn btn-primary btn-lg">Regresar a Inicio</button></a>
+    <a href="/cwu/index.php"><button type="button" class="btn btn-primary btn-lg">Regresar a Inicio</button></a>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
