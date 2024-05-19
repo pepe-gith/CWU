@@ -20,8 +20,12 @@ if(!isset($_SESSION['cliente'])or empty($_SESSION['cliente']))
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+    <link rel="stylesheet" href="/cwu/CSS/calenda.css">
     <link  rel="stylesheet" href="/cwu/CSS/style.css">
     <title>Registro</title>
+    <script src="/cwu/js/calendario.js" defer></script>
+
 </head>
 <body>
     
@@ -32,9 +36,28 @@ if(!isset($_SESSION['cliente'])or empty($_SESSION['cliente']))
     </nav>
   </div>  
     <div class="users-form" id="users-form">
-    <?php  printf("cliente es " . var_dump($_SESSION['cliente']) . " a ver si va\n");
-           printf($mensa);
-     ?>
+    <div class="wrapper">
+      <header>
+        <p class="current-date"></p>
+        <div class="icons">
+          <span id="prev" class="material-symbols-rounded">chevron_left</span>
+          <span id="next" class="material-symbols-rounded">chevron_right</span>
+        </div>
+      </header>
+      <div class="calendar">
+        <ul class="weeks">
+          <li>Dom</li>
+          <li>Lun</li>
+          <li>Mar</li>
+          <li>Mie</li>
+          <li>Jue</li>
+          <li>Vie</li>
+          <li>Sab</li>
+        </ul>
+        <ul class="days"></ul>
+      </div>
+    </div>
+
         <form action="/cwu/controladores/insertarCliente.php" method="POST">
             <h1>Solicitar presupuesto Evento</h1>
             <input type="text" name="NIF" id="NIF" placeholder="NIF" title="CAMPO OBLIGATORIO - 8 números y la letra que corresponda en mayúscula" pattern="[0-9]{8}[A-Z]{1}" required>
@@ -50,7 +73,9 @@ if(!isset($_SESSION['cliente'])or empty($_SESSION['cliente']))
 
             <input type="submit" value="Enviar" onclick=" inserta()" value="Enviar"/>
         </form>
+
     </div>
+    <!--
     <div class="users-table">        
         <h2>Usuarios registrados</h2>
         <table>
@@ -84,17 +109,17 @@ if(!isset($_SESSION['cliente'])or empty($_SESSION['cliente']))
                     <th><?php echo($row['contra']) ?></th>
                     <th><?php echo($row['direccion']) ?></th>
                     <th><?php echo($row['como_conoce']) ?></th>
-<!--
+
                     <th><a href="update.php?id=<?php echo($row['id']) ?>" class="users-table--edit">Editar</a></th>
                     <th><a class="users-table--delete" href="delete_user.php?id=<?php echo($row['id']) ?>">Eliminar</a></th>
-                -->                </tr>
+                              </tr>
                 <?php endwhile;
-                      $conexion -> close();
+                      $con -> close();
                 ?>
             </tbody>
         </table>
     </div>    
-    <!--
+    
     <script src="../js/jquery.js"></script>
     <script src="../js/anyade_cli.js"></script>
                 -->
