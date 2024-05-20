@@ -34,9 +34,19 @@ if(!isset($_SESSION['cliente'])or empty($_SESSION['cliente']))
     <nav>
         <a href="/cwu/controladores/logout.php">Salir</a>
     </nav>
-  </div>  
+  </div>
+  
+
     <div class="users-form" id="users-form">
-    <div class="wrapper">
+        <form action="/cwu/controladores/insertarCliente.php" style="width: 100%" method="POST">
+            <h1>Solicitar presupuesto Evento</h1>
+            <input type="text" name="NIF" id="NIF" placeholder="NIF" title="CAMPO OBLIGATORIO - 8 números y la letra que corresponda en mayúscula" pattern="[0-9]{8}[A-Z]{1}" required>
+            <input type="text" name="nombrecli" id="nombrecli" pattern="[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð -]" title="Solo puedes introducir letras" placeholder="Nombre">
+            <input type="text" name="apellidos" id="apellidos" pattern="[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]" title="Solo letras" placeholder="Apellidos">
+            <input type="text" name="movil1" id="movil1" pattern="[0-9]{9}" title="CAMPO OBLIGATORIO - Solo 9 números" placeholder="Teléfono móvil" required>
+            <input type="text" name="movil2" id="movil2" pattern="[0-9]{9}" title="Solo 9 números" placeholder="Otro teléfono">
+
+            <div class="wrapper">
       <header>
         <p class="current-date"></p>
         <div class="icons">
@@ -58,13 +68,7 @@ if(!isset($_SESSION['cliente'])or empty($_SESSION['cliente']))
       </div>
     </div>
 
-        <form action="/cwu/controladores/insertarCliente.php" method="POST">
-            <h1>Solicitar presupuesto Evento</h1>
-            <input type="text" name="NIF" id="NIF" placeholder="NIF" title="CAMPO OBLIGATORIO - 8 números y la letra que corresponda en mayúscula" pattern="[0-9]{8}[A-Z]{1}" required>
-            <input type="text" name="nombrecli" id="nombrecli" pattern="[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð -]" title="Solo puedes introducir letras" placeholder="Nombre">
-            <input type="text" name="apellidos" id="apellidos" pattern="[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]" title="Solo letras" placeholder="Apellidos">
-            <input type="text" name="movil1" id="movil1" pattern="[0-9]{9}" title="CAMPO OBLIGATORIO - Solo 9 números" placeholder="Teléfono móvil" required>
-            <input type="text" name="movil2" id="movil2" pattern="[0-9]{9}" title="Solo 9 números" placeholder="Otro teléfono">
+            
             <input type="email" name="corre1" id="corre1" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" title="CAMPO OBLIGATORIO" placeholder="e-mail" required>
             <input type="email" name="corre2" id="corre2" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" placeholder="Otro e-mail">
             <input type="password" name="contra" id="contra" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="OBLIGATORIO Al menos un número, una letra mayúscula, una minúscula, y como mínimo 8 carácteres" placeholder="Contraseña" required>
