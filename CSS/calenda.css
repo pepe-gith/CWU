@@ -81,8 +81,9 @@ header .current-date{
 .days li.inactive{
   color: #aaa;
 }
-.days li.disabled{
-  color: #E0284A;
+.days li.disabled::before{
+  /*color: #E0284A;*/
+  background: red;
 }
 .days li.active{
   color: #fff;
@@ -103,4 +104,5 @@ header .current-date{
 }
 .days li:not(.active):hover::before{
   background: #f2f2f2;
+ 
 }

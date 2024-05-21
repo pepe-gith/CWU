@@ -34,7 +34,8 @@ if(!isset($_SESSION['cliente'])or empty($_SESSION['cliente']))
   <div class="cabecera">
     <img class="lin1" src="/cwu/CSS/Img/titulo.png"/>
     <nav>
-        <a href="/cwu/controladores/logout.php">Salir</a>
+        <a href="/cwu/controladores/logout.php">Salir</a> |
+        <a href="/cwu/Vistas/MisEventosView.php">Mis Eventos</a>
     </nav>
   </div>
   
@@ -56,9 +57,8 @@ if(!isset($_SESSION['cliente'])or empty($_SESSION['cliente']))
             <input type="text" name="nombrepro" id="nombrepro" pattern="[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð -]" 
             title="Solo puedes introducir letras" placeholder="Nombre y Edad del protagonista, (texto a visionarse en pantalla)">
             <input type="text" name="partic" id="partic" pattern="[0-9]{2}" title="Máximo 16 participantes" placeholder="Total de participantes" required> 
-            <input type="text" name="partic" id="partic" pattern="[0-9]{2}" title="Máximo 16 participantes" placeholder="Nº Participantes con atención especial (Celiacos, Alergias, etc)">           
             <h3 style="text-align: center; color: green">ESCOGE DÍA</h3>  
-            <h5>(disponibles verde, no en rojo y día actual morado)</h5>  
+            <h5>(días no disponibles en rojo y día actual morado)</h5>  
             <div class="wrapper">
               <header>
                 <p class="current-date"></p>

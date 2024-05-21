@@ -23,17 +23,22 @@ const renderCalendar = () => {
     }
 
     for (let i = 1; i <= lastDateofMonth; i++) { // crea lista de los días del mes actual
-        // marca en lista el día mes y año actual
+        // añade la clase active en la lista en el día mes y año 
         let isToday = i === date.getDate() && currMonth === new Date().getMonth() 
                      && currYear === new Date().getFullYear() ? "active" : "";
-        liTag += `<li class="${isToday}" id="day${i}" onclick="getDate(${i})">${i}</li>`;
+        //liTag += `<li class="${isToday}" id="day${i}" onclick="getDate(${i})">${i}</li>`;
+        if ((i==23) || (i==26) || (i==27)|| (i==29) || (i==30)) {
+             liTag += `<li class="disabled" id="day${i}">${i}</li>`;
+        }
+        else liTag += `<li class="${isToday}" id="day${i}" onclick="getDate(${i})">${i}</li>`;
     }
 
-    for (let i = lastDayofMonth; i < 6; i++) { // crea lista de los primeros días del mes actual
+    for (let i = lastDayofMonth; i < 6; i++) { // crea lista de los primeros días del mes próximo
         liTag += `<li class="inactive daycell">${i - lastDayofMonth + 1}</li>`
     }
     currentDate.innerText = `${months[currMonth]} ${currYear}`; // transforma a texto mes y año actual
     daysTag.innerHTML = liTag;
+
 }
 renderCalendar();
 disableDates();
@@ -63,9 +68,9 @@ function getDate(day) {
     alert(dR);
 }
 
-function disableDates() {
+async function disableDates() {
+    
     /*let reservedDatesArr = [5, 10, 28, 31]
-
     reservedDatesArr.forEach(date => {
        
         $(`li#day${date}`).addClass("disabled");
