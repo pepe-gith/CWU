@@ -1,5 +1,32 @@
+const form = document.querySelector('#formRegistro');
+
+form.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const formData = new FormData(this);
+    console.log(formData.entries());
+    for (let [clave, valor] of formData.entries()) {
+        console.log(clave, valor);
+    }
+
+
+    fetch('.././Controladores/insertarCliente.php', {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+    }).catch(error => {
+        console.log('esto ha dado error');
+    })
+    
+});
+
+
 
 function inserta(){
+
+    
   
     var NIF=$("#NIF").val();       
     var nombrecli=$("#nombrecli").val();
@@ -41,4 +68,4 @@ $.ajax({
              }  
             }
         });
-        }
+}

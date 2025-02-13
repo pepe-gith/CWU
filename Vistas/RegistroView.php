@@ -24,7 +24,7 @@ $query = mysqli_query($con, $sql);
     </nav>
   </div>  
     <div class="users-form" id="users-form">
-        <form action="/cwu/controladores/insertarCliente.php" method="POST">
+        <form id="formRegistro" action="/cwu/controladores/insertarCliente.php" method="POST">
             <h1>Registrar Cliente</h1>
             <input type="text" name="NIF" id="NIF" placeholder="NIF" title="CAMPO OBLIGATORIO - 8 números y la letra que corresponda en mayúscula" pattern="[0-9]{8}[A-Z]{1}" required>
             <input type="text" name="nombrecli" id="nombrecli" pattern="[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð -]" title="Solo puedes introducir letras" placeholder="Nombre">
@@ -37,7 +37,7 @@ $query = mysqli_query($con, $sql);
             <input type="text" name="direccion" id="direccion" pattern="[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]" title="Letras, números" placeholder="Dirección">
             <input type="text" name="como" id="como" pattern="[a-zA-ZñÑ.,0-9\s]{4-8}" title="Letras, números. De 4 a 8 carácteres" placeholder="Como nos has conocido">
 
-            <input type="submit" value="Enviar" onclick=" inserta()" value="Enviar"/>
+            <input type="submit" value="Enviar" value="Enviar"/>
         </form>
     </div>
     <div class="users-table">        
@@ -81,9 +81,9 @@ $query = mysqli_query($con, $sql);
             </tbody>
         </table>
     </div>    
-    <!--
+    
     <script src="../js/jquery.js"></script>
     <script src="../js/anyade_cli.js"></script>
-                -->
+               
 </body>
 </html>

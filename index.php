@@ -12,35 +12,8 @@
 <body>  
 <video src="/cwu/css/Img/confeti.mp4" autoplay loop muted></video>
 <!--cabecera-->
-  <div class="cajon">    
-  
-    <img class="lin1" src="/cwu/CSS/Img/titulo.png"/>
-    <nav>
-        <a href="/cwu/index.php">Inicio</a> |
-        <a href="/cwu/Vistas/RegistroView.php">Registro</a> |
-        <a href="/cwu/Vistas/AccesoView.php">Acceso</a> 
-    </nav>
-    <div class="contenedor">
-      <div class="caja">  
-        <a href="/cwu/Vistas/SalasView.php">  <img class="opc" src="/cwu/CSS/Img/escape.png" height="200" > </a>
-      </div>
-      <div class="caja">  
-        <a href="/cwu/Vistas/CumpleView.php">  <img class="opc" src="/cwu/CSS/Img/feliz.png" height="200" > </a>
-      </div>                
-      <div class="caja">  
-        <a href="/cwu/Vistas/FiestaView.php">  <img class="opc" src="/cwu/CSS/Img/fiesta.png" height="200" > </a>
-      </div>      
-    </div>    
-  </div>  
+    <?php include('./header.php') ?>
   <!--footer-->
- <footer class="w-100 bg-info d-flex align-items justify-content-center position-absolute bottom-0 end-0">
-    <p style="text-align: center; font-size:0.8em">Celebrate with US &copy; Todos los derechos reservados<br/> email: informa@cwu.com Tfno: 96 123 4567</p>
-    <div id="iconos">
-      <a href="https://www.facebook.com/"><i class="bi bi-facebook"></i></a>
-      <a href=" https://chat.whatsapp.com/"><i class="bi bi-whatsapp"></i></a>
-      <a href="https://t.me/"><i class="bi bi-telegram"></i></a>
-    </div>
-
- </footer>
+    <?php include('./footer.php') ?>
 </body>
 </html>

@@ -2,6 +2,7 @@ const daysTag = document.querySelector(".days"),
 currentDate = document.querySelector(".current-date"),
 prevNextIcon = document.querySelectorAll(".icons span");
 
+
 // toma nueva fecha, año y mes actual
 let date = new Date(),
 currYear = date.getFullYear(),
@@ -26,11 +27,12 @@ const renderCalendar = () => {
         // añade la clase active en la lista en el día mes y año 
         let isToday = i === date.getDate() && currMonth === new Date().getMonth() 
                      && currYear === new Date().getFullYear() ? "active" : "";
-        //liTag += `<li class="${isToday}" id="day${i}" onclick="getDate(${i})">${i}</li>`;
-        if ((i==23) || (i==26) || (i==27)|| (i==29) || (i==30)) {
+        liTag += `<li class="${isToday}" id="day${i}" onclick="getDate(${i})">${i}</li>`;
+        /*if ((i==23) || (i==26) || (i==27)|| (i==29) || (i==30)) {
              liTag += `<li class="disabled" id="day${i}">${i}</li>`;
         }
         else liTag += `<li class="${isToday}" id="day${i}" onclick="getDate(${i})">${i}</li>`;
+        */
     }
 
     for (let i = lastDayofMonth; i < 6; i++) { // crea lista de los primeros días del mes próximo
@@ -70,10 +72,14 @@ function getDate(day) {
 
 async function disableDates() {
     
-    /*let reservedDatesArr = [5, 10, 28, 31]
-    reservedDatesArr.forEach(date => {
-       
+    `<li#day5 class="inactive daycell">`;
+    `li#day5.null`;
+    let reservedDatesArr = [5, 10, 28, 31]
+    alert("entra en disableDates");
+    /*reservedDatesArr.forEach(date => {
         $(`li#day${date}`).addClass("disabled");
         $(`li#day${date}`).removeAttr("onclick", null);
+        
     });*/
 }
+
