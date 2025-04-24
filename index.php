@@ -25,6 +25,7 @@
     <a href="/cwu/Vistas/FiestaView.php">  <img class="opc" src="/cwu/CSS/Img/fiesta.png" height="200" > </a>
     </div>      
 </div>    
+</div>
 </body>
 <!-- incluyo el fichero footer en la página principal -->
 <?php include('./footer.php') ?>

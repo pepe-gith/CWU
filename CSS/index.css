@@ -101,6 +101,68 @@ body {
 
 /* End Motivos */
 
+/* Banner */
+
+.banner {
+  background-color: #4f4aa6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 70px;
+}
+
+.banner-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.banner-content-text {
+  max-width: 500px;
+  color: white;;
+  display: flex;
+  flex-direction: column;
+}
+
+.section-title {
+  font-size: 48px;
+  /*font-family: Poppins-bold;*/
+}
+
+.banner-subtitle {
+  font-size: 30px;
+}
+
+/* End Banner */
+
+/* Descripción de Sala */
+
+.descSala {
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+.descSala-card {
+  width: 800px;
+}
+
+.descSala-card h5 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+@media(max-width: 800px){
+  .descSala-card {
+      width: 96%;
+  }    
+}
+
+/* End Reviews */
+
 /* Footer */  
 
 footer {
