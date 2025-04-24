@@ -99,7 +99,7 @@ body {
 }
 
 .card p {
-  text-align:center;
+  text-align: justify;
 }
 
 /* End Motivos */
@@ -129,7 +129,6 @@ body {
 
 .section-title {
   font-size: 48px;
-  /*font-family: Poppins-bold;*/
 }
 
 .banner-subtitle {
@@ -158,10 +157,31 @@ body {
   margin-bottom: 20px;
 }
 
+.descSala-card p {
+  margin-bottom: 30px;
+  text-align: justify;
+}
+
+
 @media(max-width: 800px){
   .descSala-card {
       width: 96%;
   }    
+}
+
+.btn-primary-full {
+  color: white;
+  display: flow-root;
+  padding: 15px 60px;
+  border: 4px solid #48ca95;
+  text-align: center;
+  text-decoration: none;
+  background-color: #48ca95;
+}
+
+.btn-primary-full:hover {
+  color: black;
+  background-color: red;
 }
 
 /* End Reviews */

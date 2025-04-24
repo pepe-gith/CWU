@@ -17,13 +17,13 @@
 <div class="contenedor">
   <!-- incluyo opciones de página principal -->      
   <div class="caja">  
-      <a href="/cwu/Vistas/SalasView.php">  <img class="opc" src="/cwu/CSS/Img/SalaClinica.png"> </a>
+      <a href="/cwu/Vistas/Sala1View.php">  <img class="opc" src="/cwu/CSS/Img/SalaClinica.png"> </a>
       </div>
       <div class="caja">  
       <a href="/cwu/Vistas/CumpleView.php">  <img class="opc" src="/cwu/CSS/Img/feliz.png"> </a>
       </div>                
       <div class="caja">  
-      <a href="/cwu/Vistas/FiestaView.php">  <img class="opc" src="/cwu/CSS/Img/SalaLibreria.png"> </a>
+      <a href="/cwu/Vistas/Sala2View.php">  <img class="opc" src="/cwu/CSS/Img/SalaLibreria.png"> </a>
       </div>      
   </div>    
 </div>
