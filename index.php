@@ -13,7 +13,7 @@
 <video src="/cwu/css/Img/confeti.mp4" autoplay loop muted></video>
 <!--cabecera-->
     <?php include('./header.php') ?>
-  <!--footer-->
+  <!--footer--> <!--voy a poner comentario para cambiar algo-->
     <?php include('./footer.php') ?>
 </body>
 </html>
