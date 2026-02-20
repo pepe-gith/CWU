@@ -13,7 +13,7 @@ if (isset($_POST["NIF"])){
     $query1 = mysqli_query($con, $sql1);
     //printf("numero de filas %d.\n", $query1->num_rows);
     $filas = $query1->num_rows;
-
+    //Si el usuario si que esta registrado
     if ($filas == 1){
         $sql2 = "SELECT * FROM cliente WHERE NIF LIKE '$NIF' AND contra LIKE '$password'";
         $query2 = mysqli_query($con, $sql2);
@@ -46,10 +46,10 @@ if (isset($_POST["NIF"])){
     <link  rel="stylesheet" href="/cwu/CSS/style.css">
     <title>Indica resultado de la comprobación de Acceso</title>
 </head>
-<body>
+<body> <!--mensajes de error si el usuario no está registrado o la contraseña no es correcta-->
    <h2 style="color:purple"> <?php if ($filas == 2) printf ("ERROR CONTRASEÑA INCORRECTA"); ?> </h2> 
    <h2 style="color:red"> <?php if ($filas == 0) printf ("ERROR NIF " . $NIF . " no ha sido registrado"); ?> </h2>
-   <h2 style="color:green"> <?php if ($filas == 3) printf ("ERROR DE CONEXION - inténtalo de nuevo"); ?> </h2>
+   <h2 style="color:green"> <?php if ($filas > 3) printf ("ERROR DE CONEXION - inténtalo de nuevo"); ?> </h2>
     <a href="/cwu/index.php"><button type="button" class="btn btn-primary btn-lg">Regresar a Inicio</button></a>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
