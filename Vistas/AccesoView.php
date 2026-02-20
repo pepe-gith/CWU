@@ -16,13 +16,14 @@ $query = mysqli_query($con, $sql);
     <title>Registro</title>
 </head>
 <body>
-    
+   
   <div class="cabecera">
     <img class="lin1" src="/cwu/CSS/Img/titulo.png"/>
     <nav>
         <a href="/cwu/index.php">Inicio</a>
     </nav>
   </div>  
+  <!--Muestra formulario de "Acceso" para comprobar si el usuario está registrado-->
     <div class="users-form" id="users-form">
         <form action="/cwu/controladores/comprobarAcceso.php" method="POST">
             <h1>Acceso</h1>
