@@ -48,15 +48,15 @@ body {
   }    
   
   .opc {
+    border-radius: 10%;
     height: 200px;
     width: 200px;
     margin-right: 50px;
     margin-bottom: 100px;
   }
-  
-  
+   
   .caja:hover{
-      transform: scale(1.4);
+      transform: scale(1.5);
   
   }
 

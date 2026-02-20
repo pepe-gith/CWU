@@ -17,7 +17,7 @@
 <div class="contenedor">
   <!-- incluyo opciones de página principal -->      
   <div class="caja">  
-      <a href="/cwu/Vistas/Sala1View.php">  <img class="opc" src="/cwu/CSS/Img/SalaClinica.png"> </a>
+      <a href="/cwu/Vistas/Sala1View.php">  <img class="opc" src="/cwu/CSS/Img/SalaClinica.png" width="50%"> </a>
       </div>
       <div class="caja">  
       <a href="/cwu/Vistas/CumpleView.php">  <img class="opc" src="/cwu/CSS/Img/feliz.png"> </a>
