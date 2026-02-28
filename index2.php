@@ -1,8 +1,8 @@
 <?php
-include("connection.php");
+include("./Modelos/conexion.php");
 
 //Conecta y obtiene todos los registros de la BD
-$con= connection();
+$con= conexion();
 $sql = "SELECT * FROM users";
 $query = mysqli_query($con, $sql);
 
@@ -23,7 +23,7 @@ $query = mysqli_query($con, $sql);
 </nav>
 <body>
     <div class="users-form">
-        <form action="insert_user.php" method="POST">
+        <form action="Controladores/insert_user.php" method="POST">
             <h1>Crear Usuario</h1>
 
             <input type="text" name="name" placeholder="Nombre">
@@ -60,8 +60,8 @@ $query = mysqli_query($con, $sql);
                     <th><?php echo($row['password']) ?></th>
                     <th><?php echo($row['email']) ?></th>
 
-                    <th><a href="update.php?id=<?php echo($row['id']) ?>" class="users-table--edit">Editar</a></th>
-                    <th><a class="users-table--delete" href="delete_user.php?id=<?php echo($row['id']) ?>">Eliminar</a></th>
+                    <th><a href="Controladores/update.php?id=<?php echo($row['id']) ?>" class="users-table--edit">Editar</a></th>
+                    <th><a class="users-table--delete" href="Controladores/delete_user.php?id=<?php echo($row['id']) ?>">Eliminar</a></th>
                 </tr>
                 <?php endwhile; ?>
             </tbody>

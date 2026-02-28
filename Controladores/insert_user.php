@@ -1,8 +1,8 @@
 <?php
-include("connection.php");
+include("../Modelos/conexion.php");
 
 //Conecta la BD
-$con= connection();
+$con= conexion();
 
 $id = null;
 $name = $_POST['name'];

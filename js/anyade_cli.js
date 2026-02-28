@@ -9,13 +9,9 @@ form.addEventListener('submit', function(event) {
         console.log(clave, valor);
     }
 
-
-    fetch('.././Controladores/insertarCliente.php', {
+    fetch('../Controladores/insertarCliente.php', {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(formData)
+        body: formData
     }).catch(error => {
         console.log('esto ha dado error');
     })

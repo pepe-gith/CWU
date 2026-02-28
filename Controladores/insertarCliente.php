@@ -1,6 +1,6 @@
 <?php
 //conecta con la Base de datos
-include("conexion.php");
+include("../Modelos/conexion.php");
 
 //Conecta la BD
 $con= conexion();
@@ -11,7 +11,7 @@ function compruebaNif($tira) {
   for ($i = 0; $i < 9; $i ++){
     $num[$i] = substr($tira, $i, 1);
   }
-  if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($tira, 0, 8) % 23, 1))
+  if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', (int)substr($tira, 0, 8) % 23, 1))
     return true; 
   else return false;
 }
@@ -43,6 +43,7 @@ if (compruebaNif($NIF)){
     $query2 = null;
     $conexion = null;
 } else $filas = 2;
+
 ?> 
 
 <!DOCTYPE html>
@@ -52,7 +53,7 @@ if (compruebaNif($NIF)){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link  rel="stylesheet" href="/cwu/CSS/style.css">
+    <link  rel="stylesheet" href="../CSS/style.css">
     <title>Indica resultado de la inserción de nuevo Cliente</title>
 </head>
 <body>

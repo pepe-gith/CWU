@@ -3,29 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link  rel="stylesheet" href="/cwu/CSS/index.css" >
+    <link  rel="stylesheet" href="../CSS/index.css" >
     <title>Document</title>
 </head>
 <body>
     
 <!-- incluyo el fichero cabecera en la página principal -->
-    <?php include('../header.php') ?>
+    <?php include('../inc/header.php') ?>
     <!-- MOTIVOS -->
     <section class="cards">
         <div class="card">
-            <img src="/cwu/css/img/thr.png">
+            <img src="../CSS/Img/thr.png">
             <h5>Diversión Asegurada</h5>
             <p>Es importante salir de la rutina diaria y divertirse con otras personas. Disfrutarás del ambiente de cada sala
                que te transportará a una época o lugar diferente y no querrás que acabe.</p>
         </div>
         <div class="card">
-            <img src="/cwu/css/img/thr1.png">
+            <img src="../CSS/Img/thr1.png">
             <h5>Trabaja en Equipo</h5>
             <p>Fomenta el trabajo en equipo. Tod@s tenéis que interactuar, para poder escapar de la sala debéis organizaros,
                comunicaros y ayudaros a resolver la clave y superar las misiones con éxito.</p>
         </div>
         <div class="card">
-            <img src="/cwu/css/img/thr2.png">
+            <img src="../CSS/Img/thr2.png">
             <h5>Ejercita tu mente</h5>
             <p>Hay que darle al coco. Habrán acertijos que te son familiares o que, gracias a tus habilidades, se te dan bien. 
               Hallarás pruebas de todo tipo, confia en tu ingenio, creatividad y lógica.</p>
@@ -35,7 +35,7 @@
     <!-- BANNER -->    
     <section class="banner">
         <div class="banner-content">
-          <image class="header-img" src="/cwu/css/img/clinica.jpg" width="588" heigt="245" />
+          <image class="header-img" src="../CSS/Img/clinica.jpg" width="588" heigt="245" />
         </div>
     </section>
     <!-- END BANNER -->    
@@ -53,5 +53,5 @@
     <!-- END DESCRIPCIÓN SALA -->
 </body>
   <!-- incluyo el fichero footer en la página principal -->
-  <?php include('../footer.php') ?>
+  <?php include('../inc/footer.php') ?>
 </html>

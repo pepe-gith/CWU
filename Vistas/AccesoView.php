@@ -1,5 +1,5 @@
 <?php
-include("C:/xampp/htdocs/cwu/conexion.php");
+include("../Modelos/conexion.php");
 
 //Conecta y obtiene todos los registros de la BD
 $con = conexion();
@@ -12,20 +12,20 @@ $query = mysqli_query($con, $sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link  rel="stylesheet" href="/cwu/CSS/style.css">
+    <link  rel="stylesheet" href="../CSS/style.css">
     <title>Registro</title>
 </head>
 <body>
    
   <div class="cabecera">
-    <img class="lin1" src="/cwu/CSS/Img/titulo.png"/>
+    <img class="lin1" src="../CSS/Img/titulo.png"/>
     <nav>
         <a href="/cwu/index.php">Inicio</a>
     </nav>
   </div>  
   <!--Muestra formulario de "Acceso" para comprobar si el usuario está registrado-->
     <div class="users-form" id="users-form">
-        <form action="/cwu/controladores/comprobarAcceso.php" method="POST">
+        <form action="/cwu/Controladores/comprobarAcceso.php" method="POST">
             <h1>Acceso</h1>
             <input type="text" name="NIF" id="NIF" title="CAMPO OBLIGATORIO" pattern="[0-9A-Z]{1-9}" placeholder="NIF - ID" required>
             <input type="password" name="contra" id="contra" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="OBLIGATORIO Al menos un número, una letra mayúscula, una minúscula, y como mínimo 8 carácteres" placeholder="Contraseña" required>

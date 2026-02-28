@@ -1,5 +1,5 @@
 <?php
-include("C:/xampp/htdocs/cwu/conexion.php");
+include("../Modelos/conexion.php");
 
 //Conecta y obtiene todos los registros de la BD
 $con = conexion();
@@ -23,25 +23,25 @@ if(!isset($_SESSION['cliente'])or empty($_SESSION['cliente']))
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
-    <link rel="stylesheet" href="/cwu/CSS/calenda.css">
-    <link  rel="stylesheet" href="/cwu/CSS/style.css">
+    <link rel="stylesheet" href="../CSS/calenda.css">
+    <link  rel="stylesheet" href="../CSS/style.css">
     <title>Registro</title>
-    <script src="/cwu/js/calendario.js" defer></script>
+    <script src="../js/calendario.js" defer></script>
 
 </head>
 <body>
     
   <div class="cabecera">
-    <img class="lin1" src="/cwu/CSS/Img/titulo.png"/>
+    <img class="lin1" src="../CSS/Img/titulo.png"/>
     <nav>
-        <a href="/cwu/controladores/logout.php">Salir</a> |
-        <a href="/cwu/Vistas/MisEventosView.php">Mis Eventos</a>
+        <a href="/cwu/Controladores/logout.php">Salir</a> |
+        <a href="./MisEventosView.php">Mis Eventos</a>
     </nav>
   </div>
   
   
     <div class="users-form" id="users-form">
-        <form action="/cwu/controladores/insertarCliente.php" style="width: 100%" method="POST">
+        <form action="/cwu/Controladores/insertarCliente.php" style="width: 100%" method="POST">
             <h1>Solicitar presupuesto Evento</h1>
             <h2>Cliente: <?php echo($_SESSION['cliente']['NIF']) ?></h2>      
   

@@ -1,3 +1,4 @@
+<?php include('./config.php') ?>
 <!-- Esta es la página principal de la Web -->
 <!DOCTYPE html>
 <html lang="en">
@@ -11,23 +12,23 @@
 </head>
 <body>
 <!-- incluyo el fichero video de confeti en página principal -->
-    <video src="/cwu/css/Img/confeti.mp4" autoplay loop muted></video>
+    <video src="./CSS/Img/confeti.mp4" autoplay loop muted></video>
 <!-- incluyo el fichero cabecera en la página principal -->
-    <?php include('./header.php') ?>
+    <?php include('./inc/header.php') ?>
 <div class="contenedor">
   <!-- incluyo opciones de página principal -->      
   <div class="caja">  
-      <a href="/cwu/Vistas/Sala1View.php">  <img class="opc" src="/cwu/CSS/Img/SalaClinica.png" width="50%"> </a>
+      <a href="./Vistas/Sala1View.php">  <img class="opc" src="./CSS/Img/SalaClinica.png" width="50%"> </a>
       </div>
       <div class="caja">  
-      <a href="/cwu/Vistas/CumpleView.php">  <img class="opc" src="/cwu/CSS/Img/feliz.png"> </a>
+      <a href="./Vistas/CumpleView.php">  <img class="opc" src="./CSS/Img/feliz.png"> </a>
       </div>                
       <div class="caja">  
-      <a href="/cwu/Vistas/Sala2View.php">  <img class="opc" src="/cwu/CSS/Img/SalaLibreria.png"> </a>
+      <a href="./Vistas/Sala2View.php">  <img class="opc" src="./CSS/Img/SalaLibreria.png"> </a>
       </div>      
   </div>    
 </div>
 </body>
 <!-- incluyo el fichero footer en la página principal -->
-<?php include('./footer.php') ?>
+<?php include('./inc/footer.php') ?>
 </html>
