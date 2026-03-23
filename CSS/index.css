@@ -54,7 +54,11 @@ body {
     margin-right: 50px;
     margin-bottom: 100px;
   }
-   
+
+  .caja {
+    transition: transform 0.3s ease;
+  }
+
   .caja:hover{
       transform: scale(1.5);
   
