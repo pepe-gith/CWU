@@ -1,22 +1,18 @@
 <?php
 //conecta con la Base de datos
-include("../Modelos/conexion.php");
+include_once("../Modelos/conexion.php");
 
 //Conecta la BD
 $con= conexion();
 
-//función para comprobar si la letra del Nif introducido es la correcta
-function compruebaNif($tira) {
-  $tira = strtoupper($tira);
-  for ($i = 0; $i < 9; $i ++){
-    $num[$i] = substr($tira, $i, 1);
-  }
-  if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', (int)substr($tira, 0, 8) % 23, 1))
-    return true; 
-  else return false;
-}
+// Optemos los datos 
 
-$NIF = $_POST['NIF'];
+$NIF = htmlspecialchars($_POST['nif']);
+$contra = htmlspecialchars($_POST['contra']);
+
+
+
+
 if (compruebaNif($NIF)){
     $nombrecli = $_POST['nombrecli'];
     $apellidos = $_POST['apellidos'];
@@ -44,9 +40,21 @@ if (compruebaNif($NIF)){
     $conexion = null;
 } else $filas = 2;
 
+
+//función para comprobar si la letra del Nif introducido es la correcta
+function compruebaNif($tira) {
+  $tira = strtoupper($tira);
+  for ($i = 0; $i < 9; $i ++){
+    $num[$i] = substr($tira, $i, 1);
+  }
+  if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', (int)substr($tira, 0, 8) % 23, 1))
+    return true; 
+  else return false;
+}
+
 ?> 
 
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -63,4 +71,4 @@ if (compruebaNif($NIF)){
     <a href="/cwu/index.php"><button type="button" class="btn btn-primary btn-lg">Regresar a Inicio</button></a>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
-</html>
+</html> -->

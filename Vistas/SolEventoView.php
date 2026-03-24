@@ -41,7 +41,7 @@ if(!isset($_SESSION['cliente'])or empty($_SESSION['cliente']))
   
   
     <div class="users-form" id="users-form">
-        <form action="/cwu/Controladores/insertarCliente.php" style="width: 100%" method="POST">
+        <form action="/cwu/Controladores/crearCliente.php" style="width: 100%" method="POST">
             <h1>Solicitar presupuesto Evento</h1>
             <h2>Cliente: <?php echo($_SESSION['cliente']['NIF']) ?></h2>      
   
@@ -138,8 +138,8 @@ if(!isset($_SESSION['cliente'])or empty($_SESSION['cliente']))
                     <th><?php echo($row['direccion']) ?></th>
                     <th><?php echo($row['como_conoce']) ?></th>
 
-                    <th><a href="update.php?id=<?php echo($row['id']) ?>" class="users-table--edit">Editar</a></th>
-                    <th><a class="users-table--delete" href="delete_user.php?id=<?php echo($row['id']) ?>">Eliminar</a></th>
+                    <th><a href="actualizarUsuario.php?id=<?php echo($row['id']) ?>" class="users-table--edit">Editar</a></th>
+                    <th><a class="users-table--delete" href="eliminarUsuario.php?id=<?php echo($row['id']) ?>">Eliminar</a></th>
                               </tr>
                 <?php endwhile;
                       $con -> close();

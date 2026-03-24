@@ -16,11 +16,11 @@ INSERT INTO Categoria (nombre) VALUES
 
 ---
 
-INSERT INTO Usuario (nombre, apellidos, telefono, otro_telefono, email, password_hash, direccion, como_conoce, id_rol, id_empresa)
+INSERT INTO Usuario (nif, nombre, apellidos, telefono, otro_telefono, email, password_hash, direccion, como_conoce, id_rol, id_empresa)
 VALUES
-('Laura', 'Gómez', '600111111', NULL, 'admin@aventurakids.com', 'hash_admin', 'Madrid', 'web', 1, 1),
-('Carlos', 'Pérez', '600222222', NULL, 'monitor1@aventurakids.com', 'hash_monitor', 'Madrid', 'instagram', 2, 1),
-('Marta', 'López', '600333333', NULL, 'cliente1@gmail.com', 'hash_cliente', 'Madrid', 'amigo', 3, 1);
+('12345678A', 'Laura', 'Gómez', '600111111', NULL, 'admin@aventurakids.com', 'hash_admin', 'Madrid', 'web', 1, 1),
+('87654321B', 'Carlos', 'Pérez', '600222222', NULL, 'monitor1@aventurakids.com', 'hash_monitor', 'Madrid', 'instagram', 2, 1),
+('11223344C', 'Marta', 'López', '600333333', NULL, 'cliente1@gmail.com', 'hash_cliente', 'Madrid', 'amigo', 3, 1);
 
 INSERT INTO Servicio (nombre, descripcion, precio_base, capacidad, id_categoria, id_empresa)
 VALUES

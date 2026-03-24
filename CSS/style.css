@@ -1,12 +1,21 @@
-* {
-    box-sizing: border-box;
-    
-    padding: 0;
+
+/* Estilos generales */
+*, *::before, *::after { 
+    box-sizing: border-box; 
 }
+
+
+/* {
+    padding: 0;
+} */
 
 html {
     font-family: 'Segoe UI' , sans-serif;
     text-align: center;
+}
+
+body {
+    margin: 0;
 }
 
 a {
@@ -27,7 +36,8 @@ a {
 
 .users-form form input[type=text],
 .users-form form input[type=password],
-.users-form form input[type=email] {
+.users-form form input[type=email],
+.users-form form input[type=tel] {
     padding: 8px;
     border: 2px solid #aaa;
     outline: none;
@@ -36,7 +46,8 @@ a {
 
 .users-form form input[type=text]:focus,
 .users-form form input[type=password]:focus,
-.users-form form input[type=email]:focus {
+.users-form form input[type=email]:focus,
+.users-form form input[type=tel]:focus {
     border-color: dodgerblue;
     box-shadow: 0 0 6px 0 dodgerblue;
 }

@@ -33,6 +33,7 @@ CREATE TABLE Categoria (
 --- 2. TABLAS PRINCIPALES
 CREATE TABLE Usuario (
     id int AUTO_INCREMENT PRIMARY KEY,
+    nif VARCHAR(20) NOT NULL UNIQUE,
     nombre VARCHAR(100) NOT NULL,
     apellidos VARCHAR(150),
     telefono VARCHAR(20),
