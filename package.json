@@ -1,0 +1,14 @@
+{
+  "name": "cwu",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "postinstall": "node scripts/copy-libs.js"
+  },
+  "dependencies": {
+    "bootstrap": "5.3.8",
+    "bootstrap-icons": "1.13.1",
+    "flatpickr": "4.6.13",
+    "fullcalendar": "6.1.20"
+  }
+}
