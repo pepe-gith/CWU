@@ -1,11 +1,4 @@
-/* Import Google font - Poppins */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
-*{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
+/* Estilos específicos de SolEventoView - Calendario */
 body{
   display: flex;
   align-items: center;
@@ -29,7 +22,7 @@ body{
 header .icons{
   display: flex;
 }
-header .icons span{
+header .icons i{
   height: 38px;
   width: 38px;
   margin: 0 1px;
@@ -37,14 +30,16 @@ header .icons span{
   color: #878787;
   text-align: center;
   line-height: 38px;
-  font-size: 1.9rem;
+  font-size: 1.2rem;
   user-select: none;
   border-radius: 50%;
 }
-.icons span:last-child{
+
+
+.icons i:last-child{
   margin-right: -10px;
 }
-header .icons span:hover{
+header .icons i:hover{
   background: #f2f2f2;
 }
 header .current-date{

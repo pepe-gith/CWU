@@ -11,8 +11,7 @@
     <link rel="stylesheet" href="/cwu/libs/bootstrap-icons/font/bootstrap-icons.min.css">
 
     <!-- Custom CSS -->
-    <link  rel="stylesheet" href="/cwu/CSS/index.css" >
-    <link  rel="stylesheet" href="../CSS/style.css">
+    <link rel="stylesheet" href="/cwu/CSS/style.css">
 
     <script src="../js/comprobarAcceso.js" defer></script>
     <script src="../js/mostrarUsuarios.js" defer></script>

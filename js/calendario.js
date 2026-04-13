@@ -1,6 +1,6 @@
 const daysTag = document.querySelector(".days"),
 currentDate = document.querySelector(".current-date"),
-prevNextIcon = document.querySelectorAll(".icons span");
+prevNextIcon = document.querySelectorAll(".icons i");
 
 
 // toma nueva fecha, año y mes actual
@@ -75,7 +75,7 @@ async function disableDates() {
     `<li#day5 class="inactive daycell">`;
     `li#day5.null`;
     let reservedDatesArr = [5, 10, 28, 31]
-    alert("entra en disableDates");
+    // alert("entra en disableDates");
     /*reservedDatesArr.forEach(date => {
         $(`li#day${date}`).addClass("disabled");
         $(`li#day${date}`).removeAttr("onclick", null);

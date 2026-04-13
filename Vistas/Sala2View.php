@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="/cwu/libs/bootstrap-icons/font/bootstrap-icons.min.css">
 
     <!-- Custom CSS -->
-    <link  rel="stylesheet" href="/cwu/CSS/index.css" >
+    <link rel="stylesheet" href="/cwu/CSS/style.css">
 
     <title>La Biblioteca</title>
 </head>

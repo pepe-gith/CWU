@@ -1,36 +1,35 @@
 <?php
-include("../Modelos/conexion.php");
+$clienteLogueado = false;
+$nombreCliente = '';
 
-//Conecta y obtiene todos los registros de la BD
-$con = conexion();
-$sql = "SELECT * FROM cliente";
-$query = mysqli_query($con, $sql);
+if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
 
-session_start();   //Inicia sesión
-
-//Si no ha iniciado sesion de 'cliente' salir a INICIO
-if(!isset($_SESSION['cliente'])or empty($_SESSION['cliente']))
- header('location:/cwu/index.php');
- else  $mensa ='NO entra en el IF';
-    
-
-?> 
+    $clienteLogueado = isset($_SESSION['cliente']) && !empty($_SESSION['cliente']);
+    // $nombreCliente = $clienteLogueado ? (string) ($_SESSION['cliente']['nombre'] ?? '') : '';
+}
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+
+    <link href="../libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../libs/bootstrap-icons/font/bootstrap-icons.min.css">
+
+
     <link rel="stylesheet" href="../CSS/calenda.css">
     <link  rel="stylesheet" href="../CSS/style.css">
-    <title>Registro</title>
+    <title>Solicitar Evento</title>
     <script src="../js/calendario.js" defer></script>
 
 </head>
 <body>
-    
+  
   <div class="cabecera">
     <img class="lin1" src="../CSS/Img/titulo.png"/>
     <nav>
@@ -63,8 +62,8 @@ if(!isset($_SESSION['cliente'])or empty($_SESSION['cliente']))
               <header>
                 <p class="current-date"></p>
                 <div class="icons">
-                  <span id="prev" class="material-symbols-rounded">chevron_left</span>
-                  <span id="next" class="material-symbols-rounded">chevron_right</span>
+                  <i id="prev" class="bi bi-chevron-left"></i>
+                  <i id="next" class="bi bi-chevron-right"></i>
                 </div>
               </header>
               <div class="calendar">
@@ -151,6 +150,6 @@ if(!isset($_SESSION['cliente'])or empty($_SESSION['cliente']))
     <script src="../js/jquery.js"></script>
     <script src="../js/anyade_cli.js"></script>
                 -->
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="../libs/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

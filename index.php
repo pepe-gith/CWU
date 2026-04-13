@@ -1,7 +1,7 @@
 <?php include('./config.php') ?>
 <!-- Esta es la página principal de la Web -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +14,8 @@
 
 
     <!-- Custom CSS -->
-    <link  rel="stylesheet" href="/cwu/CSS/index.css" >
+    <link rel="stylesheet" href="/cwu/CSS/style.css">
+    <link rel="stylesheet" href="/cwu/CSS/index.css">
     <!-- <link rel="stylesheet" href="/cwu/CSS/index-mejorado.css"> -->
 
     <title>CWU - Celebrate with US</title>

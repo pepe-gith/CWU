@@ -12,7 +12,7 @@
 
 
     <!-- Custom CSS -->
-    <link  rel="stylesheet" href="/cwu/CSS/index.css" >
+    <link rel="stylesheet" href="/cwu/CSS/style.css">
 
     <title>La Clínica</title>
 </head>
