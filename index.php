@@ -30,7 +30,7 @@
     <main>
         <section id="opciones" class="opciones-section">
             <div class="container-fluid">
-                <h2 class="section-title">Explora nuestras secciones</h2>
+                <!-- <h2 class="section-title">Explora nuestras secciones</h2> -->
 
                 <div class="cards-container">
 
