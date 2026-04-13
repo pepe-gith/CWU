@@ -3,7 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Bootstrap 5.3 -->
+    <link href="/cwu/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="/cwu/libs/bootstrap-icons/font/bootstrap-icons.min.css">
+
+    <!-- Custom CSS -->
+    <link  rel="stylesheet" href="/cwu/CSS/index.css" >
     <link  rel="stylesheet" href="../CSS/style.css">
+
     <script src="../js/comprobarAcceso.js" defer></script>
     <script src="../js/mostrarUsuarios.js" defer></script>
     <title>Acceso</title>

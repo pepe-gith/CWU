@@ -17,7 +17,11 @@ $comoNosConocio = trim((string) ($_POST['como'] ?? ''));
 
 if ( $nif === '' || $nombre === '' || $apellidos === '' || $movil1 === '' || $email1 === '' || $password === '' || $direccion === '' || $comoNosConocio === '') {
     http_response_code(400);
-    exit('Faltan datos obligatorios.');
+    echo json_encode([
+        'ok' => false,
+        'mensaje' => 'Faltan datos obligatorios.'
+    ]);
+    exit;
 }
 
 

@@ -1,23 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link  rel="stylesheet" href="../CSS/index.css" >
-    <title>Document</title>
+    
+    <!-- Bootstrap 5.3 -->
+    <link href="/cwu/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="/cwu/libs/bootstrap-icons/font/bootstrap-icons.min.css">
+
+
+    <!-- Custom CSS -->
+    <link  rel="stylesheet" href="/cwu/CSS/index.css" >
+
+    <title>Cumples</title>
 </head>
 <body>
-    
-  <div class="cajon">
-    <img class="lin1" src="../CSS/Img/titulo.png"/>
-    <nav>
-        <a href="/cwu/index.php">Inicio</a> |
-        <a href="RegistroView.php">Registro</a> |
-        <a href="AccesoView.php">Acceso</a> 
-    </nav>
+
+    <!-- Header -->
+    <?php include('../inc/header.php') ?>
+
+    <main>
         <h1>Estoy en Cumples</h1>
+    </main>
 
-
-  </div>  
+    <!-- Footer -->
+    <?php include('../inc/footer.php') ?>
+    <script src="/cwu/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

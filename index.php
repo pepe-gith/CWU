@@ -5,30 +5,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Bootstrap 5.3 -->
+    <link href="/cwu/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="/cwu/libs/bootstrap-icons/font/bootstrap-icons.min.css">
+
+
+    <!-- Custom CSS -->
     <link  rel="stylesheet" href="/cwu/CSS/index.css" >
-    <title>CWU_PaginaPrincipal</title>
+    <!-- <link rel="stylesheet" href="/cwu/CSS/index-mejorado.css"> -->
+
+    <title>CWU - Celebrate with US</title>
 </head>
 <body>
-<!-- incluyo el fichero video de confeti en página principal -->
-    <video src="./CSS/Img/confeti.mp4" autoplay loop muted></video>
-<!-- incluyo el fichero cabecera en la página principal -->
+    <!-- Vídeo de fondo -->
+    <video class="video-fondo" src="./CSS/Img/confeti.mp4" autoplay loop muted></video>
+
+    <!-- Header -->
     <?php include('./inc/header.php') ?>
-<div class="contenedor">
-  <!-- incluyo opciones de página principal -->      
-  <div class="caja">  
-      <a href="./Vistas/Sala1View.php">  <img class="opc" src="./CSS/Img/SalaClinica.png" width="50%"> </a>
-      </div>
-      <div class="caja">  
-      <a href="./Vistas/CumpleView.php">  <img class="opc" src="./CSS/Img/feliz.png"> </a>
-      </div>                
-      <div class="caja">  
-      <a href="./Vistas/Sala2View.php">  <img class="opc" src="./CSS/Img/SalaLibreria.png"> </a>
-      </div>      
-  </div>    
-</div>
+
+
+    <main>
+        <section id="opciones" class="opciones-section">
+            <div class="container-fluid">
+                <h2 class="section-title">Explora nuestras secciones</h2>
+
+                <div class="cards-container">
+
+                    <!-- Tarjeta 1: La Clínica -->
+                    <div class="card-opcion">
+
+                        <a class="card-link" href="./Vistas/Sala1View.php"> 
+
+                            <div class="card-image">
+                                <img src="./CSS/Img/SalaClinica.png" alt="La Clínica" class="card-img">
+                                <div class="card-overlay"></div>
+                            </div>
+
+                            <div class="card-content">
+                                <h3 class="card-title">La Clínica</h3>
+                                <p class="card-description">Servicios de salud y bienestar especializados</p>
+                                <span class="card-arrow">Explorar →</span>
+                            </div>
+
+                            <!-- <img class="opc" src="./CSS/Img/SalaClinica.png" width="50%">  -->
+                        </a>
+
+                    </div>
+
+                    <!-- Tarjeta 2: ¡Feliz Cumpleaños! -->
+                    <div class="card-opcion">
+                        <a href="./Vistas/CumpleView.php" class="card-link">
+                            <div class="card-image">
+                                <img src="./CSS/Img/feliz.png" alt="¡Feliz Cumpleaños!" class="card-img">
+                                <div class="card-overlay"></div>
+                            </div>
+                            <div class="card-content">
+                                <h3 class="card-title">¡Feliz Cumpleaños!</h3>
+                                <p class="card-description">Planes y celebraciones para tu día especial</p>
+                                <span class="card-arrow">Explorar →</span>
+                            </div>
+                        </a>
+                    </div>
+ 
+                    <!-- Tarjeta 3: La Biblioteca -->
+                    <div class="card-opcion">
+                        <a href="./Vistas/Sala2View.php" class="card-link">
+                            <div class="card-image">
+                                <img src="./CSS/Img/SalaLibreria.png" alt="La Biblioteca" class="card-img">
+                                <div class="card-overlay"></div>
+                            </div>
+                            <div class="card-content">
+                                <h3 class="card-title">La Biblioteca</h3>
+                                <p class="card-description">Ideas, recursos e inspiración para tus eventos</p>
+                                <span class="card-arrow">Explorar →</span>
+                            </div>
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <?php include('./inc/footer.php') ?>
+
+    <script src="/cwu/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
-<!-- incluyo el fichero footer en la página principal -->
-<?php include('./inc/footer.php') ?>
 </html>

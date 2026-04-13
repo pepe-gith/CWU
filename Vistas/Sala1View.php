@@ -1,15 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link  rel="stylesheet" href="../CSS/index.css" >
-    <title>Document</title>
+
+    <!-- Bootstrap 5.3 -->
+    <link href="/cwu/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="/cwu/libs/bootstrap-icons/font/bootstrap-icons.min.css">
+
+
+    <!-- Custom CSS -->
+    <link  rel="stylesheet" href="/cwu/CSS/index.css" >
+
+    <title>La Clínica</title>
 </head>
 <body>
     
-<!-- incluyo el fichero cabecera en la página principal -->
+    <!-- Header -->
     <?php include('../inc/header.php') ?>
+    
     <!-- MOTIVOS -->
     <section class="cards">
         <div class="card">
@@ -51,7 +62,9 @@
         </div>
     </section>
     <!-- END DESCRIPCIÓN SALA -->
+
+    <!-- Footer -->
+    <?php include('../inc/footer.php') ?>
+    <script src="/cwu/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
-  <!-- incluyo el fichero footer en la página principal -->
-  <?php include('../inc/footer.php') ?>
 </html>

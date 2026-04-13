@@ -12,21 +12,52 @@ if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) 
 }
 ?>
 
-<section class="header">    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link  rel="stylesheet" href="/cwu/CSS/index.css" >
+<header class="header">    
+
+    <!-- Logo/Título -->
     <img class="lin1" src="/cwu/CSS/Img/titulo.png"/>
+
+    <!-- Navegación -->
     <nav>
-        <a href="/cwu/index.php">Inicio</a> |
+        <a href="/cwu/index.php" class="nav-link">
+            <i class="bi bi-house-door"></i> Inicio
+        </a>
+
+
+        <!-- <a href="/cwu/index.php">Inicio</a> | -->
         <?php if ($clienteLogueado): ?>
             <?php if ($nombreCliente !== ''): ?>
-                <span>Hola, <?php echo htmlspecialchars($nombreCliente, ENT_QUOTES, 'UTF-8'); ?></span> |
+                <span class="saludo-usuario">
+                     <i class="bi bi-person-circle"></i>
+                    Hola, <?php echo htmlspecialchars($nombreCliente, ENT_QUOTES, 'UTF-8'); ?>
+                </span>
             <?php endif; ?>
-            <a href="/cwu/Vistas/SolEventoView.php">Mi area</a> |
-            <a href="/cwu/Controladores/logout.php">Salir</a>
+
+            <a href="/cwu/Vistas/SolEventoView.php" class="nav-link">
+                <i class="bi bi-calendar-event"></i> Mi área
+            </a>
+            
+            <a href="/cwu/Controladores/logout.php" class="nav-link logout">
+                <i class="bi bi-box-arrow-right"></i> Salir
+            </a>
+
+            <!-- <a href="/cwu/Vistas/SolEventoView.php">Mi area</a> |
+            <a href="/cwu/Controladores/logout.php">Salir</a> -->
+
         <?php else: ?>
-            <a href="/cwu/Vistas/RegistroView.php">Registro</a> |
-            <a href="/cwu/Vistas/AccesoView.php">Acceso</a>
+
+            <a href="/cwu/Vistas/RegistroView.php" class="nav-link">
+                <i class="bi bi-person-plus"></i> Crear cuenta
+            </a>
+
+            <a href="/cwu/Vistas/AccesoView.php" class="nav-link">
+                <i class="bi bi-box-arrow-in-right"></i> Acceso
+            </a>
+
+            <!-- <a href="/cwu/Vistas/RegistroView.php">Registro</a> |
+            <a href="/cwu/Vistas/AccesoView.php">Acceso</a> -->
+
         <?php endif; ?>
     </nav>
-</section>  
+
+</header>  
