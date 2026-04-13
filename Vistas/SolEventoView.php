@@ -22,10 +22,33 @@ if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) 
     <link rel="stylesheet" href="../libs/bootstrap-icons/font/bootstrap-icons.min.css">
 
 
+    <!-- Calendario anterior (conservado para comparar) -->
     <link rel="stylesheet" href="../CSS/calenda.css">
-    <link  rel="stylesheet" href="../CSS/style.css">
+    <!-- <script src="../js/calendario.js" defer></script> -->
+   
+    <link rel="stylesheet" href="/cwu/libs/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="../CSS/style.css">
     <title>Solicitar Evento</title>
-    <script src="../js/calendario.js" defer></script>
+    <style>
+        .flatpickr-calendar {
+            width: 100%;
+            box-shadow: none;
+            border: 2px solid #aaa;
+            border-radius: 0;
+        }
+        .flatpickr-days,
+        .dayContainer {
+            width: 100%;
+            min-width: 100%;
+            max-width: 100%;
+        }
+        .flatpickr-day {
+            max-width: none;
+            flex-basis: calc(100% / 7);
+        }
+    </style>
+
+    
 
 </head>
 <body>
@@ -56,8 +79,13 @@ if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) 
             <input type="text" name="nombrepro" id="nombrepro" pattern="[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð -]" 
             title="Solo puedes introducir letras" placeholder="Nombre y Edad del protagonista, (texto a visionarse en pantalla)">
             <input type="text" name="partic" id="partic" pattern="[0-9]{2}" title="Máximo 16 participantes" placeholder="Total de participantes" required> 
-            <h3 style="text-align: center; color: green">ESCOGE DÍA</h3>  
-            <h5>(días no disponibles en rojo y día actual morado)</h5>  
+            <h3 style="text-align: center; color: green">ESCOGE DÍA</h3>
+            <h5>(días no disponibles aparecen deshabilitados)</h5>
+            <input type="hidden" name="fecha_evento" id="fecha_evento">
+            <div id="cal"></div>
+
+            <!-- Calendario anterior (conservado para comparar)
+            <h5>(días no disponibles en rojo y día actual morado)</h5>
             <div class="wrapper">
               <header>
                 <p class="current-date"></p>
@@ -79,6 +107,7 @@ if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) 
                 <ul class="days"></ul>
               </div>
             </div>
+            -->
 
         <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
           <option selected>Selecciona Escape Room</option>
@@ -102,54 +131,21 @@ if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) 
         </form>
 
     </div>
-    <!--
-    <div class="users-table">        
-        <h2>Usuarios registrados</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>NIF</th>
-                    <th>Nombre</th>
-                    <th>Apellidos</th>
-                    <th>Movil</th>
-                    <th>Movil 2</th>
-                    <th>Email</th>
-                    <th>Email2</th>
-                    <th>Password</th>
-                    <th>Dirección</th>
-                    <th>Como nos conociste</th>
 
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while ($row = mysqli_fetch_array($query)): ?>
-                <tr> 
-                    <th><?php echo($row['NIF']) ?></th>
-                    <th><?php echo($row['nombrecli']) ?></th>
-                    <th><?php echo($row['apellidos']) ?></th>
-                    <th><?php echo($row['movil1']) ?></th>
-                    <th><?php echo($row['movil2']) ?></th>
-                    <th><?php echo($row['corre1']) ?></th>
-                    <th><?php echo($row['corre2']) ?></th>
-                    <th><?php echo($row['contra']) ?></th>
-                    <th><?php echo($row['direccion']) ?></th>
-                    <th><?php echo($row['como_conoce']) ?></th>
-
-                    <th><a href="actualizarUsuario.php?id=<?php echo($row['id']) ?>" class="users-table--edit">Editar</a></th>
-                    <th><a class="users-table--delete" href="eliminarUsuario.php?id=<?php echo($row['id']) ?>">Eliminar</a></th>
-                              </tr>
-                <?php endwhile;
-                      $con -> close();
-                ?>
-            </tbody>
-        </table>
-    </div>    
-    
-    <script src="../js/jquery.js"></script>
-    <script src="../js/anyade_cli.js"></script>
-                -->
   <script src="../libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/cwu/libs/flatpickr/dist/flatpickr.min.js"></script>
+  <script src="/cwu/libs/flatpickr/dist/l10n/es.js"></script>
+  <script>
+    flatpickr("#cal", {
+        locale: "es",
+        minDate: "today",
+        dateFormat: "Y-m-d",
+        inline: true,
+        disable: [], // aquí irán las fechas reservadas desde la BD
+        onChange: function(selectedDates, dateStr) {
+            document.getElementById("fecha_evento").value = dateStr;
+        }
+    });
+  </script>
 </body>
 </html>
