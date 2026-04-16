@@ -38,6 +38,13 @@ class Usuario {
 
     }
 
+    public function existeNif(string $nif): bool {
+        $sql = "SELECT 1 FROM Usuario WHERE nif = :nif LIMIT 1";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->execute([':nif' => $nif]);
+        return (bool) $stmt->fetchColumn();
+    }
+
     public function existeEmail(string $email): bool {
         $sql = "SELECT 1 FROM Usuario WHERE email = :email LIMIT 1";
         $stmt = $this->conexion->prepare($sql);

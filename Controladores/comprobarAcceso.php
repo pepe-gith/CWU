@@ -50,8 +50,7 @@ $_SESSION['cliente'] = [
 echo json_encode([
     'ok' => true,
     'mensaje' => 'Acceso correcto',
-    // 'redirect' => '../Vistas/SolEventoView.php',
-    'redirect' => '../index.php',
+    'redirect' => '/cwu/index.php',
     'usuario' => [
         'id' => $usuario['id'] ?? null,
         'nombre' => $usuario['nombre'] ?? null,

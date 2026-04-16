@@ -1,6 +1,5 @@
 # Dependencias y build
 node_modules/
-libs/
 public/build/
 
 # Variables de entorno

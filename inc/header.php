@@ -15,7 +15,7 @@ if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) 
 <header class="header">    
 
     <!-- Logo/Título -->
-    <img class="lin1" src="/cwu/CSS/Img/titulo.png"/>
+    <img class="lin1" src="/cwu/public/assets/img/titulo.png"/>
 
     <!-- Navegación -->
     <nav>
@@ -33,7 +33,7 @@ if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) 
                 </span>
             <?php endif; ?>
 
-            <a href="/cwu/Vistas/SolEventoView.php" class="nav-link">
+            <a href="/cwu/Vistas/cliente/SolEventoView.php" class="nav-link">
                 <i class="bi bi-calendar-event"></i> Mi área
             </a>
             
@@ -46,11 +46,11 @@ if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) 
 
         <?php else: ?>
 
-            <a href="/cwu/Vistas/RegistroView.php" class="nav-link">
+            <a href="/cwu/Vistas/auth/RegistroView.php" class="nav-link">
                 <i class="bi bi-person-plus"></i> Crear cuenta
             </a>
 
-            <a href="/cwu/Vistas/AccesoView.php" class="nav-link">
+            <a href="/cwu/Vistas/auth/AccesoView.php" class="nav-link">
                 <i class="bi bi-box-arrow-in-right"></i> Acceso
             </a>
 

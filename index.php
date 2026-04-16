@@ -6,16 +6,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <?php include './inc/vite.php'; vite_assets(); ?>
-    <link rel="stylesheet" href="/cwu/CSS/style.css">
-    <link rel="stylesheet" href="/cwu/CSS/index.css">
-    <!-- <link rel="stylesheet" href="/cwu/CSS/index-mejorado.css"> -->
+    <?php include './inc/vite.php'; vite_assets('index'); ?>
 
     <title>CWU - Celebrate with US</title>
 </head>
 <body>
     <!-- Vídeo de fondo -->
-    <video class="video-fondo" src="./CSS/Img/confeti.mp4" autoplay loop muted></video>
+    <video class="video-fondo" src="/cwu/public/assets/img/confeti.mp4" autoplay loop muted></video>
 
     <!-- Header -->
     <?php include('./inc/header.php') ?>
@@ -31,10 +28,10 @@
                     <!-- Tarjeta 1: La Clínica -->
                     <div class="card-opcion">
 
-                        <a class="card-link" href="./Vistas/Sala1View.php"> 
+                        <a class="card-link" href="./Vistas/publico/Sala1View.php">
 
                             <div class="card-image">
-                                <img src="./CSS/Img/SalaClinica.png" alt="La Clínica" class="card-img">
+                                <img src="/cwu/public/assets/img/SalaClinica.png" alt="La Clínica" class="card-img">
                                 <div class="card-overlay"></div>
                             </div>
 
@@ -44,16 +41,16 @@
                                 <span class="card-arrow">Explorar →</span>
                             </div>
 
-                            <!-- <img class="opc" src="./CSS/Img/SalaClinica.png" width="50%">  -->
+                            <!-- <img class="opc" src="/cwu/public/assets/img/SalaClinica.png" width="50%">  -->
                         </a>
 
                     </div>
 
                     <!-- Tarjeta 2: ¡Feliz Cumpleaños! -->
                     <div class="card-opcion">
-                        <a href="./Vistas/CumpleView.php" class="card-link">
+                        <a href="./Vistas/publico/CumpleView.php" class="card-link">
                             <div class="card-image">
-                                <img src="./CSS/Img/feliz.png" alt="¡Feliz Cumpleaños!" class="card-img">
+                                <img src="/cwu/public/assets/img/feliz.png" alt="¡Feliz Cumpleaños!" class="card-img">
                                 <div class="card-overlay"></div>
                             </div>
                             <div class="card-content">
@@ -66,9 +63,9 @@
  
                     <!-- Tarjeta 3: La Biblioteca -->
                     <div class="card-opcion">
-                        <a href="./Vistas/Sala2View.php" class="card-link">
+                        <a href="./Vistas/publico/Sala2View.php" class="card-link">
                             <div class="card-image">
-                                <img src="./CSS/Img/SalaLibreria.png" alt="La Biblioteca" class="card-img">
+                                <img src="/cwu/public/assets/img/SalaLibreria.png" alt="La Biblioteca" class="card-img">
                                 <div class="card-overlay"></div>
                             </div>
                             <div class="card-content">

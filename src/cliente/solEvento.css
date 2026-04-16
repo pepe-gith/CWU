@@ -1,0 +1,17 @@
+.flatpickr-calendar {
+    width: 100%;
+    max-width: 400px;
+    box-shadow: none;
+    border: 2px solid #aaa;
+    border-radius: 8px;
+}
+.flatpickr-days,
+.dayContainer {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+}
+.flatpickr-day {
+    max-width: none;
+    flex-basis: calc(100% / 7);
+}

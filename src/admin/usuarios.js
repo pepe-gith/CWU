@@ -1,12 +1,13 @@
-fetch('../Controladores/mostrarUsuarios.php')
+const tbody = document.querySelector('#cuerpoTablaUsuarios')
+if (!tbody) throw new Error('Tabla usuarios not found')
+
+fetch('/cwu/Controladores/mostrarUsuarios.php')
     .then(res => res.json())
     .then(data => {
-        if (!data.ok) return;
-
-        const tbody = document.querySelector('#cuerpoTablaUsuarios');
+        if (!data.ok) return
 
         data.datos.forEach(usuario => {
-            const fila = document.createElement('tr');
+            const fila = document.createElement('tr')
             fila.innerHTML = `
                 <td>${usuario.nif ?? ''}</td>
                 <td>${usuario.nombre ?? ''}</td>
@@ -16,10 +17,10 @@ fetch('../Controladores/mostrarUsuarios.php')
                 <td>${usuario.email ?? ''}</td>
                 <td>${usuario.direccion ?? ''}</td>
                 <td>${usuario.como_conoce ?? ''}</td>
-            `;
-            tbody.appendChild(fila);
-        });
+            `
+            tbody.appendChild(fila)
+        })
     })
     .catch(error => {
-        console.error('Error al cargar usuarios:', error.message);
-    });
+        console.error('Error al cargar usuarios:', error.message)
+    })

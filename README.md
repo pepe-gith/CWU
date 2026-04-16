@@ -13,24 +13,44 @@ Aplicación web para gestión de reservas de eventos y escape rooms.
 # 1. Clona el repositorio en htdocs de XAMPP
 git clone <url-repo> c:/xampp/htdocs/CWU
 
-# 2. Instala las dependencias y genera los assets
+# 2. Instala las dependencias
 npm install
-npm run build
 ```
 
-> `npm install` descarga las librerías. `npm run build` las empaqueta en `public/build/`.
+## Puesta en marcha
 
-## Desarrollo
+### 1. Inicia XAMPP
+- Abre el **Panel de control de XAMPP**
+- Arranca **Apache** y **MySQL**
+- Importa la base de datos: abre `http://localhost/phpmyadmin` y ejecuta `database/script-completo.sql`
 
+### 2. Inicia Vite (desarrollo)
 ```bash
-# Generar assets para producción (ejecutar cada vez que cambies librerías)
-npm run build
-
-# Modo desarrollo con hot reload (opcional)
 npm run dev
 ```
 
-Con `npm run dev` activo, los cambios en `src/main.js` se reflejan en el navegador sin hacer build.
+### 3. Abre el proyecto
+```
+http://localhost/cwu/
+```
+
+> Mientras `npm run dev` esté corriendo, los cambios en `src/` se reflejan en el navegador automáticamente.
+
+## Producción
+
+```bash
+# Genera los assets optimizados en public/build/
+npm run build
+```
+
+Una vez ejecutado, ya no necesitas tener `npm run dev` corriendo.
+
+## Crear una vista nueva
+
+1. Crear el archivo PHP en `Vistas/[modulo]/NombreView.php`
+2. Si necesita JS/CSS propio, crear `src/[modulo]/nombre.js` (e importar el CSS desde ahí)
+3. Si el módulo no tiene entry en Vite aún, añadirlo en `vite.config.js`
+4. En el `<head>` del PHP incluir: `<?php include '../../inc/vite.php'; vite_assets('modulo/nombre'); ?>`
 
 ## Añadir una librería nueva
 
@@ -38,60 +58,56 @@ Con `npm run dev` activo, los cambios en `src/main.js` se reflejan en el navegad
 # 1. Instalar con npm
 npm install nombre-libreria
 
-# 2. Importarla en src/main.js
+# 2. Importarla en src/main.js (si es global) o en el JS del módulo
 import 'nombre-libreria/dist/archivo.css'
 import 'nombre-libreria'
-
-# 3. Regenerar el build
-npm run build
 ```
 
-## Inicialización de JS en las vistas
+## Importante — scripts type="module"
 
 El script de Vite es `type="module"` (asíncrono). Los inline scripts en los PHP
 se ejecutan antes de que el módulo cargue, por lo que **no pueden llamar a funciones
 de las librerías directamente**.
 
-**❌ No hacer — inline script en el PHP:**
 ```html
+<!-- ❌ No hacer -->
 <script>
     flatpickr("#cal", { ... }) // Error: flatpickr is not defined
 </script>
+
+<!-- ✅ Correcto — inicializar en src/[modulo]/nombre.js -->
 ```
-
-**✅ Correcto — inicializar en `src/main.js` con check del elemento:**
-```js
-const cal = document.getElementById('cal')
-if (cal) {
-    flatpickr(cal, { ... })
-}
-```
-
-## Configuración importante
-
-El `vite.config.js` tiene `base: '/cwu/public/build/'` para que las rutas de
-fuentes e imágenes generadas por Vite apunten a la ruta correcta en XAMPP.
-Si el proyecto se sirve desde otra ruta, hay que actualizar este valor.
 
 ## Estructura del proyecto
 
 ```
 CWU/
-├── Controladores/      # Lógica PHP (acciones de formularios, BD)
-├── Modelos/            # Modelos de datos PHP
-├── Vistas/             # Páginas PHP (vistas del cliente)
-├── CSS/                # Estilos propios del proyecto
-├── js/                 # Scripts JS propios del proyecto
-├── fonts/              # Fuentes locales (Poppins, Raleway)
-├── inc/                # Fragmentos PHP reutilizables (header, footer, vite.php)
+├── Controladores/          # Lógica PHP (acciones de formularios, BD)
+├── Modelos/                # Modelos de datos PHP
+├── Vistas/
+│   ├── auth/               # Login, registro
+│   ├── cliente/            # Vistas del cliente autenticado
+│   ├── monitor/            # Vistas del monitor
+│   ├── admin/              # Vistas del administrador
+│   └── publico/            # Páginas públicas (info de salas, eventos)
+├── database/               # Scripts SQL
+├── inc/                    # Fragmentos PHP reutilizables (header, footer, vite.php)
 ├── src/
-│   └── main.js         # Entrada de Vite — importa todas las librerías
+│   ├── main.js             # Entry global — Bootstrap, CSS global, librerías
+│   ├── css/
+│   │   ├── main.css        # Estilos globales y fuentes
+│   │   └── index.css       # Estilos de index.php
+│   ├── auth/               # JS de login y registro
+│   ├── cliente/            # JS y CSS del cliente
+│   ├── monitor/            # JS y CSS del monitor
+│   └── admin/              # JS y CSS del administrador
 ├── public/
-│   └── build/          # Assets generados por Vite (no subir a git)
-├── libs/               # Librerías generadas por npm install (no subir a git)
-├── vite.config.js      # Configuración de Vite
-├── package.json        # Dependencias del proyecto
-└── .gitignore
+│   ├── assets/
+│   │   ├── img/            # Imágenes del proyecto
+│   │   └── fonts/          # Fuentes locales (Poppins, Raleway)
+│   └── build/              # Generado por Vite — no subir a git
+├── vite.config.js
+└── package.json
 ```
 
 ## Tecnologías
@@ -102,6 +118,5 @@ CWU/
 | Base de datos | MySQL |
 | CSS framework | Bootstrap 5 |
 | Iconos | Bootstrap Icons |
-| Calendario cliente | Flatpickr |
-| Calendario admin | FullCalendar |
+| Calendario | Flatpickr |
 | Bundler | Vite |

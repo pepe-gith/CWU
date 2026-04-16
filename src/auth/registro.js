@@ -1,0 +1,124 @@
+const form = document.querySelector('#formRegistro')
+if (!form) throw new Error('RegistroView not found')
+
+const errorMsg  = document.getElementById('error-msg')
+const successMsg = document.getElementById('success-msg')
+
+// Espera X ms después de que el usuario para de escribir
+function debounce(fn, delay) {
+    let timer
+    return (...args) => {
+        clearTimeout(timer)
+        timer = setTimeout(() => fn(...args), delay)
+    }
+}
+
+function verificarCampo(campo, valor, input) {
+    if (!valor) return
+
+    const formData = new FormData()
+    formData.append('campo', campo)
+    formData.append('valor', valor)
+
+    fetch('/cwu/Controladores/verificarCampo.php', { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(data => {
+            input.classList.toggle('is-invalid', data.existe)
+            input.classList.remove('is-valid')
+            const feedback = input.nextElementSibling
+            if (feedback && feedback.classList.contains('invalid-feedback')) {
+                feedback.textContent = data.existe
+                    ? `Este ${campo === 'nif' ? 'NIF' : 'email'} ya está registrado.`
+                    : ''
+            }
+        })
+}
+
+// Validación blur — campos obligatorios
+const camposObligatorios = form.querySelectorAll('input[required]')
+camposObligatorios.forEach(input => {
+    input.addEventListener('blur', function() {
+        if (!this.value.trim()) {
+            this.classList.add('is-invalid')
+            this.classList.remove('is-valid')
+        } else if (!this.classList.contains('is-invalid') || this.value.trim()) {
+            this.classList.remove('is-invalid')
+        }
+    })
+})
+
+// Validación en tiempo real — NIF y email
+const nifInput   = document.getElementById('nif')
+const emailInput = document.getElementById('email1')
+
+nifInput.addEventListener('input', debounce(
+    () => verificarCampo('nif', nifInput.value, nifInput), 500
+))
+nifInput.addEventListener('blur', function() {
+    if (!this.value.trim()) {
+        this.classList.add('is-invalid')
+        const feedback = this.nextElementSibling
+        if (feedback && feedback.classList.contains('invalid-feedback')) {
+            feedback.textContent = 'Campo obligatorio.'
+        }
+    }
+})
+
+emailInput.addEventListener('input', debounce(
+    () => verificarCampo('email', emailInput.value, emailInput), 500
+))
+emailInput.addEventListener('blur', function() {
+    if (!this.value.trim()) {
+        this.classList.add('is-invalid')
+        const feedback = this.nextElementSibling
+        if (feedback && feedback.classList.contains('invalid-feedback')) {
+            feedback.textContent = 'Campo obligatorio.'
+        }
+    }
+})
+
+// Validación visual de contraseña en tiempo real
+const password = document.getElementById('password')
+password.addEventListener('input', function() {
+    const valido = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/.test(this.value)
+    const escrito = this.value.length > 0
+    this.classList.toggle('is-valid', valido)
+    this.classList.toggle('is-invalid', !valido && escrito)
+    // Oculta el texto de ayuda cuando la contraseña ya es válida
+    const hint = this.nextElementSibling
+    if (hint && hint.classList.contains('form-text')) {
+        hint.classList.toggle('d-none', valido)
+    }
+})
+
+form.addEventListener('submit', function(event) {
+    event.preventDefault()
+    errorMsg.classList.add('d-none')
+    successMsg.classList.add('d-none')
+
+    // Bloquear envío si hay campos inválidos
+    if (form.querySelector('.is-invalid')) {
+        errorMsg.textContent = 'Corrige los errores antes de continuar.'
+        errorMsg.classList.remove('d-none')
+        return
+    }
+
+    const formData = new FormData(this)
+
+    fetch('/cwu/Controladores/crearUsuario.php', { method: 'POST', body: formData })
+        .then(async res => {
+            const data = await res.json()
+            if (!data.ok) throw new Error(data.error || 'Error al registrar el cliente')
+            return data
+        })
+        .then(() => {
+            successMsg.textContent = 'Cuenta creada correctamente. Redirigiendo...'
+            successMsg.classList.remove('d-none')
+            form.reset()
+            setTimeout(() => location.href = '/cwu/Vistas/auth/AccesoView.php', 2000)
+        })
+        .catch(error => {
+            errorMsg.textContent = error.message
+            errorMsg.classList.remove('d-none')
+        })
+})
