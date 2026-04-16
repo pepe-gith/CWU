@@ -17,19 +17,14 @@ if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="../libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <link rel="stylesheet" href="../libs/bootstrap-icons/font/bootstrap-icons.min.css">
-
-
-    <!-- Calendario anterior (conservado para comparar) -->
-    <link rel="stylesheet" href="../CSS/calenda.css">
-    <!-- <script src="../js/calendario.js" defer></script> -->
-   
-    <link rel="stylesheet" href="/cwu/libs/flatpickr/dist/flatpickr.min.css">
+    <?php include '../inc/vite.php'; vite_assets(); ?>
     <link rel="stylesheet" href="../CSS/style.css">
     <title>Solicitar Evento</title>
     <style>
+        body {
+            align-items: center;
+            justify-content: center;
+        }
         .flatpickr-calendar {
             width: 100%;
             box-shadow: none;
@@ -132,20 +127,5 @@ if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) 
 
     </div>
 
-  <script src="../libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="/cwu/libs/flatpickr/dist/flatpickr.min.js"></script>
-  <script src="/cwu/libs/flatpickr/dist/l10n/es.js"></script>
-  <script>
-    flatpickr("#cal", {
-        locale: "es",
-        minDate: "today",
-        dateFormat: "Y-m-d",
-        inline: true,
-        disable: [], // aquí irán las fechas reservadas desde la BD
-        onChange: function(selectedDates, dateStr) {
-            document.getElementById("fecha_evento").value = dateStr;
-        }
-    });
-  </script>
 </body>
 </html>

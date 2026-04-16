@@ -12,6 +12,7 @@ form.addEventListener('submit', function(event) {
         if (data.ok) {
             alert('Cliente dado de alta, ya puede acceder con NIF y contraseña.');
             location.href = "../index.php";
+            // location.href = "../RegistroView.php";
         } else {
             alert('Error al dar de alta Cliente: ' + data.error);
         }

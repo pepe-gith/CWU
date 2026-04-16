@@ -11,7 +11,7 @@ class Usuario {
 
     public function mostrarDatos() {
 
-        $sql = "SELECT * FROM Usuario";
+        $sql = "SELECT nif FROM Usuario";
         $stmt = $this->conexion->query($sql);
         $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $usuarios;

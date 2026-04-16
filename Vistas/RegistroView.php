@@ -4,13 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Bootstrap 5.3 -->
-    <link href="/cwu/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Icons -->
-    <link rel="stylesheet" href="/cwu/libs/bootstrap-icons/font/bootstrap-icons.min.css">
-
-    <!-- Custom CSS -->
+    <?php include '../inc/vite.php'; vite_assets(); ?>
     <link rel="stylesheet" href="/cwu/CSS/style.css">
     
     <script src="/cwu/js/anyade_cli.js" defer></script>
@@ -38,7 +32,8 @@
             <input type="text" name="direccion" id="direccion" title="Letras, números" placeholder="Dirección" maxlength="255" required>
             <input type="text" name="como" id="como" title="Letras y números" placeholder="Cómo nos has conocido" maxlength="100">
 
-            <input type="submit" value="Enviar"/>
+            <input type="submit" disabled value="Enviar"/>
+            
         </form>
     </div>
     <div class="users-table">        
@@ -62,6 +57,5 @@
         </table>
     </div>    
 
-    <script src="/cwu/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
