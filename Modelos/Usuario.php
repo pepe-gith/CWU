@@ -9,7 +9,7 @@ class Usuario {
         $this->conexion = $conexion;
     }
 
-    public function mostrarDatos() {
+    public function mostrarDatos(): array {
 
         $sql = "SELECT nif FROM Usuario";
         $stmt = $this->conexion->query($sql);
@@ -17,7 +17,7 @@ class Usuario {
         return $usuarios;
     }
 
-    public function comprobarAcceso(string $nif, string $contra) {
+    public function comprobarAcceso(string $nif, string $contra): ?array {
 
         $sql = "SELECT * FROM Usuario WHERE nif = :nif";
         $stmt = $this->conexion->prepare($sql);

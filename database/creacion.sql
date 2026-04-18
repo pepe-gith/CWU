@@ -96,6 +96,26 @@ CREATE TABLE Producto (
 
 
 --- 3. TABLAS DEL NÚCLEO
+
+-- Primero la solicitud del evento
+CREATE TABLE Solicitud_Evento (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha_solicitud DATE NOT NULL,
+    fecha_evento DATE NOT NULL,
+    tipo_evento INT NOT NULL,
+    nombre_protagonista VARCHAR(150),
+    num_participantes INT NOT NULL,
+    sala TINYINT,
+    realidad_virtual TINYINT,
+    tarta TINYINT,
+    estado ENUM('pendiente','presupuestada','aceptada','rechazada') DEFAULT 'pendiente',
+    id_usuario INT NOT NULL,
+    id_empresa INT NOT NULL,
+    FOREIGN KEY (tipo_evento) REFERENCES Categoria(id),
+    FOREIGN KEY (id_usuario) REFERENCES Usuario(id),
+    FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
+);
+
 CREATE TABLE Reserva (
     id INT AUTO_INCREMENT PRIMARY KEY,
     fecha_reserva DATE NOT NULL,

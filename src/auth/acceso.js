@@ -9,7 +9,9 @@ form.addEventListener('submit', function(event) {
 
     const formData = new FormData(this)
 
-    fetch('/cwu/Controladores/comprobarAcceso.php', {
+    formData.append('action', 'iniciarSession')
+
+    fetch('/cwu/Controladores/UsuarioControlador.php', {
         method: 'POST',
         body: formData
     })

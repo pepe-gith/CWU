@@ -22,10 +22,12 @@
                 <form id="formRegistro" autocomplete="on" novalidate>
 
                     <div class="mb-3">
-                        <label for="nif" class="form-label">NIF <span class="text-danger">*</span></label>
+                        <label for="nif" class="form-label">NIF 
+                            <span class="text-danger">*</span>
+                        </label>
                         <input type="text" class="form-control" name="nif" id="nif"
                             placeholder="12345678A" pattern="[0-9]{8}[A-Z]{1}" maxlength="9" required>
-                        <div class="invalid-feedback"></div>
+                        <div class="invalid-feedback">Campo obligatorio.</div>
                     </div>
 
                     <div class="row mb-3">
@@ -61,7 +63,7 @@
                         <label for="email1" class="form-label">Email <span class="text-danger">*</span></label>
                         <input type="email" class="form-control" name="email1" id="email1"
                             placeholder="correo@ejemplo.com" maxlength="100" required>
-                        <div class="invalid-feedback"></div>
+                        <div class="invalid-feedback">Campo obligatorio.</div>
                     </div>
 
                     <div class="mb-3">

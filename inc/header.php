@@ -37,9 +37,19 @@ if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) 
                 <i class="bi bi-calendar-event"></i> Mi área
             </a>
             
-            <a href="/cwu/Controladores/logout.php" class="nav-link logout">
+            <a href="#" class="nav-link logout" id="btn-logout">
                 <i class="bi bi-box-arrow-right"></i> Salir
             </a>
+            <script>
+                document.getElementById('btn-logout').addEventListener('click', function(e) {
+                    e.preventDefault()
+                    const fd = new FormData()
+                    fd.append('action', 'cerrarSesion')
+                    fetch('/cwu/Controladores/UsuarioControlador.php', { method: 'POST', body: fd })
+                        .then(res => res.json())
+                        .then(data => { if (data.redirect) location.href = data.redirect })
+                })
+            </script>
 
             <!-- <a href="/cwu/Vistas/SolEventoView.php">Mi area</a> |
             <a href="/cwu/Controladores/logout.php">Salir</a> -->

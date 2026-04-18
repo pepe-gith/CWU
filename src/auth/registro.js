@@ -96,8 +96,17 @@ form.addEventListener('submit', function(event) {
     errorMsg.classList.add('d-none')
     successMsg.classList.add('d-none')
 
+    let hayErrores = false
+
+    camposObligatorios.forEach(campo => {
+        if (!campo.value.trim()) {
+            campo.classList.add('is-invalid')
+            hayErrores = true
+        }
+    });
+
     // Bloquear envío si hay campos inválidos
-    if (form.querySelector('.is-invalid')) {
+    if (hayErrores) {
         errorMsg.textContent = 'Corrige los errores antes de continuar.'
         errorMsg.classList.remove('d-none')
         return
