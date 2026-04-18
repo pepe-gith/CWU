@@ -1,3 +1,5 @@
+import { validarNIF } from '../utils/validarNIF'
+
 const form = document.querySelector('#formRegistro')
 if (!form) throw new Error('RegistroView not found')
 
@@ -48,18 +50,23 @@ camposObligatorios.forEach(input => {
 })
 
 // Validación en tiempo real — NIF y email
-const nifInput   = document.getElementById('nif')
-const emailInput = document.getElementById('email1')
+const nifInput   = document.getElementById('nif');
+const emailInput = document.getElementById('email1');
 
 nifInput.addEventListener('input', debounce(
     () => verificarCampo('nif', nifInput.value, nifInput), 500
 ))
 nifInput.addEventListener('blur', function() {
+    const feedback = this.nextElementSibling
     if (!this.value.trim()) {
         this.classList.add('is-invalid')
-        const feedback = this.nextElementSibling
         if (feedback && feedback.classList.contains('invalid-feedback')) {
             feedback.textContent = 'Campo obligatorio.'
+        }
+    } else if (!validarNIF(this.value)) {
+        this.classList.add('is-invalid')
+        if (feedback && feedback.classList.contains('invalid-feedback')) {
+            feedback.textContent = 'El NIF introducido no es válido.'
         }
     }
 })
@@ -104,6 +111,15 @@ form.addEventListener('submit', function(event) {
             hayErrores = true
         }
     });
+
+    if (nifInput && !validarNIF(nifInput.value)) {
+        nifInput.classList.add('is-invalid')
+        const feedback = nifInput.nextElementSibling
+        if (feedback?.classList.contains('invalid-feedback')) {
+            feedback.textContent = 'El NIF introducido no es válido.'
+        }
+        hayErrores = true
+    }
 
     // Bloquear envío si hay campos inválidos
     if (hayErrores) {

@@ -18,14 +18,16 @@
 
                 <div id="error-msg" class="alert alert-danger d-none" role="alert"></div>
 
-                <form id="formComprobarAcceso">
+                <form id="formComprobarAcceso" novalidate>
                     <div class="mb-3">
                         <label for="nif" class="form-label">NIF</label>
                         <input type="text" class="form-control" name="nif" id="nif" placeholder="12345678A" required>
+                        <div class="invalid-feedback">Campo obligatorio.</div>
                     </div>
                     <div class="mb-4">
                         <label for="contra" class="form-label">Contraseña</label>
                         <input type="password" class="form-control" name="contra" id="contra" placeholder="Contraseña" required>
+                        <div class="invalid-feedback">Campo obligatorio.</div>
                     </div>
                     <div class="d-grid">
                         <button type="submit" class="btn btn-primary btn-lg">Entrar</button>
