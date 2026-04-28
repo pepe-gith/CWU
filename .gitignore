@@ -12,6 +12,9 @@ public/build/
 *.suo
 *.user
 
+# No subir
+.claude/
+
 # Sistema operativo
 .DS_Store
 Thumbs.db
