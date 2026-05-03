@@ -11,6 +11,7 @@ function menuCliente(string $active): array {
         ['label' => 'Resumen',         'href' => '/cwu/Vistas/cliente/InicioView.php',      'icon' => 'bi-house-door',    'active' => $active === 'resumen'],
         ['label' => 'Nueva solicitud', 'href' => '/cwu/Vistas/cliente/SolEventoView.php',   'icon' => 'bi-plus-circle',   'active' => $active === 'solEvento'],
         ['label' => 'Mis solicitudes', 'href' => '/cwu/Vistas/cliente/SolicitudesView.php', 'icon' => 'bi-list-check',    'active' => $active === 'solicitudes'],
+        ['label' => 'Mis reservas',   'href' => '/cwu/Vistas/cliente/ReservasView.php',    'icon' => 'bi-calendar-check', 'active' => $active === 'reservas'],
     ];
 }
 

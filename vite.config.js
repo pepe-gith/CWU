@@ -15,6 +15,7 @@ export default defineConfig(({ command }) => ({
                 'cliente/inicio':      'src/cliente/inicio.js',
                 'cliente/solicitudes':'src/cliente/solicitudes.js',
                 'cliente/solEvento':  'src/cliente/solEvento.js',
+                'cliente/reservas':   'src/cliente/reservas.js',
                 'admin/admin':        'src/admin/admin.js',
                 'admin/dashboard':    'src/admin/dashboard.js',
                 'admin/solicitudes':  'src/admin/solicitudes.js',

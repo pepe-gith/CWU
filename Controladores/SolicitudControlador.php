@@ -14,6 +14,7 @@ match($action) {
     'mostrar'             => mostrar(),
     'responderPresupuesto'=> responderPresupuesto(),
     'solicitarRevision'   => solicitarRevision(),
+    'misReservas'         => misReservas(),
     default               => responderError(400, 'Acción no válida.')
 };
 
@@ -97,6 +98,24 @@ function solicitarRevision(): void {
     if (!$ok) responderError(403, 'No puedes modificar esta solicitud.');
 
     echo json_encode(['ok' => true, 'mensaje' => 'Revisión solicitada correctamente']);
+    exit;
+}
+
+function misReservas(): void {
+    if (empty($_SESSION['cliente']['id'])) responderError(401, 'No autenticado.');
+
+    $con  = conexionPDO();
+    $stmt = $con->prepare("
+        SELECT r.id, r.fecha_evento, r.hora_inicio, r.hora_fin, r.num_asistentes,
+               r.estado, r.observaciones, s.nombre AS servicio
+        FROM Reserva r
+        JOIN Servicio s ON s.id = r.id_servicio
+        WHERE r.id_usuario = :id
+        ORDER BY r.fecha_evento DESC
+    ");
+    $stmt->execute([':id' => (int) $_SESSION['cliente']['id']]);
+
+    echo json_encode(['ok' => true, 'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
     exit;
 }
 
