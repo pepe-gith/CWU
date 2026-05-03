@@ -586,6 +586,7 @@ footer p {
 .badge-pendiente     { background: #fff3cd; color: #856404; }
 .badge-presupuestada { background: #cff4fc; color: #055160; }
 .badge-aceptada      { background: #d1e7dd; color: #0a3622; }
+.badge-reservada     { background: #e2d9f3; color: #3d1a78; }
 .badge-rechazada     { background: #f8d7da; color: #58151c; }
 
 .badge-reserva-pendiente  { background: #fff3cd; color: #856404; }

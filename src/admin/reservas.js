@@ -1,30 +1,73 @@
 const CONTROLADOR = '/cwu/Controladores/AdminControlador.php'
+let filtroFecha  = 'proximas'
+let filtroEstado = ''
+let filtroCliente= ''
+let buscarTimer  = null
 
-cargarReservas('proximas')
+cargarReservas()
 
-document.querySelectorAll('.filtro-btn').forEach(btn => {
+// Filtro fecha
+document.querySelectorAll('.filtro-fecha').forEach(btn => {
     btn.addEventListener('click', () => {
-        document.querySelectorAll('.filtro-btn').forEach(b => {
+        document.querySelectorAll('.filtro-fecha').forEach(b => {
             b.classList.remove('active', 'btn-primary')
             b.classList.add('btn-outline-secondary')
         })
         btn.classList.remove('btn-outline-secondary')
         btn.classList.add('active', 'btn-primary')
-
-        cargarReservas(btn.dataset.filtro)
+        filtroFecha = btn.dataset.filtro
+        cargarReservas()
     })
 })
 
-function cargarReservas(filtro) {
+// Filtro estado
+document.getElementById('filtro-estado').addEventListener('change', e => {
+    filtroEstado = e.target.value
+    cargarReservas()
+})
+
+// Búsqueda cliente con debounce
+document.getElementById('filtro-cliente').addEventListener('input', e => {
+    clearTimeout(buscarTimer)
+    buscarTimer = setTimeout(() => {
+        filtroCliente = e.target.value.trim()
+        cargarReservas()
+    }, 300)
+})
+
+// Limpiar filtros
+document.getElementById('btn-limpiar').addEventListener('click', () => {
+    filtroFecha   = 'proximas'
+    filtroEstado  = ''
+    filtroCliente = ''
+    document.getElementById('filtro-estado').value  = ''
+    document.getElementById('filtro-cliente').value = ''
+    document.querySelectorAll('.filtro-fecha').forEach(b => {
+        b.classList.remove('active', 'btn-primary')
+        b.classList.add('btn-outline-secondary')
+    })
+    document.querySelector('.filtro-fecha[data-filtro="proximas"]').classList.add('active', 'btn-primary')
+    document.querySelector('.filtro-fecha[data-filtro="proximas"]').classList.remove('btn-outline-secondary')
+    cargarReservas()
+})
+
+function cargarReservas() {
+    const params = new URLSearchParams({
+        action: 'reservas',
+        filtro: filtroFecha,
+        ...(filtroEstado  && { estado:  filtroEstado }),
+        ...(filtroCliente && { cliente: filtroCliente }),
+    })
+
     document.getElementById('tabla-reservas').innerHTML = '<p class="text-muted p-4">Cargando...</p>'
 
-    fetch(`${CONTROLADOR}?action=reservas&filtro=${filtro}`)
+    fetch(`${CONTROLADOR}?${params}`)
         .then(r => r.json())
         .then(data => {
             const contenedor = document.getElementById('tabla-reservas')
             contenedor.innerHTML = data.data.length
                 ? renderTabla(data.data)
-                : '<p class="text-muted p-4">No hay reservas.</p>'
+                : '<p class="text-muted p-4">No hay reservas con esos filtros.</p>'
 
             contenedor.querySelectorAll('.select-estado').forEach(sel => {
                 sel.addEventListener('change', () => cambiarEstado(sel.dataset.id, sel.value, sel))
@@ -40,17 +83,13 @@ function cambiarEstado(id, estado, selectEl) {
     fd.append('action', 'cambiarEstadoReserva')
     fd.append('id', id)
     fd.append('estado', estado)
-
     selectEl.disabled = true
 
     fetch(CONTROLADOR, { method: 'POST', body: fd })
         .then(r => r.json())
         .then(data => {
-            if (data.ok) {
-                selectEl.className = `select-estado badge-estado badge-reserva-${estado}`
-            } else {
-                alert(data.error)
-            }
+            if (data.ok) selectEl.className = `select-estado badge-estado badge-reserva-${estado}`
+            else alert(data.error)
         })
         .finally(() => { selectEl.disabled = false })
 }

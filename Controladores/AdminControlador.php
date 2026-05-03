@@ -18,6 +18,8 @@ match($action) {
     'cambiarEstado'        => cambiarEstado(),
     'reservas'             => reservas(),
     'cambiarEstadoReserva' => cambiarEstadoReserva(),
+    'obtenerServicios'     => obtenerServicios(),
+    'crearReserva'         => crearReserva(),
     default                => responderError(400, 'Acción no válida.')
 };
 
@@ -79,6 +81,7 @@ function solicitudes(): void {
     $sql = "
         SELECT se.id, se.fecha_solicitud, se.fecha_evento, se.num_participantes,
                se.sala, se.realidad_virtual, se.tarta, se.nombre_protagonista, se.estado,
+               se.id_usuario,
                c.nombre AS tipo, u.nombre AS cliente, u.apellidos, u.telefono, u.email
         FROM Solicitud_Evento se
         JOIN Categoria c ON c.id = se.tipo_evento
@@ -119,7 +122,17 @@ function cambiarEstado(): void {
 
 function reservas(): void {
     $con    = conexionPDO();
-    $filtro = $_GET['filtro'] ?? 'proximas';
+    $filtro = $_GET['filtro']  ?? 'proximas';
+    $estado = $_GET['estado']  ?? '';
+    $cliente= trim($_GET['cliente'] ?? '');
+
+    $where  = [];
+    $params = [];
+
+    if ($filtro === 'proximas') { $where[] = "r.fecha_evento >= CURDATE()"; }
+    if ($filtro === 'pasadas')  { $where[] = "r.fecha_evento < CURDATE()";  }
+    if ($estado)  { $where[] = "r.estado = :estado";  $params[':estado']  = $estado;  }
+    if ($cliente) { $where[] = "CONCAT(u.nombre, ' ', u.apellidos) LIKE :cliente"; $params[':cliente'] = "%$cliente%"; }
 
     $sql = "
         SELECT r.id, r.fecha_reserva, r.fecha_evento, r.hora_inicio, r.hora_fin,
@@ -130,16 +143,11 @@ function reservas(): void {
         JOIN Usuario u ON u.id = r.id_usuario
     ";
 
-    $sql .= match($filtro) {
-        'pasadas'  => " WHERE r.fecha_evento < CURDATE()",
-        'proximas' => " WHERE r.fecha_evento >= CURDATE()",
-        default    => "",
-    };
-
+    if ($where) $sql .= " WHERE " . implode(" AND ", $where);
     $sql .= " ORDER BY r.fecha_evento ASC";
 
     $stmt = $con->prepare($sql);
-    $stmt->execute();
+    $stmt->execute($params);
 
     echo json_encode(['ok' => true, 'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
     exit;
@@ -159,5 +167,50 @@ function cambiarEstadoReserva(): void {
     $stmt->execute([':estado' => $estado, ':id' => $id]);
 
     echo json_encode(['ok' => true, 'mensaje' => 'Estado actualizado']);
+    exit;
+}
+
+function obtenerServicios(): void {
+    $con  = conexionPDO();
+    $stmt = $con->query("SELECT id, nombre, precio_base FROM Servicio ORDER BY nombre");
+    echo json_encode(['ok' => true, 'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+    exit;
+}
+
+function crearReserva(): void {
+    $idUsuario    = (int) filter_input(INPUT_POST, 'id_usuario',    FILTER_SANITIZE_NUMBER_INT);
+    $idServicio   = (int) filter_input(INPUT_POST, 'id_servicio',   FILTER_SANITIZE_NUMBER_INT);
+    $fechaEvento  = trim((string) filter_input(INPUT_POST, 'fecha_evento',  FILTER_UNSAFE_RAW));
+    $horaInicio   = trim((string) filter_input(INPUT_POST, 'hora_inicio',   FILTER_UNSAFE_RAW));
+    $horaFin      = trim((string) filter_input(INPUT_POST, 'hora_fin',      FILTER_UNSAFE_RAW));
+    $asistentes   = (int) filter_input(INPUT_POST, 'num_asistentes', FILTER_SANITIZE_NUMBER_INT);
+    $observaciones= trim((string) filter_input(INPUT_POST, 'observaciones', FILTER_UNSAFE_RAW));
+
+    if (!$idUsuario || !$idServicio || !$fechaEvento || !$horaInicio || !$horaFin || !$asistentes) {
+        responderError(400, 'Faltan campos obligatorios');
+    }
+
+    $con  = conexionPDO();
+    $stmt = $con->prepare("
+        INSERT INTO Reserva (fecha_reserva, fecha_evento, hora_inicio, hora_fin, num_asistentes, estado, observaciones, id_usuario, id_servicio, id_empresa)
+        VALUES (CURDATE(), :fecha_evento, :hora_inicio, :hora_fin, :asistentes, 'pendiente', :observaciones, :id_usuario, :id_servicio, 1)
+    ");
+    $stmt->execute([
+        ':fecha_evento'  => $fechaEvento,
+        ':hora_inicio'   => $horaInicio,
+        ':hora_fin'      => $horaFin,
+        ':asistentes'    => $asistentes,
+        ':observaciones' => $observaciones ?: null,
+        ':id_usuario'    => $idUsuario,
+        ':id_servicio'   => $idServicio,
+    ]);
+
+    $idSolicitud = (int) filter_input(INPUT_POST, 'id_solicitud', FILTER_SANITIZE_NUMBER_INT);
+    if ($idSolicitud) {
+        $con->prepare("UPDATE Solicitud_Evento SET estado = 'reservada' WHERE id = :id")
+            ->execute([':id' => $idSolicitud]);
+    }
+
+    echo json_encode(['ok' => true, 'mensaje' => 'Reserva creada correctamente']);
     exit;
 }
