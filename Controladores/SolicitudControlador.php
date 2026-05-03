@@ -10,9 +10,11 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
 match($action) {
-    'crear'   => crear(),
-    'mostrar' => mostrar(),
-    default   => responderError(400, 'Acción no válida.')
+    'crear'               => crear(),
+    'mostrar'             => mostrar(),
+    'responderPresupuesto'=> responderPresupuesto(),
+    'solicitarRevision'   => solicitarRevision(),
+    default               => responderError(400, 'Acción no válida.')
 };
 
 function crear(): void {
@@ -56,6 +58,45 @@ function crear(): void {
 
     http_response_code(201);
     echo json_encode(['ok' => true, 'id' => $id]);
+    exit;
+}
+
+function responderPresupuesto(): void {
+    if (empty($_SESSION['cliente']['id'])) responderError(401, 'No autenticado.');
+
+    $id       = (int) filter_input(INPUT_POST, 'id',       FILTER_SANITIZE_NUMBER_INT);
+    $respuesta= trim((string) filter_input(INPUT_POST, 'respuesta', FILTER_UNSAFE_RAW));
+
+    if (!$id || !in_array($respuesta, ['aceptada', 'rechazada'])) {
+        responderError(400, 'Datos no válidos.');
+    }
+
+    $con    = conexionPDO();
+    $modelo = new SolicitudEvento($con);
+    $ok = $modelo->responderPresupuesto($id, (int) $_SESSION['cliente']['id'], $respuesta);
+
+    if ($ok === false)  responderError(403, 'No puedes modificar esta solicitud.');
+    if (is_string($ok)) responderError(400, $ok);
+
+    echo json_encode(['ok' => true, 'mensaje' => 'Solicitud ' . $respuesta]);
+    exit;
+}
+
+function solicitarRevision(): void {
+    if (empty($_SESSION['cliente']['id'])) responderError(401, 'No autenticado.');
+
+    $id     = (int) filter_input(INPUT_POST, 'id',     FILTER_SANITIZE_NUMBER_INT);
+    $motivo = trim((string) filter_input(INPUT_POST, 'motivo', FILTER_UNSAFE_RAW));
+
+    if (!$id) responderError(400, 'Datos no válidos.');
+
+    $con    = conexionPDO();
+    $modelo = new SolicitudEvento($con);
+    $ok     = $modelo->solicitarRevision($id, (int) $_SESSION['cliente']['id'], $motivo);
+
+    if (!$ok) responderError(403, 'No puedes modificar esta solicitud.');
+
+    echo json_encode(['ok' => true, 'mensaje' => 'Revisión solicitada correctamente']);
     exit;
 }
 

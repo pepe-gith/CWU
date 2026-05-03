@@ -37,6 +37,42 @@ ob_start();
 
 </div>
 
+<!-- Modal presupuesto -->
+<div class="modal fade" id="modalPresupuesto" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Enviar presupuesto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="form-presupuesto" novalidate>
+                <div class="modal-body">
+                    <input type="hidden" name="id">
+                    <div class="mb-3">
+                        <label class="form-label">Importe total <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" name="importe" min="0" step="0.01" required placeholder="0.00">
+                            <span class="input-group-text">€</span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Desglose / notas</label>
+                        <textarea class="form-control" name="notas_presupuesto" rows="3" placeholder="Ej: Incluye escape room, tarta y monitor..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Fecha límite para aceptar</label>
+                        <input type="date" class="form-control" name="fecha_limite_presupuesto">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn-cancelar-presupuesto">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Enviar presupuesto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Modal crear reserva -->
 <div class="modal fade" id="modalReserva" tabindex="-1">
     <div class="modal-dialog">

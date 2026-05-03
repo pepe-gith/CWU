@@ -89,7 +89,7 @@ function cambiarEstado(id, estado, selectEl) {
         .then(r => r.json())
         .then(data => {
             if (data.ok) selectEl.className = `select-estado badge-estado badge-reserva-${estado}`
-            else alert(data.error)
+            else window.mostrarToast(data.error)
         })
         .finally(() => { selectEl.disabled = false })
 }

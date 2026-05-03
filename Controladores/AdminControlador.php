@@ -81,7 +81,7 @@ function solicitudes(): void {
     $sql = "
         SELECT se.id, se.fecha_solicitud, se.fecha_evento, se.num_participantes,
                se.sala, se.realidad_virtual, se.tarta, se.nombre_protagonista, se.estado,
-               se.id_usuario,
+               se.id_usuario, se.motivo_revision,
                c.nombre AS tipo, u.nombre AS cliente, u.apellidos, u.telefono, u.email
         FROM Solicitud_Evento se
         JOIN Categoria c ON c.id = se.tipo_evento
@@ -104,17 +104,35 @@ function solicitudes(): void {
 }
 
 function cambiarEstado(): void {
-    $id     = (int) filter_input(INPUT_POST, 'id',     FILTER_SANITIZE_NUMBER_INT);
-    $estado = trim((string) filter_input(INPUT_POST, 'estado', FILTER_UNSAFE_RAW));
+    $id      = (int) filter_input(INPUT_POST, 'id',      FILTER_SANITIZE_NUMBER_INT);
+    $estado  = trim((string) filter_input(INPUT_POST, 'estado',  FILTER_UNSAFE_RAW));
+    $importe = filter_input(INPUT_POST, 'importe', FILTER_VALIDATE_FLOAT);
 
-    $validos = ['pendiente', 'presupuestada', 'aceptada', 'rechazada'];
+    $validos = ['pendiente', 'presupuestada', 'aceptada', 'reservada', 'rechazada'];
     if (!$id || !in_array($estado, $validos)) {
         responderError(400, 'Datos no válidos');
     }
 
+    if ($estado === 'presupuestada' && ($importe === false || $importe < 0)) {
+        responderError(400, 'El importe es obligatorio para presupuestar');
+    }
+
     $con  = conexionPDO();
-    $stmt = $con->prepare("UPDATE Solicitud_Evento SET estado = :estado WHERE id = :id");
-    $stmt->execute([':estado' => $estado, ':id' => $id]);
+    if ($estado === 'presupuestada') {
+        $notas        = trim((string) filter_input(INPUT_POST, 'notas_presupuesto',       FILTER_UNSAFE_RAW));
+        $fechaLimite  = trim((string) filter_input(INPUT_POST, 'fecha_limite_presupuesto', FILTER_UNSAFE_RAW));
+        $stmt = $con->prepare("UPDATE Solicitud_Evento SET estado = :estado, importe_presupuesto = :importe, notas_presupuesto = :notas, fecha_limite_presupuesto = :fecha_limite WHERE id = :id");
+        $stmt->execute([
+            ':estado'       => $estado,
+            ':importe'      => $importe,
+            ':notas'        => $notas ?: null,
+            ':fecha_limite' => $fechaLimite ?: null,
+            ':id'           => $id,
+        ]);
+    } else {
+        $stmt = $con->prepare("UPDATE Solicitud_Evento SET estado = :estado WHERE id = :id");
+        $stmt->execute([':estado' => $estado, ':id' => $id]);
+    }
 
     echo json_encode(['ok' => true, 'mensaje' => 'Estado actualizado']);
     exit;

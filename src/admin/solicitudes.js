@@ -19,7 +19,42 @@ document.querySelectorAll('.filtro-btn').forEach(btn => {
     })
 })
 
-// Modal
+// Modal presupuesto
+let selectPendiente = null
+document.getElementById('modalPresupuesto').addEventListener('hidden.bs.modal', () => {
+    if (selectPendiente) {
+        selectPendiente.value = selectPendiente.dataset.estadoAnterior
+        selectPendiente.className = `select-estado badge-estado badge-${selectPendiente.dataset.estadoAnterior}`
+        selectPendiente = null
+    }
+})
+
+document.getElementById('form-presupuesto').addEventListener('submit', async e => {
+    e.preventDefault()
+    const fd = new FormData(e.target)
+    fd.append('action', 'cambiarEstado')
+    fd.append('estado', 'presupuestada')
+
+    try {
+        const res  = await fetch(CONTROLADOR, { method: 'POST', body: fd })
+        const data = await res.json()
+        if (data.ok) {
+            if (selectPendiente) {
+                selectPendiente.className = 'select-estado badge-estado badge-presupuestada'
+                selectPendiente.dataset.estadoAnterior = 'presupuestada'
+                selectPendiente = null
+            }
+            window.bootstrap.Modal.getInstance(document.getElementById('modalPresupuesto')).hide()
+            cargarSolicitudes(estadoActivo)
+        } else {
+            alert(data.error)
+        }
+    } catch {
+        window.mostrarToast('Error de conexión')
+    }
+})
+
+// Modal reserva
 document.getElementById('modalReserva').addEventListener('shown.bs.modal', () => {
     document.getElementById('modal-alert').innerHTML = ''
 })
@@ -100,6 +135,17 @@ function abrirModalReserva(btn) {
 }
 
 function cambiarEstado(id, estado, selectEl) {
+    if (estado === 'presupuestada') {
+        selectPendiente = selectEl
+        selectEl.dataset.estadoAnterior = selectEl.dataset.estadoAnterior || [...selectEl.options].find(o => o.defaultSelected)?.value || 'pendiente'
+        const form = document.getElementById('form-presupuesto')
+        form.querySelector('[name="id"]').value      = id
+        form.querySelector('[name="importe"]').value = ''
+        const modal = new window.bootstrap.Modal(document.getElementById('modalPresupuesto'))
+        modal.show()
+        return
+    }
+
     const fd = new FormData()
     fd.append('action', 'cambiarEstado')
     fd.append('id', id)
@@ -110,7 +156,7 @@ function cambiarEstado(id, estado, selectEl) {
         .then(r => r.json())
         .then(data => {
             if (data.ok) selectEl.className = `select-estado badge-estado badge-${estado}`
-            else alert(data.error)
+            else window.mostrarToast(data.error)
         })
         .finally(() => { selectEl.disabled = false })
 }
@@ -124,7 +170,10 @@ function renderTabla(items) {
                 <div class="text-muted small">${s.email}</div>
             </td>
             <td>${s.tipo}</td>
-            <td>${s.nombre_protagonista ?? '—'}</td>
+            <td>
+                ${s.nombre_protagonista ?? '—'}
+                ${s.motivo_revision ? `<div class="text-info small mt-1"><i class="bi bi-arrow-repeat"></i> ${s.motivo_revision}</div>` : ''}
+            </td>
             <td>${s.fecha_evento}</td>
             <td>${s.num_participantes}</td>
             <td class="text-center">
