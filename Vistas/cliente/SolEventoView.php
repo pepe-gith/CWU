@@ -86,6 +86,12 @@ ob_start();
                     <div class="invalid-feedback">Campo obligatorio.</div>
                 </div>
 
+                <div class="mb-4">
+                    <label class="form-label">Observaciones <span class="text-muted small">(opcional)</span></label>
+                    <textarea class="form-control" name="observaciones" rows="3"
+                        placeholder="Alergias, necesidades especiales, decoración..."></textarea>
+                </div>
+
                 <div class="d-grid">
                     <button type="submit" class="btn btn-primary btn-lg">Enviar solicitud</button>
                 </div>

@@ -15,6 +15,8 @@ match($action) {
     'responderPresupuesto'=> responderPresupuesto(),
     'solicitarRevision'   => solicitarRevision(),
     'misReservas'         => misReservas(),
+    'cancelarReserva'     => cancelarReserva(),
+    'solicitarCambio'     => solicitarCambio(),
     default               => responderError(400, 'Acción no válida.')
 };
 
@@ -51,6 +53,7 @@ function crear(): void {
         'sala'                => isset($_POST['sala'])             ? (int) $_POST['sala']             : null,
         'realidad_virtual'    => isset($_POST['realidad_virtual']) ? (int) $_POST['realidad_virtual'] : null,
         'tarta'               => isset($_POST['tarta'])            ? (int) $_POST['tarta']            : null,
+        'observaciones'       => trim($_POST['observaciones'] ?? '') ?: null,
     ];
 
     $con = conexionPDO();
@@ -107,7 +110,7 @@ function misReservas(): void {
     $con  = conexionPDO();
     $stmt = $con->prepare("
         SELECT r.id, r.fecha_evento, r.hora_inicio, r.hora_fin, r.num_asistentes,
-               r.estado, r.observaciones, s.nombre AS servicio
+               r.estado, r.observaciones, r.motivo_cancelacion, s.nombre AS servicio
         FROM Reserva r
         JOIN Servicio s ON s.id = r.id_servicio
         WHERE r.id_usuario = :id
@@ -116,6 +119,59 @@ function misReservas(): void {
     $stmt->execute([':id' => (int) $_SESSION['cliente']['id']]);
 
     echo json_encode(['ok' => true, 'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+    exit;
+}
+
+function cancelarReserva(): void {
+    if (empty($_SESSION['cliente']['id'])) responderError(401, 'No autenticado.');
+
+    $id = (int) filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+    if (!$id) responderError(400, 'Datos no válidos.');
+
+    $con  = conexionPDO();
+    $stmt = $con->prepare("SELECT id_usuario, fecha_evento, estado FROM Reserva WHERE id = :id");
+    $stmt->execute([':id' => $id]);
+    $reserva = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$reserva) responderError(404, 'Reserva no encontrada.');
+    if ((int)$reserva['id_usuario'] !== (int)$_SESSION['cliente']['id']) responderError(403, 'No tienes permiso.');
+    if (!in_array($reserva['estado'], ['pendiente', 'confirmada'])) responderError(400, 'Esta reserva no se puede cancelar.');
+
+    $horasRestantes = (strtotime($reserva['fecha_evento']) - time()) / 3600;
+    if ($horasRestantes < 24) responderError(400, 'No se puede cancelar con menos de 24 horas de antelación.');
+
+    $motivo = trim((string) filter_input(INPUT_POST, 'motivo', FILTER_UNSAFE_RAW)) ?: null;
+    $con->prepare("UPDATE Reserva SET estado = 'cancelada', motivo_cancelacion = :motivo WHERE id = :id")
+        ->execute([':motivo' => $motivo, ':id' => $id]);
+
+    echo json_encode(['ok' => true, 'mensaje' => 'Reserva cancelada correctamente.']);
+    exit;
+}
+
+function solicitarCambio(): void {
+    if (empty($_SESSION['cliente']['id'])) responderError(401, 'No autenticado.');
+
+    $id     = (int) filter_input(INPUT_POST, 'id',     FILTER_SANITIZE_NUMBER_INT);
+    $motivo = trim((string) filter_input(INPUT_POST, 'motivo', FILTER_UNSAFE_RAW));
+
+    if (!$id || !$motivo) responderError(400, 'El motivo es obligatorio.');
+
+    $con  = conexionPDO();
+    $stmt = $con->prepare("SELECT id_usuario, fecha_evento, estado FROM Reserva WHERE id = :id");
+    $stmt->execute([':id' => $id]);
+    $reserva = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$reserva) responderError(404, 'Reserva no encontrada.');
+    if ((int)$reserva['id_usuario'] !== (int)$_SESSION['cliente']['id']) responderError(403, 'No tienes permiso.');
+    if ($reserva['estado'] === 'cancelada') responderError(400, 'No puedes modificar una reserva cancelada.');
+
+    $horasRestantes = (strtotime($reserva['fecha_evento']) - time()) / 3600;
+    if ($horasRestantes < 24) responderError(400, 'No se puede solicitar cambios con menos de 24 horas de antelación.');
+
+    $con->prepare("UPDATE Reserva SET cambio_solicitado = 1, motivo_cambio = :motivo WHERE id = :id")
+        ->execute([':motivo' => $motivo, ':id' => $id]);
+
+    echo json_encode(['ok' => true, 'mensaje' => 'Solicitud de cambio enviada. Nos pondremos en contacto contigo.']);
     exit;
 }
 

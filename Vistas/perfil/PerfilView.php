@@ -7,10 +7,10 @@ if (empty($_SESSION['cliente'])) {
 
 require_once '../../inc/helpers.php';
 
-$idRol = (int) ($_SESSION['cliente']['id_rol'] ?? 2);
+$idRol = (int) ($_SESSION['cliente']['id_rol'] ?? 3);
 $layoutMenu = match($idRol) {
     1       => menuAdmin('perfil'),
-    3       => menuMonitor('perfil'),
+    2       => menuMonitor('perfil'),
     default => menuCliente('perfil'),
 };
 

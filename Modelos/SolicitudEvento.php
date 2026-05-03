@@ -12,10 +12,10 @@ class SolicitudEvento {
     public function crear(int $idUsuario, int $idEmpresa, array $datos): int {
         $sql = "INSERT INTO Solicitud_Evento
                 (fecha_solicitud, fecha_evento, tipo_evento, nombre_protagonista,
-                 num_participantes, sala, realidad_virtual, tarta, id_usuario, id_empresa)
+                 num_participantes, sala, realidad_virtual, tarta, observaciones, id_usuario, id_empresa)
                 VALUES
                 (CURDATE(), :fecha_evento, :tipo_evento, :nombre_protagonista,
-                 :num_participantes, :sala, :realidad_virtual, :tarta, :id_usuario, :id_empresa)";
+                 :num_participantes, :sala, :realidad_virtual, :tarta, :observaciones, :id_usuario, :id_empresa)";
 
         $stmt = $this->conexion->prepare($sql);
         $stmt->execute([
@@ -26,6 +26,7 @@ class SolicitudEvento {
             ':sala'                => $datos['sala'] ?? null,
             ':realidad_virtual'    => $datos['realidad_virtual'] ?? null,
             ':tarta'               => $datos['tarta'] ?? null,
+            ':observaciones'       => $datos['observaciones'] ?? null,
             ':id_usuario'          => $idUsuario,
             ':id_empresa'          => $idEmpresa,
         ]);

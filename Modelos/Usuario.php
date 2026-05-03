@@ -19,7 +19,7 @@ class Usuario {
 
     public function comprobarAcceso(string $nif, string $contra): ?array {
 
-        $sql = "SELECT * FROM Usuario WHERE nif = :nif";
+        $sql = "SELECT * FROM Usuario WHERE nif = :nif AND activo = 1";
         $stmt = $this->conexion->prepare($sql);
 
         $stmt->bindParam(':nif', $nif);

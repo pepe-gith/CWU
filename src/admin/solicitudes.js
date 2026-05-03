@@ -130,6 +130,7 @@ function abrirModalReserva(btn) {
     form.querySelector('[name="id_solicitud"]').value   = btn.dataset.idSolicitud
     form.querySelector('[name="fecha_evento"]').value   = btn.dataset.fechaEvento
     form.querySelector('[name="num_asistentes"]').value = btn.dataset.participantes
+    form.querySelector('[name="observaciones"]').value  = btn.dataset.observaciones ?? ''
     if (!modalReserva) modalReserva = new window.bootstrap.Modal(document.getElementById('modalReserva'))
     modalReserva.show()
 }
@@ -186,12 +187,8 @@ function renderTabla(items) {
                 ${s.tarta ? '<i class="bi bi-check-circle-fill text-success"></i>' : '<i class="bi bi-x-circle text-muted"></i>'}
             </td>
             <td>
-                <select class="select-estado badge-estado badge-${s.estado}" data-id="${s.id}">
-                    <option value="pendiente"     ${s.estado === 'pendiente'     ? 'selected' : ''}>Pendiente</option>
-                    <option value="presupuestada" ${s.estado === 'presupuestada' ? 'selected' : ''}>Presupuestada</option>
-                    <option value="aceptada"      ${s.estado === 'aceptada'      ? 'selected' : ''}>Aceptada</option>
-                    <option value="reservada"     ${s.estado === 'reservada'     ? 'selected' : ''}>Reservada</option>
-                    <option value="rechazada"     ${s.estado === 'rechazada'     ? 'selected' : ''}>Rechazada</option>
+                <select class="select-estado badge-estado badge-${s.estado}" data-id="${s.id}" ${s.estado === 'reservada' ? 'disabled' : ''}>
+                    ${opcionesEstado(s.estado)}
                 </select>
             </td>
             <td>
@@ -200,7 +197,8 @@ function renderTabla(items) {
                         data-id-solicitud="${s.id}"
                         data-id-usuario="${s.id_usuario ?? ''}"
                         data-fecha-evento="${s.fecha_evento}"
-                        data-participantes="${s.num_participantes}">
+                        data-participantes="${s.num_participantes}"
+                        data-observaciones="${s.observaciones ?? ''}">
                         <i class="bi bi-calendar-plus"></i> Crear reserva
                     </button>` : ''}
             </td>
@@ -232,4 +230,21 @@ function renderTabla(items) {
 
 function colorEstado(estado) {
     return { pendiente: 'warning', presupuestada: 'info', aceptada: 'success', rechazada: 'danger' }[estado] || ''
+}
+
+function opcionesEstado(estado) {
+    const transiciones = {
+        pendiente:     ['pendiente', 'presupuestada'],
+        presupuestada: ['presupuestada', 'pendiente'],
+        aceptada:      ['aceptada', 'rechazada'],
+        rechazada:     ['rechazada', 'pendiente'],
+        reservada:     ['reservada'],
+    }
+    const nombres = {
+        pendiente: 'Pendiente', presupuestada: 'Presupuestada',
+        aceptada: 'Aceptada', rechazada: 'Rechazada', reservada: 'Reservada'
+    }
+    return (transiciones[estado] ?? [estado]).map(e =>
+        `<option value="${e}" ${e === estado ? 'selected' : ''}>${nombres[e]}</option>`
+    ).join('')
 }

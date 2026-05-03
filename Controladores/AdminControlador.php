@@ -18,8 +18,16 @@ match($action) {
     'cambiarEstado'        => cambiarEstado(),
     'reservas'             => reservas(),
     'cambiarEstadoReserva' => cambiarEstadoReserva(),
+    'gestionarCambio'      => gestionarCambio(),
+    'editarReserva'        => editarReserva(),
     'obtenerServicios'     => obtenerServicios(),
     'crearReserva'         => crearReserva(),
+    'usuarios'             => usuarios(),
+    'cambiarRol'           => cambiarRol(),
+    'roles'                => roles(),
+    'editarUsuario'        => editarUsuario(),
+    'toggleActivo'         => toggleActivo(),
+    'historialUsuario'     => historialUsuario(),
     default                => responderError(400, 'Acción no válida.')
 };
 
@@ -148,14 +156,15 @@ function reservas(): void {
     $params = [];
 
     if ($filtro === 'proximas') { $where[] = "r.fecha_evento >= CURDATE()"; }
-    if ($filtro === 'pasadas')  { $where[] = "r.fecha_evento < CURDATE()";  }
+    elseif ($filtro === 'pasadas') { $where[] = "r.fecha_evento < CURDATE()"; }
     if ($estado)  { $where[] = "r.estado = :estado";  $params[':estado']  = $estado;  }
     if ($cliente) { $where[] = "CONCAT(u.nombre, ' ', u.apellidos) LIKE :cliente"; $params[':cliente'] = "%$cliente%"; }
 
     $sql = "
         SELECT r.id, r.fecha_reserva, r.fecha_evento, r.hora_inicio, r.hora_fin,
                r.num_asistentes, r.estado, r.observaciones,
-               s.nombre AS servicio, u.nombre AS cliente, u.apellidos, u.telefono
+               r.cambio_solicitado, r.motivo_cambio, r.motivo_cancelacion,
+               r.id_servicio, s.nombre AS servicio, u.nombre AS cliente, u.apellidos, u.telefono
         FROM Reserva r
         JOIN Servicio s ON s.id = r.id_servicio
         JOIN Usuario u ON u.id = r.id_usuario
@@ -181,10 +190,59 @@ function cambiarEstadoReserva(): void {
     }
 
     $con  = conexionPDO();
-    $stmt = $con->prepare("UPDATE Reserva SET estado = :estado WHERE id = :id");
-    $stmt->execute([':estado' => $estado, ':id' => $id]);
+    if ($estado === 'cancelada') {
+        $motivo = trim((string) filter_input(INPUT_POST, 'motivo', FILTER_UNSAFE_RAW)) ?: null;
+        $stmt = $con->prepare("UPDATE Reserva SET estado = :estado, motivo_cancelacion = :motivo WHERE id = :id");
+        $stmt->execute([':estado' => $estado, ':motivo' => $motivo, ':id' => $id]);
+    } else {
+        $stmt = $con->prepare("UPDATE Reserva SET estado = :estado, motivo_cancelacion = NULL WHERE id = :id");
+        $stmt->execute([':estado' => $estado, ':id' => $id]);
+    }
 
     echo json_encode(['ok' => true, 'mensaje' => 'Estado actualizado']);
+    exit;
+}
+
+function editarReserva(): void {
+    $id          = (int) filter_input(INPUT_POST, 'id',            FILTER_SANITIZE_NUMBER_INT);
+    $fechaEvento = trim((string) filter_input(INPUT_POST, 'fecha_evento',  FILTER_UNSAFE_RAW));
+    $horaInicio  = trim((string) filter_input(INPUT_POST, 'hora_inicio',   FILTER_UNSAFE_RAW));
+    $horaFin     = trim((string) filter_input(INPUT_POST, 'hora_fin',      FILTER_UNSAFE_RAW));
+    $asistentes    = (int) filter_input(INPUT_POST, 'num_asistentes', FILTER_SANITIZE_NUMBER_INT);
+    $observaciones = trim((string) filter_input(INPUT_POST, 'observaciones', FILTER_UNSAFE_RAW));
+
+    if (!$id || !$fechaEvento || !$horaInicio || !$horaFin || !$asistentes) {
+        responderError(400, 'Faltan campos obligatorios');
+    }
+
+    $con = conexionPDO();
+    $stmt = $con->prepare("
+        UPDATE Reserva SET fecha_evento=:fecha_evento, hora_inicio=:hora_inicio, hora_fin=:hora_fin,
+        num_asistentes=:asistentes, observaciones=:observaciones
+        WHERE id=:id
+    ");
+    $stmt->execute([
+        ':fecha_evento'  => $fechaEvento,
+        ':hora_inicio'   => $horaInicio,
+        ':hora_fin'      => $horaFin,
+        ':asistentes'    => $asistentes,
+        ':observaciones' => $observaciones ?: null,
+        ':id'            => $id,
+    ]);
+
+    echo json_encode(['ok' => true, 'mensaje' => 'Reserva actualizada correctamente']);
+    exit;
+}
+
+function gestionarCambio(): void {
+    $id = (int) filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+    if (!$id) responderError(400, 'Datos no válidos');
+
+    $con = conexionPDO();
+    $con->prepare("UPDATE Reserva SET cambio_solicitado = 0, motivo_cambio = NULL WHERE id = :id")
+        ->execute([':id' => $id]);
+
+    echo json_encode(['ok' => true, 'mensaje' => 'Cambio marcado como gestionado']);
     exit;
 }
 
@@ -230,5 +288,140 @@ function crearReserva(): void {
     }
 
     echo json_encode(['ok' => true, 'mensaje' => 'Reserva creada correctamente']);
+    exit;
+}
+
+function usuarios(): void {
+    $con  = conexionPDO();
+    $rol  = $_GET['rol'] ?? '';
+    $buscar = trim($_GET['buscar'] ?? '');
+
+    $where  = [];
+    $params = [];
+
+    if ($rol && in_array($rol, ['1', '2', '3'])) {
+        $where[] = "u.id_rol = :rol";
+        $params[':rol'] = (int) $rol;
+    }
+    if ($buscar) {
+        $where[] = "(u.nombre LIKE :b OR u.apellidos LIKE :b2 OR u.nif LIKE :b3 OR u.email LIKE :b4)";
+        $params[':b']  = "%$buscar%";
+        $params[':b2'] = "%$buscar%";
+        $params[':b3'] = "%$buscar%";
+        $params[':b4'] = "%$buscar%";
+    }
+
+    $sql = "SELECT u.id, u.nif, u.nombre, u.apellidos, u.email, u.telefono, u.id_rol, u.activo
+            FROM Usuario u"
+         . ($where ? " WHERE " . implode(" AND ", $where) : "")
+         . " ORDER BY u.nombre ASC";
+
+    $stmt = $con->prepare($sql);
+    $stmt->execute($params);
+
+    echo json_encode(['ok' => true, 'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+    exit;
+}
+
+function roles(): void {
+    $con  = conexionPDO();
+    $stmt = $con->query("SELECT id, nombre_rol FROM Rol ORDER BY id");
+    echo json_encode(['ok' => true, 'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+    exit;
+}
+
+function cambiarRol(): void {
+    $id  = (int) filter_input(INPUT_POST, 'id',  FILTER_SANITIZE_NUMBER_INT);
+    $rol = (int) filter_input(INPUT_POST, 'rol', FILTER_SANITIZE_NUMBER_INT);
+
+    if (!$id || !in_array($rol, [1, 2, 3])) {
+        responderError(400, 'Datos no válidos');
+    }
+
+    if ($id === (int) $_SESSION['cliente']['id']) {
+        responderError(403, 'No puedes cambiar tu propio rol.');
+    }
+
+    $con  = conexionPDO();
+    $stmt = $con->prepare("UPDATE Usuario SET id_rol = :rol WHERE id = :id");
+    $stmt->execute([':rol' => $rol, ':id' => $id]);
+
+    echo json_encode(['ok' => true, 'mensaje' => 'Rol actualizado']);
+    exit;
+}
+
+function editarUsuario(): void {
+    $id        = (int) filter_input(INPUT_POST, 'id',        FILTER_SANITIZE_NUMBER_INT);
+    $nombre    = trim((string) filter_input(INPUT_POST, 'nombre',    FILTER_UNSAFE_RAW));
+    $apellidos = trim((string) filter_input(INPUT_POST, 'apellidos', FILTER_UNSAFE_RAW));
+    $email     = trim((string) filter_input(INPUT_POST, 'email',     FILTER_SANITIZE_EMAIL));
+    $telefono  = trim((string) filter_input(INPUT_POST, 'telefono',  FILTER_UNSAFE_RAW));
+
+    if (!$id || !$nombre || !$apellidos || !$email) {
+        responderError(400, 'Faltan campos obligatorios');
+    }
+
+    $con  = conexionPDO();
+
+    $dup = $con->prepare("SELECT 1 FROM Usuario WHERE email = :email AND id != :id LIMIT 1");
+    $dup->execute([':email' => $email, ':id' => $id]);
+    if ($dup->fetchColumn()) responderError(400, 'Ese email ya está en uso');
+
+    $stmt = $con->prepare("UPDATE Usuario SET nombre=:nombre, apellidos=:apellidos, email=:email, telefono=:telefono WHERE id=:id");
+    $stmt->execute([':nombre' => $nombre, ':apellidos' => $apellidos, ':email' => $email, ':telefono' => $telefono, ':id' => $id]);
+
+    echo json_encode(['ok' => true, 'mensaje' => 'Usuario actualizado']);
+    exit;
+}
+
+function toggleActivo(): void {
+    $id = (int) filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+
+    if (!$id) responderError(400, 'Datos no válidos');
+    if ($id === (int) $_SESSION['cliente']['id']) responderError(403, 'No puedes desactivarte a ti mismo');
+
+    $con  = conexionPDO();
+    $stmt = $con->prepare("UPDATE Usuario SET activo = NOT activo WHERE id = :id");
+    $stmt->execute([':id' => $id]);
+
+    $row = $con->prepare("SELECT activo FROM Usuario WHERE id = :id");
+    $row->execute([':id' => $id]);
+    $activo = (bool) $row->fetchColumn();
+
+    echo json_encode(['ok' => true, 'activo' => $activo, 'mensaje' => $activo ? 'Usuario activado' : 'Usuario desactivado']);
+    exit;
+}
+
+function historialUsuario(): void {
+    $id = (int) ($_GET['id'] ?? 0);
+    if (!$id) responderError(400, 'ID requerido');
+
+    $con = conexionPDO();
+
+    $sol = $con->prepare("
+        SELECT se.id, se.fecha_evento, se.estado, c.nombre AS tipo
+        FROM Solicitud_Evento se
+        JOIN Categoria c ON c.id = se.tipo_evento
+        WHERE se.id_usuario = :id
+        ORDER BY se.fecha_evento DESC
+        LIMIT 10
+    ");
+    $sol->execute([':id' => $id]);
+
+    $res = $con->prepare("
+        SELECT r.id, r.fecha_evento, r.hora_inicio, r.hora_fin, r.estado, s.nombre AS servicio
+        FROM Reserva r
+        JOIN Servicio s ON s.id = r.id_servicio
+        WHERE r.id_usuario = :id
+        ORDER BY r.fecha_evento DESC
+        LIMIT 10
+    ");
+    $res->execute([':id' => $id]);
+
+    echo json_encode([
+        'ok'         => true,
+        'solicitudes' => $sol->fetchAll(PDO::FETCH_ASSOC),
+        'reservas'    => $res->fetchAll(PDO::FETCH_ASSOC),
+    ]);
     exit;
 }

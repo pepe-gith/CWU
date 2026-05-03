@@ -53,6 +53,71 @@ ob_start();
     </div>
 
 </div>
+
+<!-- Modal motivo cancelación -->
+<div class="modal fade" id="modalMotivoCancelacion" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Cancelar reserva</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body pt-0">
+                <p class="text-muted mb-3">Indica el motivo de la cancelación — el cliente lo verá en su área.</p>
+                <label class="form-label">Motivo <span class="text-danger">*</span></label>
+                <textarea class="form-control" id="admin-motivo-cancelacion" rows="3" placeholder="Ej: indisponibilidad del local en esa fecha..."></textarea>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btn-confirmar-cancelacion-admin">Confirmar cancelación</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal editar reserva -->
+<div class="modal fade" id="modalEditarReserva" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar reserva</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="form-editar-reserva" novalidate>
+                <div class="modal-body">
+                    <input type="hidden" name="id">
+                    <div class="mb-3">
+                        <label class="form-label">Fecha del evento <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" name="fecha_evento" required>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Hora inicio <span class="text-danger">*</span></label>
+                            <input type="time" class="form-control" name="hora_inicio" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Hora fin <span class="text-danger">*</span></label>
+                            <input type="time" class="form-control" name="hora_fin" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nº asistentes <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" name="num_asistentes" min="1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Observaciones</label>
+                        <textarea class="form-control" name="observaciones" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <?php
 $content = ob_get_clean();
 include '../../inc/layout_area.php';

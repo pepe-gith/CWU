@@ -24,6 +24,7 @@ ob_start();
         <button class="btn btn-sm btn-outline-info filtro-btn" data-estado="presupuestada">Presupuestadas</button>
         <button class="btn btn-sm btn-outline-success filtro-btn" data-estado="aceptada">Aceptadas</button>
         <button class="btn btn-sm btn-outline-danger filtro-btn" data-estado="rechazada">Rechazadas</button>
+        <button class="btn btn-sm btn-outline-secondary filtro-btn" data-estado="reservada">Reservadas</button>
     </div>
 
     <!-- Tabla -->
