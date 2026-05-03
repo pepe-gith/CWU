@@ -21,7 +21,11 @@ function crear(): void {
     }
 
     $idUsuario = (int) $_SESSION['cliente']['id'];
-    $idEmpresa = 1;
+    $idEmpresa = (int) ($_SESSION['cliente']['id_empresa'] ?? 0);
+
+    if (!$idEmpresa) {
+        responderError(500, 'No se pudo determinar la empresa del usuario.');
+    }
 
     $fechaEvento     = trim($_POST['fecha_evento']    ?? '');
     $tipoEvento      = trim($_POST['tipo_evento']     ?? '');
@@ -31,6 +35,7 @@ function crear(): void {
         responderError(400, 'Faltan datos obligatorios.');
     }
 
+    // Validar formato de fecha (YYYY-MM-DD)
     if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fechaEvento)) {
         responderError(400, 'Fecha de evento no válida.');
     }

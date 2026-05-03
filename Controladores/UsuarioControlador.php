@@ -36,10 +36,11 @@ function iniciarSession(): void {
     session_regenerate_id(true);
 
     $_SESSION['cliente'] = [
-        'id' => $usuario['id'] ?? null,
-        'NIF' => $usuario['nif'] ?? null,
-        'nombre' => $usuario['nombre'] ?? null,
-        'email' => $usuario['email'] ?? null,
+        'id'         => $usuario['id']         ?? null,
+        'NIF'        => $usuario['nif']        ?? null,
+        'nombre'     => $usuario['nombre']     ?? null,
+        'email'      => $usuario['email']      ?? null,
+        'id_empresa' => $usuario['id_empresa'] ?? null,
     ];
 
     echo json_encode([

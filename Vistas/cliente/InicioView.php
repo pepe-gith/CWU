@@ -1,23 +1,41 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
+if (empty($_SESSION['cliente'])) {
+    header('Location: /cwu/Vistas/auth/AccesoView.php');
+    exit;
+}
+
+require_once '../../inc/helpers.php';
+$layoutTitle = 'Mi área';
+$layoutEntry = 'cliente/inicio';
+$layoutMenu  = menuCliente('resumen');
+
+ob_start();
+$nombre = htmlspecialchars($_SESSION['cliente']['nombre'] ?? 'Cliente', ENT_QUOTES, 'UTF-8');
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php include '../../inc/vite.php'; vite_assets(); ?>
-    <title>Inicio Cliente</title>
-</head>
-<body>
+<div class="area-page">
 
-    <?php include('../../inc/header.php') ?>
+    <h2 class="mb-1">Hola, <?php echo $nombre ?></h2>
+    <p class="text-muted mb-5">¿Qué quieres hacer hoy?</p>
 
-    <main>
-        <h1>Bienvenido, <?php echo htmlspecialchars($_SESSION['cliente']['nombre'] ?? 'Cliente', ENT_QUOTES, 'UTF-8') ?></h1>
-    </main>
+    <div class="area-shortcut-cards">
+        <a href="/cwu/Vistas/cliente/SolEventoView.php" class="area-shortcut-card">
+            <i class="bi bi-plus-circle-fill"></i>
+            <span>Nueva solicitud</span>
+        </a>
+        <a href="/cwu/Vistas/cliente/SolicitudesView.php" class="area-shortcut-card">
+            <i class="bi bi-list-check"></i>
+            <span>Mis solicitudes</span>
+        </a>
+    </div>
 
-    <?php include('../../inc/footer.php') ?>
+    <div class="d-flex justify-content-between align-items-center mt-5 mb-3">
+        <h3 class="mb-0">Últimas solicitudes</h3>
+        <a href="/cwu/Vistas/cliente/SolicitudesView.php" class="btn btn-outline-primary btn-sm">Ver todas →</a>
+    </div>
+    <div id="resumen-solicitudes"></div>
 
-</body>
-</html>
+</div>
+<?php
+$content = ob_get_clean();
+include '../../inc/layout_area.php';

@@ -12,8 +12,10 @@ export default defineConfig(({ command }) => ({
                 index:               'src/index.js',
                 'auth/acceso':       'src/auth/acceso.js',
                 'auth/registro':     'src/auth/registro.js',
-                'cliente/solEvento': 'src/cliente/solEvento.js',
-                'admin/admin':       'src/admin/admin.js',
+                'cliente/inicio':      'src/cliente/inicio.js',
+                'cliente/solicitudes':'src/cliente/solicitudes.js',
+                'cliente/solEvento':  'src/cliente/solEvento.js',
+                'admin/admin':        'src/admin/admin.js',
             }
         }
     },

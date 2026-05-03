@@ -33,8 +33,8 @@ if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) 
                 </span>
             <?php endif; ?>
 
-            <a href="/cwu/Vistas/cliente/SolEventoView.php" class="nav-link">
-                <i class="bi bi-calendar-event"></i> Mi área
+            <a href="/cwu/Vistas/cliente/InicioView.php" class="nav-link">
+                <i class="bi bi-person-circle"></i> Mi área
             </a>
             
             <a href="#" class="nav-link logout" id="btn-logout">

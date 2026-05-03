@@ -28,8 +28,8 @@ form.addEventListener('submit', function(event) {
     const nifInput = form.querySelector('#nif');
 
     if (nifInput && nifInput.value.trim() && !validarNIF(nifInput.value)) {
-        nifInput.classList.add('is-invalid')
-        const feedback = nifInput.nextElementSibling
+        nifInput.classList.add('is-invalid');
+        const feedback = nifInput.nextElementSibling;
         if (feedback?.classList.contains('invalid-feedback')) {
             feedback.textContent = 'El NIF introducido no es válido.'
         }
