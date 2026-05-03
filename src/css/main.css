@@ -572,6 +572,50 @@ footer p {
     transform: translateY(-2px);
 }
 
+/* Badges de estado en tablas admin */
+.badge-estado {
+    display: inline-block;
+    padding: .3rem .7rem;
+    border-radius: .4rem;
+    font-size: .8rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+}
+
+.badge-pendiente     { background: #fff3cd; color: #856404; }
+.badge-presupuestada { background: #cff4fc; color: #055160; }
+.badge-aceptada      { background: #d1e7dd; color: #0a3622; }
+.badge-rechazada     { background: #f8d7da; color: #58151c; }
+
+.badge-reserva-pendiente  { background: #fff3cd; color: #856404; }
+.badge-reserva-confirmada { background: #d1e7dd; color: #0a3622; }
+.badge-reserva-cancelada  { background: #f8d7da; color: #58151c; }
+
+/* KPIs del dashboard admin */
+.admin-kpi-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: .75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.admin-kpi-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.admin-kpi-label {
+    font-size: .78rem;
+    color: #6c757d;
+    margin-top: .2rem;
+}
+
 /* ============================================
    RESPONSIVE
    ============================================ */

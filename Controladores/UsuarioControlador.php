@@ -47,10 +47,16 @@ function iniciarSession(): void {
         'id_rol'     => $usuario['id_rol']     ?? null,
     ];
 
+    $redirect = match((int)($usuario['id_rol'] ?? 2)) {
+        1       => '/cwu/Vistas/admin/DashboardView.php',
+        3       => '/cwu/Vistas/monitor/AgendaView.php',
+        default => '/cwu/Vistas/cliente/InicioView.php',
+    };
+
     echo json_encode([
         'ok' => true,
         'mensaje' => 'Acceso correcto',
-        'redirect' => '/cwu/index.php',
+        'redirect' => $redirect,
         'usuario' => [
             'id' => $usuario['id'] ?? null,
             'nombre' => $usuario['nombre'] ?? null,
