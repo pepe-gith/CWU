@@ -16,6 +16,7 @@ export default defineConfig(({ command }) => ({
                 'cliente/solicitudes':'src/cliente/solicitudes.js',
                 'cliente/solEvento':  'src/cliente/solEvento.js',
                 'admin/admin':        'src/admin/admin.js',
+                'perfil/perfil':      'src/perfil/perfil.js',
             }
         }
     },

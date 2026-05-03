@@ -26,20 +26,29 @@ if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) 
 
         <!-- <a href="/cwu/index.php">Inicio</a> | -->
         <?php if ($clienteLogueado): ?>
-            <?php if ($nombreCliente !== ''): ?>
-                <span class="saludo-usuario">
-                     <i class="bi bi-person-circle"></i>
-                    Hola, <?php echo htmlspecialchars($nombreCliente, ENT_QUOTES, 'UTF-8'); ?>
-                </span>
-            <?php endif; ?>
-
             <a href="/cwu/Vistas/cliente/InicioView.php" class="nav-link">
-                <i class="bi bi-person-circle"></i> Mi área
+                <i class="bi bi-grid"></i> Mi área
             </a>
-            
-            <a href="#" class="nav-link logout" id="btn-logout">
-                <i class="bi bi-box-arrow-right"></i> Salir
-            </a>
+
+            <div class="dropdown">
+                <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle"></i>
+                    Hola, <?php echo htmlspecialchars($nombreCliente, ENT_QUOTES, 'UTF-8'); ?>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item" href="/cwu/Vistas/perfil/PerfilView.php">
+                            <i class="bi bi-person me-2"></i> Mi perfil
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item text-danger" href="#" id="btn-logout">
+                            <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+                        </a>
+                    </li>
+                </ul>
+            </div>
             <script>
                 document.getElementById('btn-logout').addEventListener('click', function(e) {
                     e.preventDefault()
@@ -51,17 +60,14 @@ if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) 
                 })
             </script>
 
-            <!-- <a href="/cwu/Vistas/SolEventoView.php">Mi area</a> |
-            <a href="/cwu/Controladores/logout.php">Salir</a> -->
-
         <?php else: ?>
-
-            <a href="/cwu/Vistas/auth/RegistroView.php" class="nav-link">
-                <i class="bi bi-person-plus"></i> Crear cuenta
-            </a>
 
             <a href="/cwu/Vistas/auth/AccesoView.php" class="nav-link">
                 <i class="bi bi-box-arrow-in-right"></i> Acceso
+            </a>
+
+            <a href="/cwu/Vistas/auth/RegistroView.php" class="nav-link">
+                <i class="bi bi-person-plus"></i> Crear cuenta
             </a>
 
             <!-- <a href="/cwu/Vistas/RegistroView.php">Registro</a> |

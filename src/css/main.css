@@ -153,6 +153,45 @@ a {
     font-size: .9rem;
 }
 
+/* Dropdown de usuario en el header */
+.header .dropdown-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    padding: 0;
+    cursor: pointer;
+    font-size: inherit;
+}
+
+.header .dropdown-toggle:hover {
+    color: #FFD700;
+}
+
+.header .dropdown-toggle::after {
+    margin-left: .3rem;
+}
+
+.header .dropdown-menu {
+    min-width: 180px;
+    border: none;
+    box-shadow: 0 4px 16px rgba(0,0,0,.15);
+    border-radius: .5rem;
+}
+
+.header .dropdown-item {
+    color: #333;
+    padding: .6rem 1rem;
+}
+
+.header .dropdown-item:hover {
+    background: #f0f4ff;
+    color: #0052CC;
+}
+
 nav {
     margin-right: 80px;
     text-align: right;
@@ -279,7 +318,7 @@ table th {
     padding-bottom: 60px;
 }
 
-.card {
+.cards .card {
     margin: 5px;
     display: flex;
     flex-direction: column;
@@ -291,13 +330,13 @@ table th {
     max-width: 350px;
 }
 
-.card h5 {
+.cards .card h5 {
     font-size: 18px;
     margin-top: 10px;
     margin-bottom: 15px;
 }
 
-.card p {
+.cards .card p {
     text-align: justify;
 }
 
