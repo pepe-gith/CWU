@@ -74,6 +74,22 @@ $nombre = htmlspecialchars($_SESSION['cliente']['nombre'] ?? 'Admin', ENT_QUOTES
         </div>
     </div>
 
+    <!-- Alerta reservas sin empleado -->
+    <div id="alerta-sin-empleado" class="d-none mb-4"></div>
+
+    <!-- Accesos rápidos -->
+    <div class="d-flex flex-wrap gap-2 mb-5">
+        <a href="/cwu/Vistas/admin/SolicitudesView.php" class="btn btn-outline-warning">
+            <i class="bi bi-inbox me-1"></i> Gestionar solicitudes
+        </a>
+        <a href="/cwu/Vistas/admin/ReservasView.php" class="btn btn-outline-success">
+            <i class="bi bi-calendar-check me-1"></i> Ver reservas
+        </a>
+        <a href="/cwu/Vistas/admin/UsuariosView.php" class="btn btn-outline-primary">
+            <i class="bi bi-people me-1"></i> Usuarios
+        </a>
+    </div>
+
     <div class="row g-4">
 
         <!-- Últimas solicitudes pendientes -->

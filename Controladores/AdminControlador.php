@@ -59,6 +59,14 @@ function dashboard(): void {
     $stmt = $con->query("SELECT COALESCE(SUM(monto), 0) FROM Pago_Cliente WHERE MONTH(fecha) = MONTH(CURDATE()) AND YEAR(fecha) = YEAR(CURDATE())");
     $stats['ingresos_mes'] = (float) $stmt->fetchColumn();
 
+    // Reservas próximas confirmadas sin empleado asignado
+    $stmt = $con->query("
+        SELECT COUNT(*) FROM Reserva r
+        WHERE r.estado = 'confirmada' AND r.fecha_evento >= CURDATE()
+        AND NOT EXISTS (SELECT 1 FROM Asignacion_Empleado ae WHERE ae.id_reserva = r.id)
+    ");
+    $stats['reservas_sin_empleado'] = (int) $stmt->fetchColumn();
+
     // Últimas 5 solicitudes pendientes
     $stmt = $con->query("
         SELECT se.id, se.fecha_solicitud, se.fecha_evento, se.num_participantes, se.estado,

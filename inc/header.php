@@ -19,14 +19,27 @@ if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) 
 
     <!-- Navegación -->
     <nav>
+        <?php
+        $rolNav = (int) ($_SESSION['cliente']['id_rol'] ?? 0);
+        if ($rolNav !== 1 && $rolNav !== 2):
+        ?>
         <a href="/cwu/index.php" class="nav-link">
             <i class="bi bi-house-door"></i> Inicio
         </a>
+        <?php endif; ?>
 
 
         <!-- <a href="/cwu/index.php">Inicio</a> | -->
         <?php if ($clienteLogueado): ?>
-            <a href="/cwu/Vistas/cliente/InicioView.php" class="nav-link">
+            <?php
+            $rol = (int) ($_SESSION['cliente']['id_rol'] ?? 0);
+            $areaHref = match($rol) {
+                1       => '/cwu/Vistas/admin/DashboardView.php',
+                2       => '/cwu/Vistas/empleado/AgendaView.php',
+                default => '/cwu/Vistas/cliente/InicioView.php',
+            };
+            ?>
+            <a href="<?= $areaHref ?>" class="nav-link">
                 <i class="bi bi-grid"></i> Mi área
             </a>
 

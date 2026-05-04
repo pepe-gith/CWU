@@ -9,6 +9,17 @@ fetch('/cwu/Controladores/AdminControlador.php?action=dashboard')
         document.getElementById('kpi-clientes').textContent    = d.total_clientes
         document.getElementById('kpi-ingresos').textContent    = d.ingresos_mes.toFixed(2) + ' €'
 
+        const alerta = document.getElementById('alerta-sin-empleado')
+        if (d.reservas_sin_empleado > 0) {
+            alerta.className = 'alert alert-warning d-flex align-items-center gap-2 mb-4'
+            alerta.innerHTML = `
+                <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                <span>
+                    <strong>${d.reservas_sin_empleado} ${d.reservas_sin_empleado === 1 ? 'reserva próxima no tiene' : 'reservas próximas no tienen'} empleado asignado.</strong>
+                    <a href="/cwu/Vistas/admin/ReservasView.php" class="alert-link ms-1">Ir a reservas →</a>
+                </span>`
+        }
+
         document.getElementById('tabla-solicitudes').innerHTML =
             d.ultimas_solicitudes.length
                 ? renderSolicitudes(d.ultimas_solicitudes)
