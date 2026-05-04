@@ -116,6 +116,26 @@ ob_start();
         </div>
     </div>
 </div>
+<!-- Modal confirmar desactivación empleado -->
+<div class="modal fade" id="modalConfirmarDesactivar" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Desactivar empleado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body pt-0">
+                <p class="text-muted mb-3">Este empleado tiene asignaciones en reservas futuras. Si lo desactivas, <strong>se eliminarán automáticamente:</strong></p>
+                <ul id="lista-reservas-afectadas" class="list-group list-group-flush mb-0"></ul>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btn-confirmar-desactivar">Desactivar de todas formas</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php
 $content = ob_get_clean();
 include '../../inc/layout_area.php';

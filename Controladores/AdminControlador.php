@@ -33,6 +33,7 @@ match($action) {
     'roles'                => roles(),
     'editarUsuario'        => editarUsuario(),
     'toggleActivo'         => toggleActivo(),
+    'confirmarDesactivar'  => confirmarDesactivar(),
     'historialUsuario'     => historialUsuario(),
     default                => responderError(400, 'Acción no válida.')
 };
@@ -442,7 +443,37 @@ function toggleActivo(): void {
     if (!$id) responderError(400, 'Datos no válidos');
     if ($id === (int) $_SESSION['cliente']['id']) responderError(403, 'No puedes desactivarte a ti mismo');
 
-    $con  = conexionPDO();
+    $con = conexionPDO();
+
+    // Si vamos a desactivar, comprobar si es empleado con reservas futuras asignadas
+    $rowActivo = $con->prepare("SELECT activo FROM Usuario WHERE id = :id");
+    $rowActivo->execute([':id' => $id]);
+    $activoActual = (bool) $rowActivo->fetchColumn();
+
+    if ($activoActual) {
+        $emp = $con->prepare("SELECT id FROM Empleado WHERE id_usuario = :id");
+        $emp->execute([':id' => $id]);
+        $idEmpleado = $emp->fetchColumn();
+
+        if ($idEmpleado) {
+            $check = $con->prepare("
+                SELECT r.id, r.fecha_evento, s.nombre AS servicio
+                FROM Asignacion_Empleado ae
+                JOIN Reserva r ON r.id = ae.id_reserva
+                JOIN Servicio s ON s.id = r.id_servicio
+                WHERE ae.id_empleado = :emp AND r.fecha_evento >= CURDATE()
+                ORDER BY r.fecha_evento ASC
+            ");
+            $check->execute([':emp' => $idEmpleado]);
+            $reservas = $check->fetchAll(PDO::FETCH_ASSOC);
+
+            if ($reservas) {
+                echo json_encode(['ok' => false, 'confirmar' => true, 'reservas' => $reservas]);
+                exit;
+            }
+        }
+    }
+
     $stmt = $con->prepare("UPDATE Usuario SET activo = NOT activo WHERE id = :id");
     $stmt->execute([':id' => $id]);
 
@@ -451,6 +482,33 @@ function toggleActivo(): void {
     $activo = (bool) $row->fetchColumn();
 
     echo json_encode(['ok' => true, 'activo' => $activo, 'mensaje' => $activo ? 'Usuario activado' : 'Usuario desactivado']);
+    exit;
+}
+
+function confirmarDesactivar(): void {
+    $id = (int) filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+    if (!$id) responderError(400, 'Datos no válidos');
+    if ($id === (int) $_SESSION['cliente']['id']) responderError(403, 'No puedes desactivarte a ti mismo');
+
+    $con = conexionPDO();
+
+    $emp = $con->prepare("SELECT id FROM Empleado WHERE id_usuario = :id");
+    $emp->execute([':id' => $id]);
+    $idEmpleado = $emp->fetchColumn();
+
+    if ($idEmpleado) {
+        $del = $con->prepare("
+            DELETE ae FROM Asignacion_Empleado ae
+            JOIN Reserva r ON r.id = ae.id_reserva
+            WHERE ae.id_empleado = :emp AND r.fecha_evento >= CURDATE()
+        ");
+        $del->execute([':emp' => $idEmpleado]);
+    }
+
+    $stmt = $con->prepare("UPDATE Usuario SET activo = 0 WHERE id = :id");
+    $stmt->execute([':id' => $id]);
+
+    echo json_encode(['ok' => true, 'activo' => false, 'mensaje' => 'Usuario desactivado y asignaciones futuras eliminadas']);
     exit;
 }
 

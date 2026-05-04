@@ -253,19 +253,54 @@ document.getElementById('btn-toggle-activo').addEventListener('click', () => {
     fetch('/cwu/Controladores/AdminControlador.php', { method: 'POST', body: fd })
         .then(r => r.json())
         .then(data => {
+            if (data.confirmar) {
+                // Empleado con reservas futuras — mostrar aviso
+                const lista = document.getElementById('lista-reservas-afectadas')
+                lista.innerHTML = data.reservas.map(r =>
+                    `<li class="list-group-item py-1 px-0">
+                        <span class="fw-medium">${r.fecha_evento}</span>
+                        <span class="text-muted ms-2">${r.servicio}</span>
+                        <span class="text-muted small ms-1">(#${r.id})</span>
+                    </li>`
+                ).join('')
+                window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalConfirmarDesactivar')).show()
+                return
+            }
             if (!data.ok) { window.mostrarToast(data.error, 'danger'); return }
-            usuarioActual.activo = data.activo ? 1 : 0
-            document.getElementById('badge-activo').innerHTML = data.activo
-                ? '<span class="badge bg-success">Activo</span>'
-                : '<span class="badge bg-secondary">Inactivo</span>'
-            const btn = document.getElementById('btn-toggle-activo')
-            btn.textContent = data.activo ? 'Desactivar usuario' : 'Activar usuario'
-            btn.className   = data.activo ? 'btn btn-outline-danger' : 'btn btn-outline-success'
-            window.mostrarToast(data.mensaje, data.activo ? 'success' : 'warning')
-            cargar()
+            aplicarToggle(data)
         })
         .catch(() => window.mostrarToast('Error de conexión', 'danger'))
 })
+
+document.getElementById('btn-confirmar-desactivar').addEventListener('click', () => {
+    if (!usuarioActual) return
+
+    const fd = new FormData()
+    fd.append('action', 'confirmarDesactivar')
+    fd.append('id', usuarioActual.id)
+
+    window.bootstrap.Modal.getInstance(document.getElementById('modalConfirmarDesactivar')).hide()
+
+    fetch('/cwu/Controladores/AdminControlador.php', { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) { window.mostrarToast(data.error, 'danger'); return }
+            aplicarToggle(data)
+        })
+        .catch(() => window.mostrarToast('Error de conexión', 'danger'))
+})
+
+function aplicarToggle(data) {
+    usuarioActual.activo = data.activo ? 1 : 0
+    document.getElementById('badge-activo').innerHTML = data.activo
+        ? '<span class="badge bg-success">Activo</span>'
+        : '<span class="badge bg-secondary">Inactivo</span>'
+    const btn = document.getElementById('btn-toggle-activo')
+    btn.textContent = data.activo ? 'Desactivar usuario' : 'Activar usuario'
+    btn.className   = data.activo ? 'btn btn-outline-danger' : 'btn btn-outline-success'
+    window.mostrarToast(data.mensaje, data.activo ? 'success' : 'warning')
+    cargar()
+}
 
 buscador.addEventListener('input', () => {
     clearTimeout(timer)
