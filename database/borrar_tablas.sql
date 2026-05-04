@@ -9,7 +9,7 @@ USE gestion_eventos;
 SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE IF EXISTS Compra_Suministro;
-DROP TABLE IF EXISTS Asignacion_Monitor;
+DROP TABLE IF EXISTS Asignacion_Empleado;
 DROP TABLE IF EXISTS Pago_Cliente;
 DROP TABLE IF EXISTS Reserva;
 DROP TABLE IF EXISTS Producto;

@@ -16,7 +16,7 @@ ob_start();
 <div class="area-page">
 
     <h2 class="mb-1">Usuarios</h2>
-    <p class="text-muted mb-4">Gestiona los clientes y monitores registrados</p>
+    <p class="text-muted mb-4">Gestiona los clientes y empleados registrados</p>
 
     <!-- Filtros -->
     <div class="d-flex gap-2 mb-3 flex-wrap align-items-center" id="filtros-rol">

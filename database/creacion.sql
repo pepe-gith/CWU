@@ -72,8 +72,6 @@ CREATE TABLE Servicio (
 
 CREATE TABLE Empleado (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    seguridad_social VARCHAR(30),
-    cuenta_bancaria VARCHAR(34),
     precio_por_hora DECIMAL(10,2) NOT NULL,
     especialidad VARCHAR(100),
     id_usuario INT NOT NULL,
@@ -143,12 +141,9 @@ CREATE TABLE Pago_Cliente (
     FOREIGN KEY (id_reserva) REFERENCES Reserva(id)
 );
 
-CREATE TABLE Asignacion_Monitor (
+CREATE TABLE Asignacion_Empleado (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    hora_inicio TIME NOT NULL,
-    hora_fin TIME NOT NULL,
     rol_evento VARCHAR(100),
-    observaciones TEXT,
     id_reserva INT NOT NULL,
     id_empleado INT NOT NULL,
     FOREIGN KEY (id_reserva) REFERENCES Reserva(id),

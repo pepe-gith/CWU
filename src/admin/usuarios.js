@@ -189,14 +189,14 @@ function cargarHistorial(idUsuario) {
                 : '<tr><td colspan="4" class="text-muted">Sin reservas</td></tr>'
 
             wrap.innerHTML = `
-                <h6 class="mt-2">Solicitudes recientes</h6>
+                <h6 class="mt-2">Solicitudes recientes <span class="text-muted fw-normal small">(últimas 5)</span></h6>
                 <div class="table-responsive mb-3">
                     <table class="table table-sm align-middle">
                         <thead class="table-light"><tr><th>Fecha</th><th>Tipo</th><th>Estado</th></tr></thead>
                         <tbody>${solHtml}</tbody>
                     </table>
                 </div>
-                <h6>Reservas recientes</h6>
+                <h6>Reservas recientes <span class="text-muted fw-normal small">(últimas 5)</span></h6>
                 <div class="table-responsive">
                     <table class="table table-sm align-middle">
                         <thead class="table-light"><tr><th>Fecha</th><th>Horario</th><th>Servicio</th><th>Estado</th></tr></thead>

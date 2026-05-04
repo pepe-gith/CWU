@@ -18,6 +18,7 @@ export default defineConfig(({ command }) => ({
                 'cliente/reservas':   'src/cliente/reservas.js',
                 'admin/admin':        'src/admin/admin.js',
                 'admin/usuarios':     'src/admin/usuarios.js',
+                'admin/empleados':    'src/admin/empleados.js',
                 'admin/dashboard':    'src/admin/dashboard.js',
                 'admin/solicitudes':  'src/admin/solicitudes.js',
                 'admin/reservas':     'src/admin/reservas.js',

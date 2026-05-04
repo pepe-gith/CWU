@@ -49,7 +49,7 @@ function iniciarSession(): void {
 
     $redirect = match((int)($usuario['id_rol'] ?? 3)) {
         1       => '/cwu/Vistas/admin/DashboardView.php',
-        2       => '/cwu/Vistas/monitor/AgendaView.php',
+        2       => '/cwu/Vistas/empleado/AgendaView.php',
         default => '/cwu/Vistas/cliente/InicioView.php',
     };
 

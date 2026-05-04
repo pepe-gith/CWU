@@ -5,7 +5,7 @@ VALUES ('Aventura Kids SL', 'B12345678', '600123123', 'info@aventurakids.com', '
 
 INSERT INTO Rol (nombre_rol) VALUES
 ('admin'),
-('monitor'),
+('empleado'),
 ('cliente');
 
 INSERT INTO Categoria (nombre) VALUES
@@ -36,9 +36,9 @@ VALUES
 ('Globos de colores', 100, 20, 0.15, 1, 1),
 ('Pintura facial', 30, 5, 3.50, 1, 1);
 
-INSERT INTO Empleado (seguridad_social, cuenta_bancaria, precio_por_hora, especialidad, id_usuario, id_empresa)
+INSERT INTO Empleado (precio_por_hora, especialidad, id_usuario, id_empresa)
 VALUES
-('SS123456789', 'ES7620770024003102575766', 15.00, 'Animación infantil', 2, 1);
+(15.00, 'Animación infantil', 2, 1);
 
 INSERT INTO Reserva (fecha_reserva, fecha_evento, hora_inicio, hora_fin, num_asistentes, estado, observaciones, id_usuario, id_servicio, id_empresa)
 VALUES
@@ -48,9 +48,9 @@ INSERT INTO Pago_Cliente (monto, fecha, metodo, estado, id_reserva)
 VALUES
 (200.00, '2026-03-23', 'tarjeta', 'pagado', 1);
 
-INSERT INTO Asignacion_Monitor (hora_inicio, hora_fin, rol_evento, observaciones, id_reserva, id_empleado)
+INSERT INTO Asignacion_Empleado (rol_evento, id_reserva, id_empleado)
 VALUES
-('16:30:00', '19:30:00', 'Monitor principal', 'Llegar 30 min antes', 1, 1);
+('Monitor principal', 1, 1);
 
 INSERT INTO Compra_Suministro (cantidad_comprada, fecha, importe_total, estado_pago_proveedor, id_producto, id_empresa)
 VALUES

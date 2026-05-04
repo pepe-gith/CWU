@@ -20,6 +20,12 @@ match($action) {
     'cambiarEstadoReserva' => cambiarEstadoReserva(),
     'gestionarCambio'      => gestionarCambio(),
     'editarReserva'        => editarReserva(),
+    'empleados'            => empleados(),
+    'guardarEmpleado'      => guardarEmpleado(),
+    'usuariosEmpleado'     => usuariosEmpleado(),
+    'asignacionesReserva'  => asignacionesReserva(),
+    'asignarEmpleado'      => asignarEmpleado(),
+    'eliminarAsignacion'   => eliminarAsignacion(),
     'obtenerServicios'     => obtenerServicios(),
     'crearReserva'         => crearReserva(),
     'usuarios'             => usuarios(),
@@ -164,7 +170,8 @@ function reservas(): void {
         SELECT r.id, r.fecha_reserva, r.fecha_evento, r.hora_inicio, r.hora_fin,
                r.num_asistentes, r.estado, r.observaciones,
                r.cambio_solicitado, r.motivo_cambio, r.motivo_cancelacion,
-               r.id_servicio, s.nombre AS servicio, u.nombre AS cliente, u.apellidos, u.telefono
+               r.id_servicio, s.nombre AS servicio, u.nombre AS cliente, u.apellidos, u.telefono,
+               (SELECT COUNT(*) FROM Asignacion_Empleado ae WHERE ae.id_reserva = r.id) AS num_empleados
         FROM Reserva r
         JOIN Servicio s ON s.id = r.id_servicio
         JOIN Usuario u ON u.id = r.id_usuario
@@ -323,6 +330,61 @@ function usuarios(): void {
     exit;
 }
 
+function empleados(): void {
+    $con   = conexionPDO();
+    $where = isset($_GET['inactivos']) ? 'WHERE u.activo = 0' : 'WHERE u.activo = 1';
+    $excluirReserva = (int) filter_input(INPUT_GET, 'excluir_reserva', FILTER_SANITIZE_NUMBER_INT);
+    if ($excluirReserva) {
+        $where .= ' AND e.id NOT IN (SELECT id_empleado FROM Asignacion_Empleado WHERE id_reserva = ' . $excluirReserva . ')';
+    }
+    $sql   = "SELECT e.id, e.especialidad, e.precio_por_hora,
+                     u.nombre, u.apellidos, u.email, u.telefono, u.activo
+              FROM Empleado e
+              JOIN Usuario u ON u.id = e.id_usuario
+              $where
+              ORDER BY u.nombre ASC";
+    $stmt  = $con->query($sql);
+    echo json_encode(['ok' => true, 'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+    exit;
+}
+
+function usuariosEmpleado(): void {
+    $con  = conexionPDO();
+    $stmt = $con->query("
+        SELECT u.id, u.nombre, u.apellidos, u.email
+        FROM Usuario u
+        WHERE u.id_rol = 2
+        AND u.activo = 1
+        AND u.id NOT IN (SELECT id_usuario FROM Empleado)
+        ORDER BY u.nombre ASC
+    ");
+    echo json_encode(['ok' => true, 'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+    exit;
+}
+
+function guardarEmpleado(): void {
+    $id           = (int) filter_input(INPUT_POST, 'id',            FILTER_SANITIZE_NUMBER_INT);
+    $idUsuario    = (int) filter_input(INPUT_POST, 'id_usuario',    FILTER_SANITIZE_NUMBER_INT);
+    $especialidad = trim((string) filter_input(INPUT_POST, 'especialidad', FILTER_UNSAFE_RAW));
+    $precio       = filter_input(INPUT_POST, 'precio_por_hora', FILTER_VALIDATE_FLOAT);
+
+    if (!$precio || $precio < 0) responderError(400, 'El precio por hora es obligatorio');
+
+    $con = conexionPDO();
+
+    if ($id) {
+        $stmt = $con->prepare("UPDATE Empleado SET especialidad=:esp, precio_por_hora=:precio WHERE id=:id");
+        $stmt->execute([':esp' => $especialidad ?: null, ':precio' => $precio, ':id' => $id]);
+        echo json_encode(['ok' => true, 'mensaje' => 'Empleado actualizado']);
+    } else {
+        if (!$idUsuario) responderError(400, 'El usuario es obligatorio');
+        $stmt = $con->prepare("INSERT INTO Empleado (especialidad, precio_por_hora, id_usuario, id_empresa) VALUES (:esp, :precio, :id_usuario, 1)");
+        $stmt->execute([':esp' => $especialidad ?: null, ':precio' => $precio, ':id_usuario' => $idUsuario]);
+        echo json_encode(['ok' => true, 'mensaje' => 'Empleado creado correctamente']);
+    }
+    exit;
+}
+
 function roles(): void {
     $con  = conexionPDO();
     $stmt = $con->query("SELECT id, nombre_rol FROM Rol ORDER BY id");
@@ -404,7 +466,7 @@ function historialUsuario(): void {
         JOIN Categoria c ON c.id = se.tipo_evento
         WHERE se.id_usuario = :id
         ORDER BY se.fecha_evento DESC
-        LIMIT 10
+        LIMIT 5
     ");
     $sol->execute([':id' => $id]);
 
@@ -414,7 +476,7 @@ function historialUsuario(): void {
         JOIN Servicio s ON s.id = r.id_servicio
         WHERE r.id_usuario = :id
         ORDER BY r.fecha_evento DESC
-        LIMIT 10
+        LIMIT 5
     ");
     $res->execute([':id' => $id]);
 
@@ -423,5 +485,62 @@ function historialUsuario(): void {
         'solicitudes' => $sol->fetchAll(PDO::FETCH_ASSOC),
         'reservas'    => $res->fetchAll(PDO::FETCH_ASSOC),
     ]);
+    exit;
+}
+
+function asignacionesReserva(): void {
+    $id  = (int) filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
+    if (!$id) responderError(400, 'ID inválido');
+
+    $con  = conexionPDO();
+    $stmt = $con->prepare("
+        SELECT a.id, a.rol_evento, u.nombre, u.apellidos
+        FROM Asignacion_Empleado a
+        JOIN Empleado e ON e.id = a.id_empleado
+        JOIN Usuario u ON u.id = e.id_usuario
+        WHERE a.id_reserva = :id
+        ORDER BY a.id ASC
+    ");
+    $stmt->execute([':id' => $id]);
+    echo json_encode(['ok' => true, 'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+    exit;
+}
+
+function asignarEmpleado(): void {
+    $idReserva  = (int) filter_input(INPUT_POST, 'id_reserva',  FILTER_SANITIZE_NUMBER_INT);
+    $idEmpleado = (int) filter_input(INPUT_POST, 'id_empleado', FILTER_SANITIZE_NUMBER_INT);
+    $rol        = trim((string) filter_input(INPUT_POST, 'rol_evento', FILTER_UNSAFE_RAW));
+
+    if (!$idReserva || !$idEmpleado) responderError(400, 'Faltan datos obligatorios');
+
+    $con = conexionPDO();
+
+    $r = $con->prepare("SELECT id FROM Reserva WHERE id = :id");
+    $r->execute([':id' => $idReserva]);
+    if (!$r->fetch()) responderError(404, 'Reserva no encontrada');
+
+    $dup = $con->prepare("SELECT id FROM Asignacion_Empleado WHERE id_reserva = :r AND id_empleado = :e");
+    $dup->execute([':r' => $idReserva, ':e' => $idEmpleado]);
+    if ($dup->fetch()) responderError(409, 'Este empleado ya está asignado a esta reserva');
+
+    $stmt = $con->prepare("INSERT INTO Asignacion_Empleado (rol_evento, id_reserva, id_empleado)
+                           VALUES (:rol, :reserva, :empleado)");
+    $stmt->execute([
+        ':rol'     => $rol ?: null,
+        ':reserva' => $idReserva,
+        ':empleado'=> $idEmpleado,
+    ]);
+    echo json_encode(['ok' => true, 'mensaje' => 'Empleado asignado correctamente']);
+    exit;
+}
+
+function eliminarAsignacion(): void {
+    $id = (int) filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+    if (!$id) responderError(400, 'ID inválido');
+
+    $con  = conexionPDO();
+    $stmt = $con->prepare("DELETE FROM Asignacion_Empleado WHERE id = :id");
+    $stmt->execute([':id' => $id]);
+    echo json_encode(['ok' => true, 'mensaje' => 'Asignación eliminada']);
     exit;
 }

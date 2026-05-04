@@ -4,7 +4,7 @@ if (!empty($_SESSION['cliente'])) {
     $rol = (int)($_SESSION['cliente']['id_rol'] ?? 3);
     $redirect = match($rol) {
         1 => '/cwu/Vistas/admin/DashboardView.php',
-        2 => '/cwu/Vistas/monitor/AgendaView.php',
+        2 => '/cwu/Vistas/empleado/AgendaView.php',
         default => '/cwu/Vistas/cliente/InicioView.php',
     };
     header("Location: $redirect");

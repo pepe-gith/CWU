@@ -1,0 +1,122 @@
+const CONTROLADOR = '/cwu/Controladores/AdminControlador.php'
+const contenedor  = document.getElementById('tabla-empleados')
+let empleadoActual = null
+
+cargar()
+
+document.getElementById('mostrar-inactivos').addEventListener('change', cargar)
+
+function cargar() {
+    const inactivos = document.getElementById('mostrar-inactivos').checked ? '&inactivos=1' : ''
+    contenedor.innerHTML = '<p class="text-muted p-4">Cargando...</p>'
+    fetch(`${CONTROLADOR}?action=empleados${inactivos}`)
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) { contenedor.innerHTML = '<p class="text-danger p-4">Error al cargar.</p>'; return }
+            const inactivos = document.getElementById('mostrar-inactivos').checked
+            if (!data.data.length) {
+                contenedor.innerHTML = `<p class="text-muted p-4">${inactivos ? 'No hay empleados inactivos.' : 'No hay empleados registrados.'}</p>`
+                return
+            }
+            contenedor.innerHTML = renderTabla(data.data)
+            contenedor.querySelectorAll('.btn-editar').forEach(btn =>
+                btn.addEventListener('click', () => abrirEditar(JSON.parse(btn.dataset.e)))
+            )
+        })
+        .catch(() => { contenedor.innerHTML = '<p class="text-danger p-4">Error de conexión.</p>' })
+}
+
+function renderTabla(empleados) {
+    const filas = empleados.map(e => `
+        <tr>
+            <td>
+                <div class="fw-medium">${e.nombre} ${e.apellidos} ${e.activo == 0 ? '<span class="badge bg-secondary ms-1">Inactivo</span>' : ''}</div>
+                <div class="text-muted small">${e.email}</div>
+            </td>
+            <td>${e.telefono ?? '—'}</td>
+            <td>${e.especialidad ?? '—'}</td>
+            <td>${parseFloat(e.precio_por_hora).toFixed(2)} €/h</td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary btn-editar"
+                    data-e='${JSON.stringify(e).replace(/'/g, "&#39;")}'>
+                    <i class="bi bi-pencil"></i> Editar
+                </button>
+            </td>
+        </tr>
+    `).join('')
+
+    return `
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Empleado</th>
+                        <th>Teléfono</th>
+                        <th>Especialidad</th>
+                        <th>Precio/hora</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>${filas}</tbody>
+            </table>
+        </div>`
+}
+
+function abrirNuevo() {
+    empleadoActual = null
+    document.getElementById('modal-empleado-titulo').textContent = 'Nuevo empleado'
+    const form = document.getElementById('form-empleado')
+    form.reset()
+    form.elements['id'].value = ''
+
+    cargarUsuariosEmpleado()
+    document.getElementById('select-usuario-empleado').closest('.mb-3').classList.remove('d-none')
+
+    window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEmpleado')).show()
+}
+
+function abrirEditar(e) {
+    empleadoActual = e
+    document.getElementById('modal-empleado-titulo').textContent = `${e.nombre} ${e.apellidos}`
+    const form = document.getElementById('form-empleado')
+    form.elements['id'].value              = e.id
+    form.elements['especialidad'].value    = e.especialidad ?? ''
+    form.elements['precio_por_hora'].value = e.precio_por_hora
+
+    document.getElementById('select-usuario-empleado').closest('.mb-3').classList.add('d-none')
+
+    window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEmpleado')).show()
+}
+
+function cargarUsuariosEmpleado() {
+    const sel = document.getElementById('select-usuario-empleado')
+    sel.innerHTML = '<option value="">Cargando...</option>'
+    fetch(`${CONTROLADOR}?action=usuariosEmpleado`)
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok || !data.data.length) {
+                sel.innerHTML = '<option value="">No hay empleados disponibles</option>'
+                return
+            }
+            sel.innerHTML = '<option value="">Selecciona un usuario...</option>' +
+                data.data.map(u => `<option value="${u.id}">${u.nombre} ${u.apellidos} — ${u.email}</option>`).join('')
+        })
+}
+
+document.getElementById('btn-nuevo-empleado').addEventListener('click', abrirNuevo)
+
+document.getElementById('form-empleado').addEventListener('submit', e => {
+    e.preventDefault()
+    const fd = new FormData(e.target)
+    fd.append('action', 'guardarEmpleado')
+
+    fetch(CONTROLADOR, { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) { window.mostrarToast(data.error, 'danger'); return }
+            window.bootstrap.Modal.getInstance(document.getElementById('modalEmpleado')).hide()
+            window.mostrarToast(data.mensaje, 'success')
+            cargar()
+        })
+        .catch(() => window.mostrarToast('Error de conexión', 'danger'))
+})

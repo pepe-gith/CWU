@@ -83,6 +83,9 @@ function cargarReservas() {
             contenedor.querySelectorAll('.btn-editar-reserva').forEach(btn =>
                 btn.addEventListener('click', () => abrirEditar(JSON.parse(btn.dataset.r)))
             )
+            contenedor.querySelectorAll('.btn-empleados-reserva').forEach(btn =>
+                btn.addEventListener('click', () => abrirEmpleados(btn.dataset.id, btn.dataset.label))
+            )
         })
         .catch(() => {
             document.getElementById('tabla-reservas').innerHTML = '<p class="text-danger p-4">Error al cargar.</p>'
@@ -218,10 +221,14 @@ function renderTabla(items) {
                     ${opcionesEstadoReserva(r.estado)}
                 </select>
             </td>
-            <td>
+            <td class="d-flex gap-1">
                 <button class="btn btn-sm btn-outline-secondary btn-editar-reserva"
                     data-r='${JSON.stringify(r).replace(/'/g, "&#39;")}'>
                     <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-primary btn-empleados-reserva"
+                    data-id="${r.id}" data-label="Reserva #${r.id} — ${r.cliente} ${r.apellidos}">
+                    <i class="bi bi-people"></i>${r.num_empleados > 0 ? ` <span class="badge bg-primary ms-1">${r.num_empleados}</span>` : ''}
                 </button>
             </td>
         </tr>
@@ -249,3 +256,117 @@ function renderTabla(items) {
             </table>
         </div>`
 }
+
+// --- Asignación de empleados ---
+
+function abrirEmpleados(idReserva, label) {
+    document.getElementById('modal-empleados-titulo').textContent = label
+    document.getElementById('form-asignar-empleado').elements['id_reserva'].value = idReserva
+    document.getElementById('form-asignar-empleado').reset()
+    document.getElementById('form-asignar-empleado').elements['id_reserva'].value = idReserva
+
+    cargarAsignaciones(idReserva)
+    cargarEmpleadosSelect(idReserva)
+
+    window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEmpleadosReserva')).show()
+}
+
+function cargarAsignaciones(idReserva) {
+    const contenedor = document.getElementById('lista-asignaciones')
+    contenedor.innerHTML = '<p class="text-muted">Cargando...</p>'
+
+    fetch(`${CONTROLADOR}?action=asignacionesReserva&id=${idReserva}`)
+        .then(r => r.json())
+        .then(data => {
+            if (!data.data.length) {
+                contenedor.innerHTML = '<p class="text-muted">Sin empleados asignados.</p>'
+                return
+            }
+            contenedor.innerHTML = `
+                <table class="table table-sm align-middle mb-0">
+                    <thead class="table-light">
+                        <tr><th>Empleado</th><th>Rol</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        ${data.data.map(a => `
+                            <tr>
+                                <td>${a.nombre} ${a.apellidos}</td>
+                                <td>${a.rol_evento ?? '—'}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-danger btn-eliminar-asignacion" data-id="${a.id}" data-reserva="${idReserva}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>`).join('')}
+                    </tbody>
+                </table>`
+
+            contenedor.querySelectorAll('.btn-eliminar-asignacion').forEach(btn =>
+                btn.addEventListener('click', () => eliminarAsignacion(btn.dataset.id, btn.dataset.reserva))
+            )
+        })
+}
+
+function actualizarBadgeReserva(idReserva) {
+    fetch(`${CONTROLADOR}?action=asignacionesReserva&id=${idReserva}`)
+        .then(r => r.json())
+        .then(data => {
+            const btn = document.querySelector(`.btn-empleados-reserva[data-id="${idReserva}"]`)
+            if (!btn) return
+            const badge = btn.querySelector('.badge')
+            const count = data.data?.length ?? 0
+            if (count > 0) {
+                if (badge) badge.textContent = count
+                else btn.insertAdjacentHTML('beforeend', ` <span class="badge bg-primary ms-1">${count}</span>`)
+            } else {
+                badge?.remove()
+            }
+        })
+}
+
+function cargarEmpleadosSelect(idReserva) {
+    const sel = document.getElementById('select-empleado-reserva')
+    sel.innerHTML = '<option value="">Cargando...</option>'
+    fetch(`${CONTROLADOR}?action=empleados&excluir_reserva=${idReserva}`)
+        .then(r => r.json())
+        .then(data => {
+            sel.innerHTML = '<option value="">Selecciona un empleado...</option>' +
+                (data.data ?? []).map(e => `<option value="${e.id}">${e.nombre} ${e.apellidos}${e.especialidad ? ' — ' + e.especialidad : ''}</option>`).join('')
+        })
+}
+
+function eliminarAsignacion(id, idReserva) {
+    const fd = new FormData()
+    fd.append('action', 'eliminarAsignacion')
+    fd.append('id', id)
+
+    fetch(CONTROLADOR, { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) { window.mostrarToast(data.error, 'danger'); return }
+            window.mostrarToast('Asignación eliminada', 'success')
+            cargarAsignaciones(idReserva)
+            cargarEmpleadosSelect(idReserva)
+            actualizarBadgeReserva(idReserva)
+        })
+        .catch(() => window.mostrarToast('Error de conexión', 'danger'))
+}
+
+document.getElementById('form-asignar-empleado').addEventListener('submit', e => {
+    e.preventDefault()
+    const fd = new FormData(e.target)
+    fd.append('action', 'asignarEmpleado')
+
+    fetch(CONTROLADOR, { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) { window.mostrarToast(data.error, 'danger'); return }
+            window.mostrarToast('Empleado asignado', 'success')
+            e.target.reset()
+            e.target.elements['id_reserva'].value = fd.get('id_reserva')
+            cargarAsignaciones(fd.get('id_reserva'))
+            cargarEmpleadosSelect(fd.get('id_reserva'))
+            actualizarBadgeReserva(fd.get('id_reserva'))
+        })
+        .catch(() => window.mostrarToast('Error de conexión', 'danger'))
+})

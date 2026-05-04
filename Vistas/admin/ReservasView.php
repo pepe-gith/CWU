@@ -75,6 +75,44 @@ ob_start();
     </div>
 </div>
 
+<!-- Modal asignar empleados -->
+<div class="modal fade" id="modalEmpleadosReserva" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Empleados asignados — <span id="modal-empleados-titulo"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="lista-asignaciones" class="mb-4"></div>
+                <hr>
+                <p class="fw-semibold mb-3">Añadir empleado</p>
+                <form id="form-asignar-empleado" novalidate>
+                    <input type="hidden" name="id_reserva">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Empleado <span class="text-danger">*</span></label>
+                            <select class="form-select" name="id_empleado" id="select-empleado-reserva" required>
+                                <option value="">Selecciona un empleado...</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Rol en el evento</label>
+                            <input type="text" class="form-control" name="rol_evento" placeholder="Ej: Monitor principal, Animador...">
+                        </div>
+                    </div>
+                    <div class="mt-3 text-end">
+                        <button type="submit" class="btn btn-primary">Añadir</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal editar reserva -->
 <div class="modal fade" id="modalEditarReserva" tabindex="-1">
     <div class="modal-dialog">
