@@ -259,22 +259,42 @@ document.getElementById('form-editar-usuario').addEventListener('submit', e => {
 
 document.getElementById('btn-cambiar-rol').addEventListener('click', () => {
     if (!usuarioActual) return
+    ejecutarCambioRol(false)
+})
+
+document.getElementById('btn-confirmar-cambio-rol').addEventListener('click', () => {
+    window.bootstrap.Modal.getInstance(document.getElementById('modalConfirmarCambioRol')).hide()
+    ejecutarCambioRol(true)
+})
+
+function ejecutarCambioRol(forzar) {
     const nuevoRol = parseInt(document.getElementById('select-rol-modal').value)
 
     const fd = new FormData()
     fd.append('action', 'cambiarRol')
     fd.append('id', usuarioActual.id)
     fd.append('rol', nuevoRol)
+    if (forzar) fd.append('forzar', '1')
 
     fetch('/cwu/Controladores/AdminControlador.php', { method: 'POST', body: fd })
         .then(r => r.json())
         .then(data => {
+            if (data.confirmar) {
+                const parts = []
+                if (data.solicitudes) parts.push(`${data.solicitudes} solicitud${data.solicitudes > 1 ? 'es' : ''} activa${data.solicitudes > 1 ? 's' : ''}`)
+                if (data.reservas) parts.push(`${data.reservas} reserva${data.reservas > 1 ? 's' : ''} confirmada${data.reservas > 1 ? 's' : ''}`)
+                document.getElementById('texto-confirmar-rol').textContent =
+                    `Este usuario tiene ${parts.join(' y ')}. Al cambiar el rol perderá acceso al área de cliente.`
+                window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalConfirmarCambioRol')).show()
+                return
+            }
             if (!data.ok) { window.mostrarToast(data.error, 'danger'); return }
             window.mostrarToast(`Rol actualizado a ${rolesMap[nuevoRol]}`, 'success')
+            usuarioActual.id_rol = nuevoRol
             cargar()
         })
         .catch(() => window.mostrarToast('Error de conexión', 'danger'))
-})
+}
 
 document.getElementById('btn-toggle-activo').addEventListener('click', () => {
     if (!usuarioActual) return

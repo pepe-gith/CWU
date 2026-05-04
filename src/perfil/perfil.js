@@ -74,6 +74,39 @@ document.getElementById('form-password').addEventListener('submit', async e => {
     }
 })
 
+// Datos laborales (solo empleados)
+if (window.ID_ROL === 2) {
+    fetch('/cwu/Controladores/EmpleadoControlador.php?action=obtenerPerfilEmpleado')
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) return
+            document.getElementById('especialidad').value    = data.data.especialidad    ?? ''
+            document.getElementById('precio_por_hora').value = data.data.precio_por_hora ?? ''
+        })
+
+    document.getElementById('form-empleado').addEventListener('submit', async e => {
+        e.preventDefault()
+        const spinner = document.getElementById('spinner-empleado')
+        const btn     = document.getElementById('btn-guardar-empleado')
+        spinner.classList.remove('d-none')
+        btn.disabled = true
+
+        try {
+            const body = new FormData(e.target)
+            body.append('action', 'guardarPerfilEmpleado')
+            const res  = await fetch('/cwu/Controladores/EmpleadoControlador.php', { method: 'POST', body })
+            const data = await res.json()
+            if (data.ok) mostrarAlerta('success', data.mensaje)
+            else         mostrarAlerta('danger',  data.error)
+        } catch {
+            mostrarAlerta('danger', 'Error de conexión')
+        } finally {
+            spinner.classList.add('d-none')
+            btn.disabled = false
+        }
+    })
+}
+
 function mostrarAlerta(tipo, mensaje) {
     const el = document.getElementById('perfil-alert')
     el.innerHTML = `<div class="alert alert-${tipo} alert-dismissible fade show" role="alert">

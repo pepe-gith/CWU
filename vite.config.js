@@ -25,6 +25,7 @@ export default defineConfig(({ command }) => ({
                 'admin/categorias':   'src/admin/categorias.js',
                 'admin/calendario':   'src/admin/calendario.js',
                 'empleado/agenda':    'src/empleado/agenda.js',
+                'empleado/historial': 'src/empleado/historial.js',
                 'perfil/perfil':      'src/perfil/perfil.js',
             }
         }

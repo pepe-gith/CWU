@@ -11,7 +11,7 @@ function menuCliente(string $active): array {
         ['label' => 'Resumen',         'href' => '/cwu/Vistas/cliente/InicioView.php',      'icon' => 'bi-house-door',    'active' => $active === 'resumen'],
         ['label' => 'Nueva solicitud', 'href' => '/cwu/Vistas/cliente/SolEventoView.php',   'icon' => 'bi-plus-circle',   'active' => $active === 'solEvento'],
         ['label' => 'Mis solicitudes', 'href' => '/cwu/Vistas/cliente/SolicitudesView.php', 'icon' => 'bi-list-check',    'active' => $active === 'solicitudes'],
-        ['label' => 'Mis reservas',   'href' => '/cwu/Vistas/cliente/ReservasView.php',    'icon' => 'bi-calendar-check', 'active' => $active === 'reservas'],
+        ['label' => 'Mis reservas',    'href' => '/cwu/Vistas/cliente/ReservasView.php',    'icon' => 'bi-calendar-check','active' => $active === 'reservas', 'notif' => true],
     ];
 }
 
@@ -29,7 +29,7 @@ function menuAdmin(string $active): array {
 
 function menuEmpleado(string $active): array {
     return [
-        ['label' => 'Mi agenda',    'href' => '/cwu/Vistas/empleado/AgendaView.php',    'icon' => 'bi-calendar-event',  'active' => $active === 'agenda'],
-        ['label' => 'Historial',    'href' => '/cwu/Vistas/empleado/HistorialView.php', 'icon' => 'bi-clock-history',   'active' => $active === 'historial'],
+        ['label' => 'Mi agenda', 'href' => '/cwu/Vistas/empleado/AgendaView.php',    'icon' => 'bi-calendar-event', 'active' => $active === 'agenda',   'notif' => true],
+        ['label' => 'Historial', 'href' => '/cwu/Vistas/empleado/HistorialView.php', 'icon' => 'bi-clock-history',  'active' => $active === 'historial'],
     ];
 }

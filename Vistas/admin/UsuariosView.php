@@ -180,6 +180,26 @@ ob_start();
     </div>
 </div>
 
+<!-- Modal confirmar cambio de rol de cliente -->
+<div class="modal fade" id="modalConfirmarCambioRol" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Cambiar rol</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body pt-0">
+                <p class="text-muted mb-2" id="texto-confirmar-rol"></p>
+                <p class="mb-0 small text-muted">El historial quedará en la base de datos pero el usuario perderá acceso al área de cliente.</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-warning" id="btn-confirmar-cambio-rol">Confirmar cambio</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal confirmar desactivación empleado -->
 <div class="modal fade" id="modalConfirmarDesactivar" tabindex="-1">
     <div class="modal-dialog">

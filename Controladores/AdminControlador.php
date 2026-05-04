@@ -22,7 +22,6 @@ match($action) {
     'editarReserva'        => editarReserva(),
     'empleados'            => empleados(),
     'guardarEmpleado'      => guardarEmpleado(),
-    'usuariosEmpleado'     => usuariosEmpleado(),
     'asignacionesReserva'  => asignacionesReserva(),
     'asignarEmpleado'      => asignarEmpleado(),
     'eliminarAsignacion'   => eliminarAsignacion(),
@@ -182,7 +181,10 @@ function reservas(): void {
                r.num_asistentes, r.estado, r.observaciones,
                r.cambio_solicitado, r.motivo_cambio, r.motivo_cancelacion,
                r.id_servicio, s.nombre AS servicio, u.nombre AS cliente, u.apellidos, u.telefono,
-               (SELECT COUNT(*) FROM Asignacion_Empleado ae WHERE ae.id_reserva = r.id) AS num_empleados
+               (SELECT COUNT(*) FROM Asignacion_Empleado ae WHERE ae.id_reserva = r.id) AS num_empleados,
+               (SELECT COUNT(*) FROM Asignacion_Empleado ae WHERE ae.id_reserva = r.id AND ae.estado = 'aceptada')  AS emp_aceptadas,
+               (SELECT COUNT(*) FROM Asignacion_Empleado ae WHERE ae.id_reserva = r.id AND ae.estado = 'pendiente') AS emp_pendientes,
+               (SELECT COUNT(*) FROM Asignacion_Empleado ae WHERE ae.id_reserva = r.id AND ae.estado = 'rechazada') AS emp_rechazadas
         FROM Reserva r
         JOIN Servicio s ON s.id = r.id_servicio
         JOIN Usuario u ON u.id = r.id_usuario
@@ -209,23 +211,26 @@ function cambiarEstadoReserva(): void {
 
     $con  = conexionPDO();
 
-    if ($estado === 'confirmada') {
-        $total = $con->prepare("SELECT COUNT(*) FROM Asignacion_Empleado WHERE id_reserva = :id");
-        $total->execute([':id' => $id]);
-        if ((int) $total->fetchColumn() === 0) {
-            responderError(400, 'Asigna al menos un empleado antes de confirmar la reserva.');
-        }
-        $pendientes = $con->prepare("SELECT COUNT(*) FROM Asignacion_Empleado WHERE id_reserva = :id AND estado != 'aceptada'");
-        $pendientes->execute([':id' => $id]);
-        if ((int) $pendientes->fetchColumn() > 0) {
-            responderError(400, 'Todos los empleados deben aceptar la asignación antes de confirmar.');
-        }
-    }
-
     if ($estado === 'cancelada') {
         $motivo = trim((string) filter_input(INPUT_POST, 'motivo', FILTER_UNSAFE_RAW)) ?: null;
         $stmt = $con->prepare("UPDATE Reserva SET estado = :estado, motivo_cancelacion = :motivo WHERE id = :id");
         $stmt->execute([':estado' => $estado, ':motivo' => $motivo, ':id' => $id]);
+
+        $con->prepare("
+            INSERT INTO Notificacion (id_usuario, mensaje)
+            SELECT r.id_usuario, CONCAT('Tu reserva del ', DATE_FORMAT(r.fecha_evento, '%d/%m/%Y'), ' (', s.nombre, ') ha sido cancelada.')
+            FROM Reserva r JOIN Servicio s ON s.id = r.id_servicio WHERE r.id = :id
+        ")->execute([':id' => $id]);
+
+        $con->prepare("
+            INSERT INTO Notificacion (id_usuario, mensaje)
+            SELECT e.id_usuario, CONCAT('La reserva del ', DATE_FORMAT(r.fecha_evento, '%d/%m/%Y'), ' (', s.nombre, ') en la que estabas asignado ha sido cancelada.')
+            FROM Asignacion_Empleado ae
+            JOIN Empleado e ON e.id = ae.id_empleado
+            JOIN Reserva r ON r.id = ae.id_reserva
+            JOIN Servicio s ON s.id = r.id_servicio
+            WHERE ae.id_reserva = :id
+        ")->execute([':id' => $id]);
     } else {
         $stmt = $con->prepare("UPDATE Reserva SET estado = :estado, motivo_cancelacion = NULL WHERE id = :id");
         $stmt->execute([':estado' => $estado, ':id' => $id]);
@@ -418,8 +423,9 @@ function roles(): void {
 }
 
 function cambiarRol(): void {
-    $id  = (int) filter_input(INPUT_POST, 'id',  FILTER_SANITIZE_NUMBER_INT);
-    $rol = (int) filter_input(INPUT_POST, 'rol', FILTER_SANITIZE_NUMBER_INT);
+    $id     = (int) filter_input(INPUT_POST, 'id',  FILTER_SANITIZE_NUMBER_INT);
+    $rol    = (int) filter_input(INPUT_POST, 'rol', FILTER_SANITIZE_NUMBER_INT);
+    $forzar = !empty($_POST['forzar']);
 
     if (!$id || !in_array($rol, [1, 2, 3])) {
         responderError(400, 'Datos no válidos');
@@ -429,9 +435,50 @@ function cambiarRol(): void {
         responderError(403, 'No puedes cambiar tu propio rol.');
     }
 
-    $con  = conexionPDO();
+    $con = conexionPDO();
+
+    $stmtRolActual = $con->prepare("SELECT id_rol FROM Usuario WHERE id = :id");
+    $stmtRolActual->execute([':id' => $id]);
+    $rolActual = (int) $stmtRolActual->fetchColumn();
+
+    if ($rolActual === 3 && $rol !== 3 && !$forzar) {
+        $stmtSol = $con->prepare("SELECT COUNT(*) FROM Solicitud_Evento WHERE id_usuario = :id AND estado IN ('pendiente','presupuestada','aceptada')");
+        $stmtSol->execute([':id' => $id]);
+        $numSol = (int) $stmtSol->fetchColumn();
+
+        $stmtRes = $con->prepare("SELECT COUNT(*) FROM Reserva WHERE id_usuario = :id AND estado = 'confirmada' AND fecha_evento >= CURDATE()");
+        $stmtRes->execute([':id' => $id]);
+        $numRes = (int) $stmtRes->fetchColumn();
+
+        if ($numSol > 0 || $numRes > 0) {
+            echo json_encode(['ok' => false, 'confirmar' => true, 'solicitudes' => $numSol, 'reservas' => $numRes]);
+            exit;
+        }
+    }
+
     $stmt = $con->prepare("UPDATE Usuario SET id_rol = :rol WHERE id = :id");
     $stmt->execute([':rol' => $rol, ':id' => $id]);
+
+    if ($rol === 2) {
+        $existe = $con->prepare("SELECT id FROM Empleado WHERE id_usuario = :id");
+        $existe->execute([':id' => $id]);
+        if (!$existe->fetch()) {
+            $con->prepare("INSERT INTO Empleado (id_usuario, id_empresa, precio_por_hora) VALUES (:id, 1, 0)")
+                ->execute([':id' => $id]);
+        }
+    } else {
+        $emp = $con->prepare("SELECT id FROM Empleado WHERE id_usuario = :id");
+        $emp->execute([':id' => $id]);
+        $idEmpleado = $emp->fetchColumn();
+
+        if ($idEmpleado) {
+            $con->prepare("
+                DELETE ae FROM Asignacion_Empleado ae
+                JOIN Reserva r ON r.id = ae.id_reserva
+                WHERE ae.id_empleado = :emp AND r.fecha_evento >= CURDATE()
+            ")->execute([':emp' => $idEmpleado]);
+        }
+    }
 
     echo json_encode(['ok' => true, 'mensaje' => 'Rol actualizado']);
     exit;
@@ -775,6 +822,13 @@ function crearUsuario(): void {
             ':hash'     => $hash,
             ':rol'      => $idRol,
         ]);
+
+        if ($idRol === 2) {
+            $idNuevo = (int) $con->lastInsertId();
+            $con->prepare("INSERT INTO Empleado (id_usuario, id_empresa, precio_por_hora) VALUES (:id, 1, 0)")
+                ->execute([':id' => $idNuevo]);
+        }
+
         echo json_encode(['ok' => true, 'mensaje' => 'Usuario creado correctamente']);
     } catch (\PDOException $e) {
         if ($e->getCode() === '23000') {

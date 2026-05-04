@@ -1,6 +1,5 @@
 const CONTROLADOR = '/cwu/Controladores/AdminControlador.php'
 const contenedor  = document.getElementById('tabla-empleados')
-let empleadoActual = null
 
 cargar()
 
@@ -62,48 +61,15 @@ function renderTabla(empleados) {
         </div>`
 }
 
-function abrirNuevo() {
-    empleadoActual = null
-    document.getElementById('modal-empleado-titulo').textContent = 'Nuevo empleado'
-    const form = document.getElementById('form-empleado')
-    form.reset()
-    form.elements['id'].value = ''
-
-    cargarUsuariosEmpleado()
-    document.getElementById('select-usuario-empleado').closest('.mb-3').classList.remove('d-none')
-
-    window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEmpleado')).show()
-}
-
 function abrirEditar(e) {
-    empleadoActual = e
     document.getElementById('modal-empleado-titulo').textContent = `${e.nombre} ${e.apellidos}`
     const form = document.getElementById('form-empleado')
     form.elements['id'].value              = e.id
     form.elements['especialidad'].value    = e.especialidad ?? ''
     form.elements['precio_por_hora'].value = e.precio_por_hora
 
-    document.getElementById('select-usuario-empleado').closest('.mb-3').classList.add('d-none')
-
     window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEmpleado')).show()
 }
-
-function cargarUsuariosEmpleado() {
-    const sel = document.getElementById('select-usuario-empleado')
-    sel.innerHTML = '<option value="">Cargando...</option>'
-    fetch(`${CONTROLADOR}?action=usuariosEmpleado`)
-        .then(r => r.json())
-        .then(data => {
-            if (!data.ok || !data.data.length) {
-                sel.innerHTML = '<option value="">No hay empleados disponibles</option>'
-                return
-            }
-            sel.innerHTML = '<option value="">Selecciona un usuario...</option>' +
-                data.data.map(u => `<option value="${u.id}">${u.nombre} ${u.apellidos} — ${u.email}</option>`).join('')
-        })
-}
-
-document.getElementById('btn-nuevo-empleado').addEventListener('click', abrirNuevo)
 
 document.getElementById('form-empleado').addEventListener('submit', e => {
     e.preventDefault()

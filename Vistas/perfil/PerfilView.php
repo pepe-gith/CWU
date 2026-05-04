@@ -104,6 +104,37 @@ ob_start();
 
     </div>
 
+    <?php if ($idRol === 2): ?>
+    <!-- Datos laborales (solo empleados) -->
+    <div class="row g-4 mt-0">
+        <div class="col-12 col-lg-7">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-4">Datos laborales</h5>
+                    <form id="form-empleado" novalidate>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Especialidad</label>
+                                <input type="text" class="form-control" id="especialidad" name="especialidad" placeholder="Ej: Animación infantil, Escape room...">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Precio por hora (€)</label>
+                                <input type="number" class="form-control" id="precio_por_hora" name="precio_por_hora" min="0" step="0.01">
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary" id="btn-guardar-empleado">
+                                <span class="spinner-border spinner-border-sm d-none me-1" id="spinner-empleado"></span>
+                                Guardar datos laborales
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
 </div>
 <?php
 $content = ob_get_clean();

@@ -10,12 +10,14 @@ header('Content-Type: application/json');
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
 match($action) {
-    'iniciarSession'   => iniciarSession(),
-    'cerrarSesion'     => cerrarSession(),
-    'obtenerPerfil'    => obtenerPerfil(),
-    'actualizarPerfil' => actualizarPerfil(),
-    'cambiarPassword'  => cambiarPassword(),
-    default            => responderError(400, 'Acción no válida.')
+    'iniciarSession'          => iniciarSession(),
+    'cerrarSesion'            => cerrarSession(),
+    'obtenerPerfil'           => obtenerPerfil(),
+    'actualizarPerfil'        => actualizarPerfil(),
+    'cambiarPassword'         => cambiarPassword(),
+    'obtenerNotificaciones'   => obtenerNotificaciones(),
+    'marcarNotificacionLeida' => marcarNotificacionLeida(),
+    default                   => responderError(400, 'Acción no válida.')
 };
 
 function iniciarSession(): void {
@@ -116,6 +118,26 @@ function actualizarPerfil(): void {
     $_SESSION['cliente']['email']  = $email;
 
     echo json_encode(['ok' => true, 'mensaje' => 'Perfil actualizado correctamente']);
+    exit;
+}
+
+function obtenerNotificaciones(): void {
+    if (empty($_SESSION['cliente']['id'])) responderError(401, 'No autenticado');
+    $con  = conexionPDO();
+    $stmt = $con->prepare("SELECT id, mensaje, fecha FROM Notificacion WHERE id_usuario = :id AND leida = 0 ORDER BY fecha DESC");
+    $stmt->execute([':id' => $_SESSION['cliente']['id']]);
+    echo json_encode(['ok' => true, 'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+    exit;
+}
+
+function marcarNotificacionLeida(): void {
+    if (empty($_SESSION['cliente']['id'])) responderError(401, 'No autenticado');
+    $id = (int) filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+    if (!$id) responderError(400, 'Datos no válidos');
+    $con  = conexionPDO();
+    $stmt = $con->prepare("UPDATE Notificacion SET leida = 1 WHERE id = :id AND id_usuario = :uid");
+    $stmt->execute([':id' => $id, ':uid' => $_SESSION['cliente']['id']]);
+    echo json_encode(['ok' => true]);
     exit;
 }
 

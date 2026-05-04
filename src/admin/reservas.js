@@ -193,6 +193,19 @@ function gestionarCambio(id) {
         .catch(() => window.mostrarToast('Error de conexión', 'danger'))
 }
 
+function badgeEmpleados(r) {
+    const total = parseInt(r.num_empleados)
+    if (!total) return ''
+    const aceptadas  = parseInt(r.emp_aceptadas)
+    const pendientes = parseInt(r.emp_pendientes)
+    const rechazadas = parseInt(r.emp_rechazadas)
+    if (rechazadas > 0)
+        return ` <span class="badge bg-danger ms-1" title="${rechazadas} rechazada(s)">${aceptadas}/${total} <i class="bi bi-x-lg"></i></span>`
+    if (pendientes > 0)
+        return ` <span class="badge bg-warning text-dark ms-1" title="${pendientes} pendiente(s)">${aceptadas}/${total} <i class="bi bi-clock"></i></span>`
+    return ` <span class="badge bg-success ms-1" title="Todas aceptadas">${total}/${total} <i class="bi bi-check-lg"></i></span>`
+}
+
 function renderTabla(items) {
     const filas = items.map(r => `
         <tr>
@@ -228,7 +241,7 @@ function renderTabla(items) {
                 </button>
                 <button class="btn btn-sm btn-outline-primary btn-empleados-reserva"
                     data-id="${r.id}" data-label="Reserva #${r.id} — ${r.cliente} ${r.apellidos}">
-                    <i class="bi bi-people"></i>${r.num_empleados > 0 ? ` <span class="badge bg-primary ms-1">${r.num_empleados}</span>` : ''}
+                    <i class="bi bi-people"></i>${badgeEmpleados(r)}
                 </button>
             </td>
         </tr>

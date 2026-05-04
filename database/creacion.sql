@@ -151,6 +151,15 @@ CREATE TABLE Asignacion_Empleado (
     FOREIGN KEY (id_empleado) REFERENCES Empleado(id)
 );
 
+CREATE TABLE Notificacion (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    mensaje VARCHAR(500) NOT NULL,
+    leida TINYINT(1) NOT NULL DEFAULT 0,
+    fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES Usuario(id) ON DELETE CASCADE
+);
+
 CREATE TABLE Compra_Suministro (
     id INT AUTO_INCREMENT PRIMARY KEY,
     cantidad_comprada INT NOT NULL,
