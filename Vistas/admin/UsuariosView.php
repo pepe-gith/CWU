@@ -18,6 +18,12 @@ ob_start();
     <h2 class="mb-1">Usuarios</h2>
     <p class="text-muted mb-4">Gestiona los clientes y empleados registrados</p>
 
+    <div class="mb-3">
+        <button class="btn btn-primary" id="btn-nuevo-usuario">
+            <i class="bi bi-person-plus me-1"></i> Nuevo usuario
+        </button>
+    </div>
+
     <!-- Filtros -->
     <div class="d-flex gap-2 mb-3 flex-wrap align-items-center" id="filtros-rol">
         <button class="btn btn-sm btn-primary btn-todos active">Todos</button>
@@ -116,6 +122,64 @@ ob_start();
         </div>
     </div>
 </div>
+<!-- Modal nuevo usuario -->
+<div class="modal fade" id="modalNuevoUsuario" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nuevo usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="form-nuevo-usuario" novalidate>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="nombre" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Apellidos</label>
+                            <input type="text" class="form-control" name="apellidos">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">NIF <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="nif" id="nuevo-nif" required>
+                            <div class="invalid-feedback">NIF no válido.</div>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Teléfono</label>
+                            <input type="text" class="form-control" name="telefono">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" name="email" id="nuevo-email" required>
+                            <div class="invalid-feedback">Email no válido.</div>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Contraseña <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" name="password" id="nuevo-password" required>
+                            <div class="invalid-feedback">Mínimo 8 caracteres, una mayúscula, una minúscula y un número.</div>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Confirmar contraseña <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" name="password_confirm" id="nuevo-password-confirm" required>
+                            <div class="invalid-feedback">Las contraseñas no coinciden.</div>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Rol <span class="text-danger">*</span></label>
+                            <select class="form-select" name="id_rol" id="select-rol-nuevo" required></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear usuario</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Modal confirmar desactivación empleado -->
 <div class="modal fade" id="modalConfirmarDesactivar" tabindex="-1">
     <div class="modal-dialog">

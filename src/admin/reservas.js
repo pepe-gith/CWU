@@ -285,13 +285,14 @@ function cargarAsignaciones(idReserva) {
             contenedor.innerHTML = `
                 <table class="table table-sm align-middle mb-0">
                     <thead class="table-light">
-                        <tr><th>Empleado</th><th>Rol</th><th></th></tr>
+                        <tr><th>Empleado</th><th>Rol</th><th>Estado</th><th></th></tr>
                     </thead>
                     <tbody>
                         ${data.data.map(a => `
                             <tr>
                                 <td>${a.nombre} ${a.apellidos}</td>
                                 <td>${a.rol_evento ?? '—'}</td>
+                                <td>${{ pendiente: '<span class="badge bg-warning text-dark">Pendiente</span>', aceptada: '<span class="badge bg-success">Aceptada</span>', rechazada: '<span class="badge bg-danger">Rechazada</span>' }[a.estado] ?? ''}</td>
                                 <td>
                                     <button class="btn btn-sm btn-outline-danger btn-eliminar-asignacion" data-id="${a.id}" data-reserva="${idReserva}">
                                         <i class="bi bi-trash"></i>

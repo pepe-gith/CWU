@@ -1,3 +1,5 @@
+import { validarNIF } from '../utils/validarNIF'
+
 const contenedor = document.getElementById('tabla-usuarios')
 const buscador   = document.getElementById('buscador')
 
@@ -158,6 +160,10 @@ function abrirModal(u) {
     // Pestaña Historial — carga al abrir
     cargarHistorial(u.id)
 
+    // Mostrar/ocultar pestaña historial según rol
+    const tabHistorial = document.querySelector('#tabs-usuario .nav-link[data-bs-target="#tab-historial"]').closest('li')
+    tabHistorial.classList.toggle('d-none', u.id_rol == 1)
+
     // Resetear a primera pestaña
     window.bootstrap.Tab.getOrCreateInstance(
         document.querySelector('#tabs-usuario .nav-link')
@@ -174,6 +180,33 @@ function cargarHistorial(idUsuario) {
         .then(r => r.json())
         .then(data => {
             if (!data.ok) { wrap.innerHTML = '<p class="text-danger">Error al cargar.</p>'; return }
+
+            if (data.rol === 'admin') {
+                wrap.innerHTML = '<p class="text-muted">No hay historial para administradores.</p>'
+                return
+            }
+
+            if (data.rol === 'empleado') {
+                const filas = data.asignaciones.length
+                    ? data.asignaciones.map(a => `
+                        <tr>
+                            <td>${a.fecha_evento}</td>
+                            <td>${a.hora_inicio.slice(0,5)}–${a.hora_fin.slice(0,5)}</td>
+                            <td>${a.servicio}</td>
+                            <td>${{ pendiente: '<span class="badge bg-warning text-dark">Pendiente</span>', aceptada: '<span class="badge bg-success">Aceptada</span>', rechazada: '<span class="badge bg-danger">Rechazada</span>' }[a.estado] ?? ''}</td>
+                        </tr>`).join('')
+                    : '<tr><td colspan="4" class="text-muted">Sin asignaciones</td></tr>'
+
+                wrap.innerHTML = `
+                    <h6 class="mt-2">Asignaciones recientes <span class="text-muted fw-normal small">(últimas 5)</span></h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle">
+                            <thead class="table-light"><tr><th>Fecha</th><th>Horario</th><th>Servicio</th><th>Estado</th></tr></thead>
+                            <tbody>${filas}</tbody>
+                        </table>
+                    </div>`
+                return
+            }
 
             const solHtml = data.solicitudes.length
                 ? data.solicitudes.map(s => `
@@ -305,6 +338,62 @@ function aplicarToggle(data) {
 buscador.addEventListener('input', () => {
     clearTimeout(timer)
     timer = setTimeout(cargar, 350)
+})
+
+// ── Nuevo usuario ────────────────────────────────────────────────────────────
+
+document.getElementById('btn-nuevo-usuario').addEventListener('click', () => {
+    document.getElementById('form-nuevo-usuario').reset()
+    const sel = document.getElementById('select-rol-nuevo')
+    const clienteId = Object.entries(rolesMap).find(([, nombre]) => nombre === 'cliente')?.[0]
+    sel.innerHTML = Object.entries(rolesMap)
+        .map(([id, nombre]) => `<option value="${id}" ${id === clienteId ? 'selected' : ''}>${nombre}</option>`).join('')
+    window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNuevoUsuario')).show()
+})
+
+const rePassword = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/
+
+document.getElementById('nuevo-nif').addEventListener('blur', function () {
+    const ok = validarNIF(this.value)
+    this.classList.toggle('is-invalid', !ok)
+})
+
+document.getElementById('nuevo-password').addEventListener('input', function () {
+    const ok = rePassword.test(this.value)
+    this.classList.toggle('is-invalid', this.value.length > 0 && !ok)
+    this.classList.toggle('is-valid', ok)
+})
+
+document.getElementById('nuevo-password-confirm').addEventListener('input', function () {
+    const pass = document.getElementById('nuevo-password').value
+    this.classList.toggle('is-invalid', this.value.length > 0 && this.value !== pass)
+    this.classList.toggle('is-valid', this.value === pass && this.value.length > 0)
+})
+
+document.getElementById('form-nuevo-usuario').addEventListener('submit', e => {
+    e.preventDefault()
+    const nif     = document.getElementById('nuevo-nif')
+    const pass    = document.getElementById('nuevo-password')
+    const confirm = document.getElementById('nuevo-password-confirm')
+    let error = false
+
+    if (!validarNIF(nif.value)) { nif.classList.add('is-invalid'); error = true }
+    if (!rePassword.test(pass.value)) { pass.classList.add('is-invalid'); error = true }
+    if (pass.value !== confirm.value) { confirm.classList.add('is-invalid'); error = true }
+    if (error) return
+
+    const fd = new FormData(e.target)
+    fd.append('action', 'crearUsuario')
+
+    fetch('/cwu/Controladores/AdminControlador.php', { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) { window.mostrarToast(data.error, 'danger'); return }
+            window.bootstrap.Modal.getInstance(document.getElementById('modalNuevoUsuario')).hide()
+            window.mostrarToast('Usuario creado correctamente', 'success')
+            cargar()
+        })
+        .catch(() => window.mostrarToast('Error de conexión', 'danger'))
 })
 
 // ── Init ─────────────────────────────────────────────────────────────────────

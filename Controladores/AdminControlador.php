@@ -35,6 +35,8 @@ match($action) {
     'toggleActivo'         => toggleActivo(),
     'confirmarDesactivar'  => confirmarDesactivar(),
     'historialUsuario'     => historialUsuario(),
+    'crearUsuario'         => crearUsuario(),
+    'eventosCalendario'    => eventosCalendario(),
     default                => responderError(400, 'Acción no válida.')
 };
 
@@ -206,6 +208,20 @@ function cambiarEstadoReserva(): void {
     }
 
     $con  = conexionPDO();
+
+    if ($estado === 'confirmada') {
+        $total = $con->prepare("SELECT COUNT(*) FROM Asignacion_Empleado WHERE id_reserva = :id");
+        $total->execute([':id' => $id]);
+        if ((int) $total->fetchColumn() === 0) {
+            responderError(400, 'Asigna al menos un empleado antes de confirmar la reserva.');
+        }
+        $pendientes = $con->prepare("SELECT COUNT(*) FROM Asignacion_Empleado WHERE id_reserva = :id AND estado != 'aceptada'");
+        $pendientes->execute([':id' => $id]);
+        if ((int) $pendientes->fetchColumn() > 0) {
+            responderError(400, 'Todos los empleados deben aceptar la asignación antes de confirmar.');
+        }
+    }
+
     if ($estado === 'cancelada') {
         $motivo = trim((string) filter_input(INPUT_POST, 'motivo', FILTER_UNSAFE_RAW)) ?: null;
         $stmt = $con->prepare("UPDATE Reserva SET estado = :estado, motivo_cancelacion = :motivo WHERE id = :id");
@@ -526,31 +542,67 @@ function historialUsuario(): void {
 
     $con = conexionPDO();
 
-    $sol = $con->prepare("
-        SELECT se.id, se.fecha_evento, se.estado, c.nombre AS tipo
-        FROM Solicitud_Evento se
-        JOIN Categoria c ON c.id = se.tipo_evento
-        WHERE se.id_usuario = :id
-        ORDER BY se.fecha_evento DESC
-        LIMIT 5
-    ");
-    $sol->execute([':id' => $id]);
+    $u = $con->prepare("SELECT id_rol FROM Usuario WHERE id = :id");
+    $u->execute([':id' => $id]);
+    $rol = (int) $u->fetchColumn();
 
-    $res = $con->prepare("
-        SELECT r.id, r.fecha_evento, r.hora_inicio, r.hora_fin, r.estado, s.nombre AS servicio
-        FROM Reserva r
-        JOIN Servicio s ON s.id = r.id_servicio
-        WHERE r.id_usuario = :id
-        ORDER BY r.fecha_evento DESC
-        LIMIT 5
-    ");
-    $res->execute([':id' => $id]);
+    if ($rol === 3) {
+        $sol = $con->prepare("
+            SELECT se.id, se.fecha_evento, se.estado, c.nombre AS tipo
+            FROM Solicitud_Evento se
+            JOIN Categoria c ON c.id = se.tipo_evento
+            WHERE se.id_usuario = :id
+            ORDER BY se.fecha_evento DESC
+            LIMIT 5
+        ");
+        $sol->execute([':id' => $id]);
 
-    echo json_encode([
-        'ok'         => true,
-        'solicitudes' => $sol->fetchAll(PDO::FETCH_ASSOC),
-        'reservas'    => $res->fetchAll(PDO::FETCH_ASSOC),
-    ]);
+        $res = $con->prepare("
+            SELECT r.id, r.fecha_evento, r.hora_inicio, r.hora_fin, r.estado, s.nombre AS servicio
+            FROM Reserva r
+            JOIN Servicio s ON s.id = r.id_servicio
+            WHERE r.id_usuario = :id
+            ORDER BY r.fecha_evento DESC
+            LIMIT 5
+        ");
+        $res->execute([':id' => $id]);
+
+        echo json_encode([
+            'ok'          => true,
+            'rol'         => 'cliente',
+            'solicitudes' => $sol->fetchAll(PDO::FETCH_ASSOC),
+            'reservas'    => $res->fetchAll(PDO::FETCH_ASSOC),
+        ]);
+
+    } elseif ($rol === 2) {
+        $emp = $con->prepare("SELECT id FROM Empleado WHERE id_usuario = :id");
+        $emp->execute([':id' => $id]);
+        $idEmpleado = $emp->fetchColumn();
+
+        $asignaciones = [];
+        if ($idEmpleado) {
+            $a = $con->prepare("
+                SELECT a.estado, r.fecha_evento, r.hora_inicio, r.hora_fin, s.nombre AS servicio
+                FROM Asignacion_Empleado a
+                JOIN Reserva r ON r.id = a.id_reserva
+                JOIN Servicio s ON s.id = r.id_servicio
+                WHERE a.id_empleado = :emp
+                ORDER BY r.fecha_evento DESC
+                LIMIT 5
+            ");
+            $a->execute([':emp' => $idEmpleado]);
+            $asignaciones = $a->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        echo json_encode([
+            'ok'          => true,
+            'rol'         => 'empleado',
+            'asignaciones'=> $asignaciones,
+        ]);
+
+    } else {
+        echo json_encode(['ok' => true, 'rol' => 'admin']);
+    }
     exit;
 }
 
@@ -560,7 +612,7 @@ function asignacionesReserva(): void {
 
     $con  = conexionPDO();
     $stmt = $con->prepare("
-        SELECT a.id, a.rol_evento, u.nombre, u.apellidos
+        SELECT a.id, a.rol_evento, a.estado, u.nombre, u.apellidos
         FROM Asignacion_Empleado a
         JOIN Empleado e ON e.id = a.id_empleado
         JOIN Usuario u ON u.id = e.id_usuario
@@ -608,5 +660,127 @@ function eliminarAsignacion(): void {
     $stmt = $con->prepare("DELETE FROM Asignacion_Empleado WHERE id = :id");
     $stmt->execute([':id' => $id]);
     echo json_encode(['ok' => true, 'mensaje' => 'Asignación eliminada']);
+    exit;
+}
+
+function eventosCalendario(): void {
+    $con   = conexionPDO();
+    $start = $_GET['start'] ?? '';
+    $end   = $_GET['end']   ?? '';
+
+    $reservas = $con->prepare("
+        SELECT r.id, r.fecha_evento, r.hora_inicio, r.hora_fin, r.num_asistentes, r.estado,
+               s.nombre AS servicio, u.nombre AS cliente, u.apellidos
+        FROM Reserva r
+        JOIN Servicio s ON s.id = r.id_servicio
+        JOIN Usuario u ON u.id = r.id_usuario
+        WHERE r.fecha_evento BETWEEN :start AND :end
+          AND r.estado IN ('confirmada','cancelada')
+    ");
+    $reservas->execute([':start' => $start, ':end' => $end]);
+
+    $solicitudes = $con->prepare("
+        SELECT se.id, se.fecha_evento, se.num_participantes,
+               c.nombre AS tipo_evento, u.nombre AS cliente, u.apellidos
+        FROM Solicitud_Evento se
+        JOIN Categoria c ON c.id = se.tipo_evento
+        JOIN Usuario u ON u.id = se.id_usuario
+        WHERE se.fecha_evento BETWEEN :start AND :end
+          AND se.estado = 'pendiente'
+    ");
+    $solicitudes->execute([':start' => $start, ':end' => $end]);
+
+    $stmtEmp = $con->prepare("
+        SELECT u.nombre, u.apellidos, a.rol_evento
+        FROM Asignacion_Empleado a
+        JOIN Empleado e ON e.id = a.id_empleado
+        JOIN Usuario u ON u.id = e.id_usuario
+        WHERE a.id_reserva = :id
+    ");
+
+    $eventos = [];
+
+    foreach ($reservas->fetchAll(PDO::FETCH_ASSOC) as $r) {
+        $stmtEmp->execute([':id' => $r['id']]);
+        $empleados = $stmtEmp->fetchAll(PDO::FETCH_ASSOC);
+
+        $color = $r['estado'] === 'confirmada' ? '#198754' : '#dc3545';
+        $eventos[] = [
+            'id'    => 'r-' . $r['id'],
+            'title' => $r['cliente'] . ' ' . $r['apellidos'] . ' — ' . $r['servicio'],
+            'start' => $r['fecha_evento'],
+            'color' => $color,
+            'extendedProps' => [
+                'tipo'          => 'reserva',
+                'cliente'       => $r['cliente'] . ' ' . $r['apellidos'],
+                'servicio'      => $r['servicio'],
+                'hora_inicio'   => substr($r['hora_inicio'], 0, 5),
+                'hora_fin'      => substr($r['hora_fin'], 0, 5),
+                'num_asistentes'=> $r['num_asistentes'],
+                'estado'        => $r['estado'],
+                'empleados'     => $empleados,
+            ],
+        ];
+    }
+
+    foreach ($solicitudes->fetchAll(PDO::FETCH_ASSOC) as $s) {
+        $eventos[] = [
+            'id'    => 's-' . $s['id'],
+            'title' => $s['cliente'] . ' ' . $s['apellidos'] . ' — ' . $s['tipo_evento'],
+            'start' => $s['fecha_evento'],
+            'color' => '#ffc107',
+            'textColor' => '#000',
+            'extendedProps' => [
+                'tipo'            => 'solicitud',
+                'cliente'         => $s['cliente'] . ' ' . $s['apellidos'],
+                'tipo_evento'     => $s['tipo_evento'],
+                'num_participantes'=> $s['num_participantes'],
+            ],
+        ];
+    }
+
+    echo json_encode(['ok' => true, 'data' => $eventos]);
+    exit;
+}
+
+function crearUsuario(): void {
+    $nombre   = trim((string) filter_input(INPUT_POST, 'nombre',   FILTER_UNSAFE_RAW));
+    $apellidos= trim((string) filter_input(INPUT_POST, 'apellidos',FILTER_UNSAFE_RAW));
+    $nif      = trim((string) filter_input(INPUT_POST, 'nif',      FILTER_UNSAFE_RAW));
+    $telefono = trim((string) filter_input(INPUT_POST, 'telefono', FILTER_UNSAFE_RAW));
+    $email    = trim((string) filter_input(INPUT_POST, 'email',    FILTER_SANITIZE_EMAIL));
+    $password = trim((string) filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW));
+    $idRol    = (int) filter_input(INPUT_POST, 'id_rol', FILTER_SANITIZE_NUMBER_INT);
+
+    if (!$nombre || !$nif || !$email || !$password || !$idRol) {
+        responderError(400, 'Faltan campos obligatorios');
+    }
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        responderError(400, 'Email no válido');
+    }
+
+    $hash = password_hash($password, PASSWORD_BCRYPT);
+    $con  = conexionPDO();
+
+    try {
+        $stmt = $con->prepare("INSERT INTO Usuario (nif, nombre, apellidos, telefono, email, password_hash, id_rol, id_empresa, activo)
+                               VALUES (:nif, :nombre, :apellidos, :telefono, :email, :hash, :rol, 1, 1)");
+        $stmt->execute([
+            ':nif'      => $nif,
+            ':nombre'   => $nombre,
+            ':apellidos'=> $apellidos ?: null,
+            ':telefono' => $telefono ?: null,
+            ':email'    => $email,
+            ':hash'     => $hash,
+            ':rol'      => $idRol,
+        ]);
+        echo json_encode(['ok' => true, 'mensaje' => 'Usuario creado correctamente']);
+    } catch (\PDOException $e) {
+        if ($e->getCode() === '23000') {
+            responderError(409, 'El NIF o email ya están registrados');
+        }
+        responderError(500, 'Error al crear el usuario');
+    }
     exit;
 }

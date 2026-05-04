@@ -68,7 +68,7 @@ function renderReservas(items) {
             <td>${r.cliente} ${r.apellidos}</td>
             <td>${r.servicio}</td>
             <td>${r.fecha_evento}</td>
-            <td>${r.hora_inicio.slice(0,5)}</td>
+            <td>${r.hora_inicio.slice(0,5)} – ${r.hora_fin.slice(0,5)}</td>
         </tr>
     `).join('')
 
@@ -80,7 +80,7 @@ function renderReservas(items) {
                         <th>Cliente</th>
                         <th>Servicio</th>
                         <th>Fecha</th>
-                        <th>Hora</th>
+                        <th>Horario</th>
                     </tr>
                 </thead>
                 <tbody>${filas}</tbody>

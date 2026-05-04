@@ -144,6 +144,7 @@ CREATE TABLE Pago_Cliente (
 CREATE TABLE Asignacion_Empleado (
     id INT AUTO_INCREMENT PRIMARY KEY,
     rol_evento VARCHAR(100),
+    estado ENUM('pendiente','aceptada','rechazada') NOT NULL DEFAULT 'pendiente',
     id_reserva INT NOT NULL,
     id_empleado INT NOT NULL,
     FOREIGN KEY (id_reserva) REFERENCES Reserva(id),

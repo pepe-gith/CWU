@@ -23,6 +23,8 @@ export default defineConfig(({ command }) => ({
                 'admin/solicitudes':  'src/admin/solicitudes.js',
                 'admin/reservas':     'src/admin/reservas.js',
                 'admin/categorias':   'src/admin/categorias.js',
+                'admin/calendario':   'src/admin/calendario.js',
+                'empleado/agenda':    'src/empleado/agenda.js',
                 'perfil/perfil':      'src/perfil/perfil.js',
             }
         }
