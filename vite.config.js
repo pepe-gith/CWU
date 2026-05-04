@@ -22,6 +22,7 @@ export default defineConfig(({ command }) => ({
                 'admin/dashboard':    'src/admin/dashboard.js',
                 'admin/solicitudes':  'src/admin/solicitudes.js',
                 'admin/reservas':     'src/admin/reservas.js',
+                'admin/categorias':   'src/admin/categorias.js',
                 'perfil/perfil':      'src/perfil/perfil.js',
             }
         }
