@@ -36,8 +36,9 @@
                             </div>
 
                             <div class="card-content">
+                                <span class="card-badge">Escape Room</span>
                                 <h3 class="card-title">La Clínica</h3>
-                                <p class="card-description">Servicios de salud y bienestar especializados</p>
+                                <p class="card-description">Adultos y familias</p>
                                 <span class="card-arrow">Explorar →</span>
                             </div>
 
@@ -54,6 +55,7 @@
                                 <div class="card-overlay"></div>
                             </div>
                             <div class="card-content">
+                                <span class="card-badge">Cumpleaños</span>
                                 <h3 class="card-title">¡Feliz Cumpleaños!</h3>
                                 <p class="card-description">Planes y celebraciones para tu día especial</p>
                                 <span class="card-arrow">Explorar →</span>
@@ -69,8 +71,25 @@
                                 <div class="card-overlay"></div>
                             </div>
                             <div class="card-content">
+                                <span class="card-badge">Escape Room</span>
                                 <h3 class="card-title">La Biblioteca</h3>
-                                <p class="card-description">Ideas, recursos e inspiración para tus eventos</p>
+                                <p class="card-description">A partir de 8 años</p>
+                                <span class="card-arrow">Explorar →</span>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Tarjeta 4: Eventos y Fiestas -->
+                    <div class="card-opcion">
+                        <a href="./Vistas/publico/FiestaView.php" class="card-link">
+                            <div class="card-image">
+                                <img src="/cwu/public/assets/img/fiesta.png" alt="Eventos y Fiestas" class="card-img">
+                                <div class="card-overlay"></div>
+                            </div>
+                            <div class="card-content">
+                                <span class="card-badge">Eventos</span>
+                                <h3 class="card-title">Eventos y Fiestas</h3>
+                                <p class="card-description">Celebraciones, team building y eventos a medida</p>
                                 <span class="card-arrow">Explorar →</span>
                             </div>
                         </a>
