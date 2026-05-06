@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- Incluir los estilos y scripts generados por Vite -->
     <?php include './inc/vite.php'; vite_assets('index'); ?>
 
 <title>CWU - Celebrate with US</title>

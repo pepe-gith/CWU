@@ -16,7 +16,9 @@ class Categoria {
     public function listarConConteo(): array {
         $stmt = $this->conexion->query("
             SELECT c.id, c.nombre,
-                   (SELECT COUNT(*) FROM Solicitud_Evento se WHERE se.tipo_evento = c.id) AS num_solicitudes
+                   (SELECT COUNT(*) 
+                    FROM Solicitud_Evento se 
+                    WHERE se.tipo_evento = c.id) AS num_solicitudes
             FROM Categoria c
             ORDER BY c.nombre ASC
         ");
