@@ -200,14 +200,15 @@ class Reserva {
     public function ingresosMes(): float {
         return (float) $this->conexion->query("
             SELECT COALESCE(SUM(monto), 0) FROM Pago_Cliente
-            WHERE MONTH(fecha) = MONTH(CURDATE()) AND YEAR(fecha) = YEAR(CURDATE())
+            WHERE estado = 'confirmado' AND MONTH(fecha) = MONTH(CURDATE()) AND YEAR(fecha) = YEAR(CURDATE())
         ")->fetchColumn();
     }
 
     public function obtenerPorCliente(int $idUsuario): array {
         $stmt = $this->conexion->prepare("
             SELECT r.id, r.fecha_evento, r.hora_inicio, r.hora_fin, r.num_asistentes,
-                   r.estado, r.observaciones, r.motivo_cancelacion, s.nombre AS servicio
+                   r.estado, r.observaciones, r.motivo_cancelacion, s.nombre AS servicio,
+                   (SELECT COALESCE(SUM(monto), 0) FROM Pago_Cliente WHERE id_reserva = r.id AND estado = 'confirmado') AS total_pagado
             FROM Reserva r
             JOIN Servicio s ON s.id = r.id_servicio
             WHERE r.id_usuario = :id

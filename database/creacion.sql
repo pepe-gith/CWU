@@ -122,8 +122,9 @@ CREATE TABLE Pago_Cliente (
     id INT AUTO_INCREMENT PRIMARY KEY,
     monto DECIMAL(10,2) NOT NULL,
     fecha DATE NOT NULL,
-    metodo ENUM('tarjeta','efectivo','transferencia') NOT NULL,
-    estado VARCHAR(50) NOT NULL,
+    metodo ENUM('tarjeta','efectivo','transferencia','bizum') NOT NULL,
+    estado VARCHAR(50) NOT NULL DEFAULT 'pendiente',
+    referencia VARCHAR(255) NULL,
     id_reserva INT NOT NULL,
     FOREIGN KEY (id_reserva) REFERENCES Reserva(id)
 );

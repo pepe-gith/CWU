@@ -1,4 +1,5 @@
-const CONTROLADOR = '/cwu/Controladores/AdminControlador.php'
+const CONTROLADOR       = '/cwu/Controladores/AdminControlador.php'
+const PAGO_CONTROLADOR  = '/cwu/Controladores/PagoControlador.php'
 let servicios = []
 
 fetch(`${CONTROLADOR}?action=obtenerServicios`)
@@ -85,6 +86,9 @@ function cargarReservas() {
             )
             contenedor.querySelectorAll('.btn-empleados-reserva').forEach(btn =>
                 btn.addEventListener('click', () => abrirEmpleados(btn.dataset.id, btn.dataset.label))
+            )
+            contenedor.querySelectorAll('.btn-pagos-reserva').forEach(btn =>
+                btn.addEventListener('click', () => abrirPagos(btn.dataset.id, btn.dataset.label))
             )
         })
         .catch(() => {
@@ -243,6 +247,11 @@ function renderTabla(items) {
                     data-id="${r.id}" data-label="Reserva #${r.id} — ${r.cliente} ${r.apellidos}">
                     <i class="bi bi-people"></i>${badgeEmpleados(r)}
                 </button>
+                <button class="btn btn-sm btn-outline-success btn-pagos-reserva"
+                    data-id="${r.id}" data-label="Reserva #${r.id} — ${r.cliente} ${r.apellidos}"
+                    title="Pagos">
+                    <i class="bi bi-cash"></i>
+                </button>
             </td>
         </tr>
     `).join('')
@@ -381,6 +390,133 @@ document.getElementById('form-asignar-empleado').addEventListener('submit', e =>
             cargarAsignaciones(fd.get('id_reserva'))
             cargarEmpleadosSelect(fd.get('id_reserva'))
             actualizarBadgeReserva(fd.get('id_reserva'))
+        })
+        .catch(() => window.mostrarToast('Error de conexión', 'danger'))
+})
+
+// --- Pagos ---
+
+function abrirPagos(idReserva, label) {
+    document.getElementById('modal-pagos-titulo').textContent = label
+    document.getElementById('form-registrar-pago').reset()
+    document.getElementById('form-registrar-pago').elements['id_reserva'].value = idReserva
+    cargarPagos(idReserva)
+    window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPagosReserva')).show()
+}
+
+function cargarPagos(idReserva) {
+    const lista  = document.getElementById('lista-pagos')
+    const total  = document.getElementById('total-pagado')
+    lista.innerHTML = '<p class="text-muted">Cargando...</p>'
+
+    fetch(`${PAGO_CONTROLADOR}?action=obtener&id_reserva=${idReserva}`)
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) { lista.innerHTML = '<p class="text-danger">Error al cargar.</p>'; return }
+
+            total.textContent = `Total confirmado: ${parseFloat(data.total).toFixed(2)} €`
+
+            if (!data.pagos.length) {
+                lista.innerHTML = '<p class="text-muted">Sin pagos registrados.</p>'
+                return
+            }
+
+            const metodoLabel = { tarjeta: 'Tarjeta', efectivo: 'Efectivo', transferencia: 'Transferencia', bizum: 'Bizum' }
+            const estadoBadge = {
+                pendiente:  '<span class="badge bg-warning text-dark">Pendiente</span>',
+                confirmado: '<span class="badge bg-success">Confirmado</span>',
+                rechazado:  '<span class="badge bg-danger">Rechazado</span>',
+            }
+
+            lista.innerHTML = `
+                <table class="table table-sm align-middle mb-0">
+                    <thead class="table-light">
+                        <tr><th>Fecha</th><th>Monto</th><th>Método</th><th>Referencia</th><th>Estado</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        ${data.pagos.map(p => `
+                            <tr>
+                                <td>${p.fecha}</td>
+                                <td>${parseFloat(p.monto).toFixed(2)} €</td>
+                                <td>${metodoLabel[p.metodo] ?? p.metodo}</td>
+                                <td>${p.referencia ? `<span class="text-muted small">${p.referencia}</span>` : '—'}</td>
+                                <td>${estadoBadge[p.estado] ?? p.estado}</td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                    ${p.estado === 'pendiente' ? `
+                                        <button class="btn btn-sm btn-success btn-confirmar-pago" data-id="${p.id}" data-reserva="${idReserva}" title="Confirmar">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger btn-rechazar-pago" data-id="${p.id}" data-reserva="${idReserva}" title="Rechazar">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    ` : `
+                                        <button class="btn btn-sm btn-outline-danger btn-eliminar-pago" data-id="${p.id}" data-reserva="${idReserva}" title="Eliminar">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    `}
+                                    </div>
+                                </td>
+                            </tr>`).join('')}
+                    </tbody>
+                </table>`
+
+            lista.querySelectorAll('.btn-eliminar-pago').forEach(btn =>
+                btn.addEventListener('click', () => eliminarPago(btn.dataset.id, btn.dataset.reserva))
+            )
+            lista.querySelectorAll('.btn-confirmar-pago').forEach(btn =>
+                btn.addEventListener('click', () => gestionarPago('confirmar', btn.dataset.id, btn.dataset.reserva))
+            )
+            lista.querySelectorAll('.btn-rechazar-pago').forEach(btn =>
+                btn.addEventListener('click', () => gestionarPago('rechazar', btn.dataset.id, btn.dataset.reserva))
+            )
+        })
+        .catch(() => { lista.innerHTML = '<p class="text-danger">Error al cargar.</p>' })
+}
+
+function gestionarPago(accion, id, idReserva) {
+    const fd = new FormData()
+    fd.append('action', accion)
+    fd.append('id', id)
+
+    fetch(PAGO_CONTROLADOR, { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) { window.mostrarToast(data.error, 'danger'); return }
+            window.mostrarToast(data.mensaje, 'success')
+            cargarPagos(idReserva)
+        })
+        .catch(() => window.mostrarToast('Error de conexión', 'danger'))
+}
+
+function eliminarPago(id, idReserva) {
+    const fd = new FormData()
+    fd.append('action', 'eliminar')
+    fd.append('id', id)
+
+    fetch(PAGO_CONTROLADOR, { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) { window.mostrarToast(data.error, 'danger'); return }
+            window.mostrarToast('Pago eliminado', 'success')
+            cargarPagos(idReserva)
+        })
+        .catch(() => window.mostrarToast('Error de conexión', 'danger'))
+}
+
+document.getElementById('form-registrar-pago').addEventListener('submit', e => {
+    e.preventDefault()
+    const fd = new FormData(e.target)
+    fd.append('action', 'crear')
+
+    fetch(PAGO_CONTROLADOR, { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) { window.mostrarToast(data.error, 'danger'); return }
+            window.mostrarToast(data.mensaje, 'success')
+            e.target.reset()
+            e.target.elements['id_reserva'].value = fd.get('id_reserva')
+            cargarPagos(fd.get('id_reserva'))
         })
         .catch(() => window.mostrarToast('Error de conexión', 'danger'))
 })

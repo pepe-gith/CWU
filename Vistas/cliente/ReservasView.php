@@ -49,6 +49,45 @@ ob_start();
     </div>
 </div>
 
+<!-- Modal notificar pago -->
+<div class="modal fade" id="modalNotificarPago" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Notificar pago</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="form-notificar-pago" novalidate>
+                <div class="modal-body pt-0">
+                    <p class="text-muted mb-3">Indícanos el pago que has realizado y lo verificaremos en breve.</p>
+                    <input type="hidden" name="id_reserva">
+                    <div class="mb-3">
+                        <label class="form-label">Monto (€) <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" name="monto" min="0.01" step="0.01" required placeholder="Ej: 150.00">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Método <span class="text-danger">*</span></label>
+                        <select class="form-select" name="metodo" required>
+                            <option value="">Selecciona...</option>
+                            <option value="bizum">Bizum</option>
+                            <option value="transferencia">Transferencia bancaria</option>
+                            <option value="efectivo">Efectivo</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Referencia <span class="text-muted small">(opcional)</span></label>
+                        <input type="text" class="form-control" name="referencia" placeholder="Ej: Bizum a 600 000 000, ref. XXXX">
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Enviar notificación</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Modal confirmación cancelar -->
 <div class="modal fade" id="modalCancelar" tabindex="-1">
     <div class="modal-dialog">

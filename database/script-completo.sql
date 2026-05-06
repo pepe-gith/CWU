@@ -144,8 +144,9 @@ CREATE TABLE Pago_Cliente (
     id INT AUTO_INCREMENT PRIMARY KEY,
     monto DECIMAL(10,2) NOT NULL,
     fecha DATE NOT NULL,
-    metodo ENUM('tarjeta','efectivo','transferencia') NOT NULL,
-    estado VARCHAR(50) NOT NULL,
+    metodo ENUM('tarjeta','efectivo','transferencia','bizum') NOT NULL,
+    estado VARCHAR(50) NOT NULL DEFAULT 'pendiente',
+    referencia VARCHAR(255) NULL,
     id_reserva INT NOT NULL,
     FOREIGN KEY (id_reserva) REFERENCES Reserva(id)
 );
@@ -194,7 +195,7 @@ VALUES
 
 INSERT INTO Pago_Cliente (monto, fecha, metodo, estado, id_reserva)
 VALUES
-(200.00, '2026-03-23', 'tarjeta', 'pagado', 1);
+(200.00, '2026-03-23', 'tarjeta', 'confirmado', NULL, 1);
 
 INSERT INTO Asignacion_Empleado (rol_evento, id_reserva, id_empleado)
 VALUES

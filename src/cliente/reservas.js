@@ -1,4 +1,5 @@
 const contenedor = document.getElementById('lista-reservas')
+const PAGO_CONTROLADOR = '/cwu/Controladores/PagoControlador.php'
 
 function cargar() {
     fetch('/cwu/Controladores/SolicitudControlador.php?action=misReservas')
@@ -14,6 +15,9 @@ function cargar() {
             )
             contenedor.querySelectorAll('.btn-cambio').forEach(btn =>
                 btn.addEventListener('click', () => abrirCambio(btn.dataset.id))
+            )
+            contenedor.querySelectorAll('.btn-notificar-pago').forEach(btn =>
+                btn.addEventListener('click', () => abrirNotificarPago(btn.dataset.id))
             )
         })
         .catch(() => {
@@ -33,6 +37,13 @@ function puedeCancel(r) {
     return horasRestantes >= 24
 }
 
+function renderPago(total) {
+    const n = parseFloat(total)
+    return n > 0
+        ? `<span class="badge bg-success">Pagado ${n.toFixed(2)} €</span>`
+        : `<span class="badge bg-secondary">Sin pagos</span>`
+}
+
 function renderTabla(reservas) {
     const filas = reservas.map(r => `
         <tr>
@@ -45,8 +56,14 @@ function renderTabla(reservas) {
             <td>${r.estado === 'cancelada' && r.motivo_cancelacion
                     ? `<span class="text-muted small">${r.motivo_cancelacion}</span>`
                     : '—'}</td>
+            <td>${renderPago(r.total_pagado)}</td>
             <td>
                 <div class="d-flex gap-1 flex-wrap">
+                ${r.estado !== 'cancelada'
+                ? `<button class="btn btn-sm btn-outline-success btn-notificar-pago" data-id="${r.id}">
+                       <i class="bi bi-cash"></i> Notificar pago
+                   </button>`
+                : ''}
                 ${puedeCancel(r)
                 ? `<button class="btn btn-sm btn-outline-warning btn-cambio" data-id="${r.id}">Solicitar cambio</button>
                    <button class="btn btn-sm btn-outline-danger btn-cancelar" data-id="${r.id}">Cancelar</button>`
@@ -71,6 +88,7 @@ function renderTabla(reservas) {
                         <th>Observaciones</th>
                         <th>Estado</th>
                         <th>Motivo cancelación</th>
+                        <th>Pago</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -132,6 +150,31 @@ document.getElementById('btn-confirmar-cancelar').addEventListener('click', () =
         .then(r => r.json())
         .then(data => {
             if (!data.ok) { window.mostrarToast(data.error, 'danger'); return }
+            window.mostrarToast(data.mensaje, 'success')
+            cargar()
+        })
+        .catch(() => window.mostrarToast('Error de conexión', 'danger'))
+})
+
+// --- Notificar pago ---
+
+function abrirNotificarPago(id) {
+    const form = document.getElementById('form-notificar-pago')
+    form.reset()
+    form.elements['id_reserva'].value = id
+    window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNotificarPago')).show()
+}
+
+document.getElementById('form-notificar-pago').addEventListener('submit', e => {
+    e.preventDefault()
+    const fd = new FormData(e.target)
+    fd.append('action', 'solicitarPago')
+
+    fetch(PAGO_CONTROLADOR, { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) { window.mostrarToast(data.error, 'danger'); return }
+            window.bootstrap.Modal.getInstance(document.getElementById('modalNotificarPago')).hide()
             window.mostrarToast(data.mensaje, 'success')
             cargar()
         })

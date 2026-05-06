@@ -113,6 +113,49 @@ ob_start();
     </div>
 </div>
 
+<!-- Modal pagos -->
+<div class="modal fade" id="modalPagosReserva" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Pagos — <span id="modal-pagos-titulo"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="lista-pagos" class="mb-3"></div>
+                <div class="text-end fw-semibold mb-4" id="total-pagado"></div>
+                <hr>
+                <p class="fw-semibold mb-3">Registrar pago</p>
+                <form id="form-registrar-pago" novalidate>
+                    <input type="hidden" name="id_reserva">
+                    <div class="row g-3">
+                        <div class="col-sm-5">
+                            <label class="form-label">Monto (€) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" name="monto" min="0.01" step="0.01" required>
+                        </div>
+                        <div class="col-sm-5">
+                            <label class="form-label">Método <span class="text-danger">*</span></label>
+                            <select class="form-select" name="metodo" required>
+                                <option value="">Selecciona...</option>
+                                <option value="bizum">Bizum</option>
+                                <option value="tarjeta">Tarjeta</option>
+                                <option value="efectivo">Efectivo</option>
+                                <option value="transferencia">Transferencia</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">Añadir</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal editar reserva -->
 <div class="modal fade" id="modalEditarReserva" tabindex="-1">
     <div class="modal-dialog">
