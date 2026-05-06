@@ -22,6 +22,7 @@ function menuAdmin(string $active): array {
         ['label' => 'Reservas',     'href' => '/cwu/Vistas/admin/ReservasView.php',     'icon' => 'bi-calendar-check',  'active' => $active === 'reservas', 'notif' => true],
         ['label' => 'Usuarios',     'href' => '/cwu/Vistas/admin/UsuariosView.php',     'icon' => 'bi-people',          'active' => $active === 'usuarios'],
         ['label' => 'Empleados',    'href' => '/cwu/Vistas/admin/EmpleadosView.php',    'icon' => 'bi-person-badge',    'active' => $active === 'empleados'],
+        ['label' => 'Servicios',    'href' => '/cwu/Vistas/admin/ServiciosView.php',    'icon' => 'bi-box-seam',        'active' => $active === 'servicios'],
         ['label' => 'Categorías',   'href' => '/cwu/Vistas/admin/CategoriasView.php',   'icon' => 'bi-tags',            'active' => $active === 'categorias'],
         ['label' => 'Calendario',   'href' => '/cwu/Vistas/admin/CalendarioView.php',   'icon' => 'bi-calendar3',       'active' => $active === 'calendario'],
     ];
