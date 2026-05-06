@@ -5,8 +5,6 @@ SET time_zone = "+00:00";
 -- =====================================
 -- 1. CREAR BASE DE DATOS
 -- =====================================
---CREATE DATABASE IF NOT EXISTS cwubd;
---USE cwubd;
 CREATE DATABASE IF NOT EXISTS gestion_eventos;
 USE gestion_eventos;
 
@@ -18,7 +16,7 @@ CREATE TABLE Empresa (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre_empresa VARCHAR(150) NOT NULL,
     cif VARCHAR(20) NOT NULL UNIQUE,
-    telefono VARCHAR(20),
+    telefono VARCHAR(100),
     email VARCHAR(100),
     direccion VARCHAR(255)
 );
@@ -57,6 +55,7 @@ INSERT INTO Categoria (nombre) VALUES
 
 CREATE TABLE Usuario (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    nif VARCHAR(20) NOT NULL UNIQUE,
     nombre VARCHAR(100) NOT NULL,
     apellidos VARCHAR(150),
     telefono VARCHAR(20),
@@ -68,16 +67,6 @@ CREATE TABLE Usuario (
     id_rol INT NOT NULL,
     id_empresa INT NOT NULL,
     FOREIGN KEY (id_rol) REFERENCES Rol(id),
-    FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
-);
-
-CREATE TABLE Proveedor (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_empresa VARCHAR(150) NOT NULL,
-    cif_nif VARCHAR(20),
-    telefono VARCHAR(20),
-    tipo_suministro VARCHAR(100),
-    id_empresa INT NOT NULL,
     FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
 );
 
@@ -103,21 +92,27 @@ CREATE TABLE Empleado (
     FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
 );
 
-CREATE TABLE Producto (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(150) NOT NULL,
-    cantidad_stock INT NOT NULL DEFAULT 0,
-    stock_min INT NOT NULL DEFAULT 0,
-    precio_compra DECIMAL(10,2) NOT NULL,
-    id_proveedor INT NOT NULL,
-    id_empresa INT NOT NULL,
-    FOREIGN KEY (id_proveedor) REFERENCES Proveedor(id),
-    FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
-);
-
 -- =====================================
 -- 5. TABLAS DEL NÚCLEO
 -- =====================================
+
+CREATE TABLE Solicitud_Evento (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha_solicitud DATE NOT NULL,
+    fecha_evento DATE NOT NULL,
+    tipo_evento INT NOT NULL,
+    nombre_protagonista VARCHAR(150),
+    num_participantes INT NOT NULL,
+    sala TINYINT,
+    realidad_virtual TINYINT,
+    tarta TINYINT,
+    estado ENUM('pendiente','presupuestada','aceptada','rechazada') DEFAULT 'pendiente',
+    id_usuario INT NOT NULL,
+    id_empresa INT NOT NULL,
+    FOREIGN KEY (tipo_evento) REFERENCES Categoria(id),
+    FOREIGN KEY (id_usuario) REFERENCES Usuario(id),
+    FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
+);
 
 CREATE TABLE Reserva (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -148,77 +143,52 @@ CREATE TABLE Pago_Cliente (
 
 CREATE TABLE Asignacion_Empleado (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    hora_inicio TIME NOT NULL,
-    hora_fin TIME NOT NULL,
     rol_evento VARCHAR(100),
-    observaciones TEXT,
+    estado ENUM('pendiente','aceptada','rechazada') NOT NULL DEFAULT 'pendiente',
     id_reserva INT NOT NULL,
     id_empleado INT NOT NULL,
     FOREIGN KEY (id_reserva) REFERENCES Reserva(id),
     FOREIGN KEY (id_empleado) REFERENCES Empleado(id)
 );
 
-CREATE TABLE Compra_Suministro (
+CREATE TABLE Notificacion (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    cantidad_comprada INT NOT NULL,
-    fecha DATE NOT NULL,
-    importe_total DECIMAL(10,2) NOT NULL,
-    estado_pago_proveedor VARCHAR(50),
-    id_producto INT NOT NULL,
-    id_empresa INT NOT NULL,
-    FOREIGN KEY (id_producto) REFERENCES Producto(id),
-    FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
+    id_usuario INT NOT NULL,
+    mensaje VARCHAR(500) NOT NULL,
+    leida TINYINT(1) NOT NULL DEFAULT 0,
+    fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES Usuario(id) ON DELETE CASCADE
 );
 
 -- =====================================
 -- 6. DATOS DE PRUEBA
 -- =====================================
 
--- Usuarios
-INSERT INTO Usuario (nombre, apellidos, telefono, otro_telefono, email, password_hash, direccion, como_conoce, id_rol, id_empresa)
+INSERT INTO Usuario (nif, nombre, apellidos, telefono, otro_telefono, email, password_hash, direccion, como_conoce, id_rol, id_empresa)
 VALUES
-('Laura', 'Gómez', '600111111', NULL, 'admin@aventurakids.com', 'hash_admin', 'Madrid', 'web', 1, 1),
-('Carlos', 'Pérez', '600222222', NULL, 'monitor1@aventurakids.com', 'hash_monitor', 'Madrid', 'instagram', 2, 1),
-('Marta', 'López', '600333333', NULL, 'cliente1@gmail.com', 'hash_cliente', 'Madrid', 'amigo', 3, 1);
+('12345678A', 'Laura', 'Gómez', '600111111', NULL, 'admin@aventurakids.com', 'hash_admin', 'Madrid', 'web', 1, 1),
+('87654321B', 'Carlos', 'Pérez', '600222222', NULL, 'monitor1@aventurakids.com', 'hash_monitor', 'Madrid', 'instagram', 2, 1),
+('11223344C', 'Marta', 'López', '600333333', NULL, 'cliente1@gmail.com', 'hash_cliente', 'Madrid', 'amigo', 3, 1);
 
--- Servicios
 INSERT INTO Servicio (nombre, descripcion, precio_base, capacidad, id_categoria, id_empresa)
 VALUES
 ('Escape Room Piratas', 'Juego temático para grupos infantiles', 150.00, 12, 2, 1),
 ('Cumpleaños Básico', 'Celebración de cumpleaños con monitor', 200.00, 15, 3, 1);
 
--- Empleado
 INSERT INTO Empleado (precio_por_hora, especialidad, id_usuario, id_empresa)
 VALUES
 (15.00, 'Animación infantil', 2, 1);
 
--- Proveedor
-INSERT INTO Proveedor (nombre_empresa, cif_nif, telefono, tipo_suministro, id_empresa)
-VALUES
-('FiestasPro', 'A99887766', '911223344', 'Decoración y material', 1);
-
--- Productos
-INSERT INTO Producto (nombre, cantidad_stock, stock_min, precio_compra, id_proveedor, id_empresa)
-VALUES
-('Globos de colores', 100, 20, 0.15, 1, 1),
-('Pintura facial', 30, 5, 3.50, 1, 1);
-
--- Reserva
 INSERT INTO Reserva (fecha_reserva, fecha_evento, hora_inicio, hora_fin, num_asistentes, estado, observaciones, id_usuario, id_servicio, id_empresa)
 VALUES
 ('2026-03-23', '2026-04-05', '17:00:00', '19:00:00', 10, 'confirmada', 'Cumpleaños de Ana', 3, 2, 1);
 
--- Pago
 INSERT INTO Pago_Cliente (monto, fecha, metodo, estado, id_reserva)
 VALUES
 (200.00, '2026-03-23', 'tarjeta', 'pagado', 1);
 
--- Asignación empleado
 INSERT INTO Asignacion_Empleado (rol_evento, id_reserva, id_empleado)
 VALUES
 ('Monitor principal', 1, 1);
 
--- Compra suministro
-INSERT INTO Compra_Suministro (cantidad_comprada, fecha, importe_total, estado_pago_proveedor, id_producto, id_empresa)
-VALUES
-(50, '2026-03-20', 7.50, 'pagado', 1, 1);
+COMMIT;

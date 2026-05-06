@@ -27,15 +27,6 @@ VALUES
 ('Escape Room Piratas', 'Juego temático para grupos infantiles', 150.00, 12, 2, 1),
 ('Cumpleaños Básico', 'Celebración de cumpleaños con monitor', 200.00, 15, 3, 1);
 
-INSERT INTO Proveedor (nombre_empresa, cif_nif, telefono, tipo_suministro, id_empresa)
-VALUES
-('FiestasPro', 'A99887766', '911223344', 'Decoración y material', 1);
-
-INSERT INTO Producto (nombre, cantidad_stock, stock_min, precio_compra, id_proveedor, id_empresa)
-VALUES
-('Globos de colores', 100, 20, 0.15, 1, 1),
-('Pintura facial', 30, 5, 3.50, 1, 1);
-
 INSERT INTO Empleado (precio_por_hora, especialidad, id_usuario, id_empresa)
 VALUES
 (15.00, 'Animación infantil', 2, 1);
@@ -52,7 +43,4 @@ INSERT INTO Asignacion_Empleado (rol_evento, id_reserva, id_empleado)
 VALUES
 ('Monitor principal', 1, 1);
 
-INSERT INTO Compra_Suministro (cantidad_comprada, fecha, importe_total, estado_pago_proveedor, id_producto, id_empresa)
-VALUES
-(50, '2026-03-20', 7.50, 'pagado', 1, 1);
 

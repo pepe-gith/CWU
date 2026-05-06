@@ -48,16 +48,6 @@ CREATE TABLE Usuario (
     FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
 );
 
-CREATE TABLE Proveedor (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_empresa VARCHAR(150) NOT NULL,
-    cif_nif VARCHAR(20),
-    telefono VARCHAR(20),
-    tipo_suministro VARCHAR(100),
-    id_empresa INT NOT NULL,
-    FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
-);
-
 CREATE TABLE Servicio (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(150) NOT NULL,
@@ -77,18 +67,6 @@ CREATE TABLE Empleado (
     id_usuario INT NOT NULL,
     id_empresa INT NOT NULL,
     FOREIGN KEY (id_usuario) REFERENCES Usuario(id),
-    FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
-);
-
-CREATE TABLE Producto (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(150) NOT NULL,
-    cantidad_stock INT NOT NULL DEFAULT 0,
-    stock_min INT NOT NULL DEFAULT 0,
-    precio_compra DECIMAL(10,2) NOT NULL,
-    id_proveedor INT NOT NULL,
-    id_empresa INT NOT NULL,
-    FOREIGN KEY (id_proveedor) REFERENCES Proveedor(id),
     FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
 );
 
@@ -160,14 +138,3 @@ CREATE TABLE Notificacion (
     FOREIGN KEY (id_usuario) REFERENCES Usuario(id) ON DELETE CASCADE
 );
 
-CREATE TABLE Compra_Suministro (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    cantidad_comprada INT NOT NULL,
-    fecha DATE NOT NULL,
-    importe_total DECIMAL(10,2) NOT NULL,
-    estado_pago_proveedor VARCHAR(50),
-    id_producto INT NOT NULL,
-    id_empresa INT NOT NULL,
-    FOREIGN KEY (id_producto) REFERENCES Producto(id),
-    FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
-);
