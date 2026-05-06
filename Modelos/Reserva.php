@@ -204,6 +204,37 @@ class Reserva {
         ")->fetchColumn();
     }
 
+    public function obtenerPorCliente(int $idUsuario): array {
+        $stmt = $this->conexion->prepare("
+            SELECT r.id, r.fecha_evento, r.hora_inicio, r.hora_fin, r.num_asistentes,
+                   r.estado, r.observaciones, r.motivo_cancelacion, s.nombre AS servicio
+            FROM Reserva r
+            JOIN Servicio s ON s.id = r.id_servicio
+            WHERE r.id_usuario = :id
+            ORDER BY r.fecha_evento DESC
+        ");
+        $stmt->execute([':id' => $idUsuario]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function obtenerParaCliente(int $id, int $idUsuario): ?array {
+        $stmt = $this->conexion->prepare("SELECT id, id_usuario, fecha_evento, estado FROM Reserva WHERE id = :id");
+        $stmt->execute([':id' => $id]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row || (int)$row['id_usuario'] !== $idUsuario) return null;
+        return $row;
+    }
+
+    public function cancelarPorCliente(int $id, ?string $motivo): void {
+        $this->conexion->prepare("UPDATE Reserva SET estado = 'cancelada', motivo_cancelacion = :motivo WHERE id = :id")
+            ->execute([':motivo' => $motivo, ':id' => $id]);
+    }
+
+    public function marcarCambioSolicitado(int $id, string $motivo): void {
+        $this->conexion->prepare("UPDATE Reserva SET cambio_solicitado = 1, motivo_cambio = :motivo WHERE id = :id")
+            ->execute([':motivo' => $motivo, ':id' => $id]);
+    }
+
     public function proximasLista(int $limit = 5): array {
         $stmt = $this->conexion->prepare("
             SELECT r.id, r.fecha_evento, r.hora_inicio, r.hora_fin, r.num_asistentes, r.estado,
