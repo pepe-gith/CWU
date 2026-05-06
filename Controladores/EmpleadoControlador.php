@@ -118,6 +118,20 @@ function responderAsignacion(int $idUsuario): void {
     $stmt = $con->prepare("UPDATE Asignacion_Empleado SET estado = :estado WHERE id = :id");
     $stmt->execute([':estado' => $estado, ':id' => $id]);
 
+    if ($estado === 'rechazada') {
+        $con->prepare("
+            INSERT INTO Notificacion (id_usuario, mensaje)
+            SELECT u.id, CONCAT(emp.nombre, ' ', emp.apellidos, ' ha rechazado la asignación de la reserva del ', DATE_FORMAT(r.fecha_evento, '%d/%m/%Y'), ' (', s.nombre, ').')
+            FROM Asignacion_Empleado ae
+            JOIN Empleado e ON e.id = ae.id_empleado
+            JOIN Usuario emp ON emp.id = e.id_usuario
+            JOIN Reserva r ON r.id = ae.id_reserva
+            JOIN Servicio s ON s.id = r.id_servicio
+            JOIN Usuario u ON u.id_rol = 1
+            WHERE ae.id = :id
+        ")->execute([':id' => $id]);
+    }
+
     echo json_encode(['ok' => true, 'mensaje' => 'Respuesta registrada']);
     exit;
 }

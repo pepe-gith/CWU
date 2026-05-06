@@ -158,6 +158,23 @@ function cambiarEstado(): void {
         $stmt->execute([':estado' => $estado, ':id' => $id]);
     }
 
+    $textos = [
+        'presupuestada' => "Tienes un presupuesto listo para tu solicitud del %s (%s). Revísalo en Mis solicitudes.",
+        'aceptada'      => "Tu solicitud del %s (%s) ha sido aceptada. En breve recibirás los detalles de tu reserva.",
+        'rechazada'     => "Tu solicitud del %s (%s) ha sido rechazada.",
+    ];
+
+    if (isset($textos[$estado])) {
+        $info = $con->prepare("SELECT se.id_usuario, se.fecha_evento, c.nombre AS tipo FROM Solicitud_Evento se JOIN Categoria c ON c.id = se.tipo_evento WHERE se.id = :id");
+        $info->execute([':id' => $id]);
+        $sol = $info->fetch(PDO::FETCH_ASSOC);
+        if ($sol) {
+            $mensaje = sprintf($textos[$estado], date('d/m/Y', strtotime($sol['fecha_evento'])), $sol['tipo']);
+            $con->prepare("INSERT INTO Notificacion (id_usuario, mensaje) VALUES (:uid, :msg)")
+                ->execute([':uid' => $sol['id_usuario'], ':msg' => $mensaje]);
+        }
+    }
+
     echo json_encode(['ok' => true, 'mensaje' => 'Estado actualizado']);
     exit;
 }
@@ -234,6 +251,14 @@ function cambiarEstadoReserva(): void {
     } else {
         $stmt = $con->prepare("UPDATE Reserva SET estado = :estado, motivo_cancelacion = NULL WHERE id = :id");
         $stmt->execute([':estado' => $estado, ':id' => $id]);
+
+        if ($estado === 'confirmada') {
+            $con->prepare("
+                INSERT INTO Notificacion (id_usuario, mensaje)
+                SELECT r.id_usuario, CONCAT('Tu reserva del ', DATE_FORMAT(r.fecha_evento, '%d/%m/%Y'), ' (', s.nombre, ') ha sido confirmada.')
+                FROM Reserva r JOIN Servicio s ON s.id = r.id_servicio WHERE r.id = :id
+            ")->execute([':id' => $id]);
+        }
     }
 
     echo json_encode(['ok' => true, 'mensaje' => 'Estado actualizado']);

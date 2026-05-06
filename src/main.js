@@ -18,7 +18,7 @@ flatpickr.localize(Spanish)
 
 // Notificaciones internas (clientes y empleados)
 document.addEventListener('DOMContentLoaded', () => {
-    if (!window.ID_ROL || window.ID_ROL === 1) return
+    if (!window.ID_ROL) return
     const wrap = document.getElementById('notificaciones-wrap')
     if (!wrap) return
 
