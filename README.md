@@ -45,11 +45,19 @@ npm run build
 
 Una vez ejecutado, ya no necesitas tener `npm run dev` corriendo.
 
+## Roles
+
+| Rol | Acceso | Área |
+|---|---|---|
+| Admin (1) | Gestión completa | `/cwu/Vistas/admin/` |
+| Empleado (2) | Agenda y perfil | `/cwu/Vistas/empleado/` |
+| Cliente (3) | Solicitudes y reservas | `/cwu/Vistas/cliente/` |
+
 ## Crear una vista nueva
 
 1. Crear el archivo PHP en `Vistas/[modulo]/NombreView.php`
 2. Si necesita JS/CSS propio, crear `src/[modulo]/nombre.js` (e importar el CSS desde ahí)
-3. Si el módulo no tiene entry en Vite aún, añadirlo en `vite.config.js`
+3. Añadir el entry en `vite.config.js`
 4. En el `<head>` del PHP incluir: `<?php include '../../inc/vite.php'; vite_assets('modulo/nombre'); ?>`
 
 ## Añadir una librería nueva
@@ -82,29 +90,40 @@ de las librerías directamente**.
 
 ```
 CWU/
-├── Controladores/          # Lógica PHP (acciones de formularios, BD)
-├── Modelos/                # Modelos de datos PHP
+├── Controladores/          # Lógica PHP — un controlador por módulo
+│   ├── AdminControlador.php
+│   ├── EmpleadoControlador.php
+│   ├── UsuarioControlador.php
+│   ├── SolicitudControlador.php
+│   └── CategoriaControlador.php
+├── Modelos/                # Modelos de datos PHP (PDO)
 ├── Vistas/
 │   ├── auth/               # Login, registro
-│   ├── cliente/            # Vistas del cliente autenticado
-│   ├── monitor/            # Vistas del monitor
-│   ├── admin/              # Vistas del administrador
-│   └── publico/            # Páginas públicas (info de salas, eventos)
+│   ├── publico/            # Páginas públicas (salas, cumpleaños, eventos)
+│   ├── cliente/            # Área del cliente autenticado
+│   ├── empleado/           # Área del empleado
+│   ├── admin/              # Área del administrador
+│   └── perfil/             # Perfil compartido entre roles
 ├── database/               # Scripts SQL
-├── inc/                    # Fragmentos PHP reutilizables (header, footer, vite.php)
+├── inc/                    # Fragmentos PHP reutilizables
+│   ├── layout_area.php     # Layout de las áreas privadas
+│   ├── helpers.php         # Menús por rol y funciones de utilidad
+│   ├── header.php / footer.php
+│   └── vite.php            # Carga de assets de Vite
 ├── src/
-│   ├── main.js             # Entry global — Bootstrap, CSS global, librerías
+│   ├── main.js             # Entry global — Bootstrap, librerías, notificaciones
 │   ├── css/
-│   │   ├── main.css        # Estilos globales y fuentes
+│   │   ├── main.css        # Estilos globales
 │   │   └── index.css       # Estilos de index.php
 │   ├── auth/               # JS de login y registro
-│   ├── cliente/            # JS y CSS del cliente
-│   ├── monitor/            # JS y CSS del monitor
-│   └── admin/              # JS y CSS del administrador
+│   ├── cliente/            # JS del área cliente
+│   ├── empleado/           # JS del área empleado
+│   ├── admin/              # JS del área admin
+│   └── perfil/             # JS del perfil
 ├── public/
 │   ├── assets/
 │   │   ├── img/            # Imágenes del proyecto
-│   │   └── fonts/          # Fuentes locales (Poppins, Raleway)
+│   │   └── fonts/          # Fuentes locales
 │   └── build/              # Generado por Vite — no subir a git
 ├── vite.config.js
 └── package.json
@@ -118,5 +137,6 @@ CWU/
 | Base de datos | MySQL |
 | CSS framework | Bootstrap 5 |
 | Iconos | Bootstrap Icons |
-| Calendario | Flatpickr |
+| Calendario (área admin) | FullCalendar 6 |
+| Datepicker | Flatpickr |
 | Bundler | Vite |
