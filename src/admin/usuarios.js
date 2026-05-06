@@ -373,9 +373,32 @@ document.getElementById('btn-nuevo-usuario').addEventListener('click', () => {
 
 const rePassword = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/
 
+function verificarCampoUnico(campo, valor, input) {
+    if (!valor) return
+    const fd = new FormData()
+    fd.append('action', 'verificarCampo')
+    fd.append('campo', campo)
+    fd.append('valor', valor)
+    fetch('/cwu/Controladores/UsuarioControlador.php', { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+            if (data.existe) {
+                input.classList.add('is-invalid')
+                const fb = input.nextElementSibling
+                if (fb?.classList.contains('invalid-feedback'))
+                    fb.textContent = `Este ${campo === 'nif' ? 'NIF' : 'email'} ya está registrado.`
+            }
+        })
+}
+
 document.getElementById('nuevo-nif').addEventListener('blur', function () {
     const ok = validarNIF(this.value)
     this.classList.toggle('is-invalid', !ok)
+    if (ok) verificarCampoUnico('nif', this.value, this)
+})
+
+document.getElementById('nuevo-email').addEventListener('blur', function () {
+    if (this.value) verificarCampoUnico('email', this.value, this)
 })
 
 document.getElementById('nuevo-password').addEventListener('input', function () {

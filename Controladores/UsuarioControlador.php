@@ -12,11 +12,13 @@ $action = $_POST['action'] ?? $_GET['action'] ?? '';
 match($action) {
     'iniciarSession'          => iniciarSession(),
     'cerrarSesion'            => cerrarSession(),
+    'registrar'               => registrar(),
     'obtenerPerfil'           => obtenerPerfil(),
     'actualizarPerfil'        => actualizarPerfil(),
     'cambiarPassword'         => cambiarPassword(),
     'obtenerNotificaciones'   => obtenerNotificaciones(),
     'marcarNotificacionLeida' => marcarNotificacionLeida(),
+    'verificarCampo'          => verificarCampo(),
     default                   => responderError(400, 'Acción no válida.')
 };
 
@@ -118,6 +120,60 @@ function actualizarPerfil(): void {
     $_SESSION['cliente']['email']  = $email;
 
     echo json_encode(['ok' => true, 'mensaje' => 'Perfil actualizado correctamente']);
+    exit;
+}
+
+function registrar(): void {
+    $nif       = trim((string) ($_POST['nif']       ?? ''));
+    $nombre    = trim((string) ($_POST['nombre']    ?? ''));
+    $apellidos = trim((string) ($_POST['apellidos'] ?? ''));
+    $movil1    = trim((string) ($_POST['movil1']    ?? ''));
+    $movil2    = trim((string) ($_POST['movil2']    ?? ''));
+    $email     = trim((string) ($_POST['email1']    ?? ''));
+    $password  = trim((string) ($_POST['password']  ?? ''));
+    $direccion = trim((string) ($_POST['direccion'] ?? ''));
+    $como      = trim((string) ($_POST['como']      ?? ''));
+
+    if (!$nif || !$nombre || !$apellidos || !$movil1 || !$email || !$password || !$direccion)
+        responderError(400, 'Faltan datos obligatorios.');
+
+    if (!preg_match('/^[0-9]{8}[A-Z]$/', $nif))
+        responderError(400, 'El formato del NIF no es válido.');
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL))
+        responderError(400, 'El email no es válido.');
+
+    $con    = conexionPDO();
+    $modelo = new Usuario($con);
+
+    if ($modelo->existeNif($nif))   responderError(409, 'Ya existe una cuenta con ese NIF.');
+    if ($modelo->existeEmail($email)) responderError(409, 'Ya existe una cuenta con ese email.');
+
+    $modelo->crearUsuario($nif, $nombre, $apellidos, $movil1, $movil2, $email, password_hash($password, PASSWORD_DEFAULT), $direccion, $como);
+
+    http_response_code(201);
+    echo json_encode(['ok' => true, 'mensaje' => 'Usuario creado correctamente']);
+    exit;
+}
+
+function verificarCampo(): void {
+    $campo = trim((string) ($_POST['campo'] ?? ''));
+    $valor = trim((string) ($_POST['valor'] ?? ''));
+
+    if (!$campo || !$valor) responderError(400, 'Faltan datos.');
+
+    $con    = conexionPDO();
+    $modelo = new Usuario($con);
+
+    $existe = match($campo) {
+        'nif'   => $modelo->existeNif($valor),
+        'email' => $modelo->existeEmail($valor),
+        default => null,
+    };
+
+    if ($existe === null) responderError(400, 'Campo no válido.');
+
+    echo json_encode(['existe' => $existe]);
     exit;
 }
 

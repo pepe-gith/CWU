@@ -6,7 +6,7 @@
 
     <?php include '../../inc/vite.php'; vite_assets(); ?>
 
-    <title>Eventos y Fiestas</title>
+<title>Eventos y Fiestas</title>
 </head>
 <body>
 

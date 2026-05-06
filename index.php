@@ -8,7 +8,7 @@
 
     <?php include './inc/vite.php'; vite_assets('index'); ?>
 
-    <title>CWU - Celebrate with US</title>
+<title>CWU - Celebrate with US</title>
 </head>
 <body>
     <!-- Vídeo de fondo -->

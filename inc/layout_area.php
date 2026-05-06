@@ -10,7 +10,7 @@ $content     = $content     ?? '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php include __DIR__ . '/vite.php'; vite_assets($layoutEntry ?? 'main'); ?>
-    <title><?php echo htmlspecialchars($layoutTitle ?? 'Mi área') ?></title>
+<title><?php echo htmlspecialchars($layoutTitle ?? 'Mi área') ?></title>
 </head>
 <body>
 

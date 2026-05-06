@@ -6,7 +6,7 @@
 
     <?php include '../../inc/vite.php'; vite_assets(); ?>
 
-    <title>La Clínica</title>
+<title>La Clínica</title>
 </head>
 <body>
     

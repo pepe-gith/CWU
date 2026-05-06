@@ -6,7 +6,7 @@
 
     <?php include '../../inc/vite.php'; vite_assets(); ?>
 
-    <title>Cumpleaños</title>
+<title>Cumpleaños</title>
 </head>
 <body>
 

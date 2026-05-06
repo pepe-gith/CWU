@@ -6,7 +6,7 @@
     
     <?php include '../../inc/vite.php'; vite_assets(); ?>
 
-    <title>La Biblioteca</title>
+<title>La Biblioteca</title>
 </head>
 <body>
     

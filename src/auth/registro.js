@@ -22,7 +22,8 @@ function verificarCampo(campo, valor, input) {
     formData.append('campo', campo)
     formData.append('valor', valor)
 
-    fetch('/cwu/Controladores/verificarCampo.php', { method: 'POST', body: formData })
+    formData.append('action', 'verificarCampo')
+    fetch('/cwu/Controladores/UsuarioControlador.php', { method: 'POST', body: formData })
         .then(res => res.json())
         .then(data => {
             input.classList.toggle('is-invalid', data.existe)
@@ -130,7 +131,8 @@ form.addEventListener('submit', function(event) {
 
     const formData = new FormData(this)
 
-    fetch('/cwu/Controladores/crearUsuario.php', { method: 'POST', body: formData })
+    formData.append('action', 'registrar')
+    fetch('/cwu/Controladores/UsuarioControlador.php', { method: 'POST', body: formData })
         .then(async res => {
             const data = await res.json()
             if (!data.ok) throw new Error(data.error || 'Error al registrar el cliente')

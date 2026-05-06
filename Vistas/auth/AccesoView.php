@@ -17,7 +17,7 @@ if (!empty($_SESSION['cliente'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php include '../../inc/vite.php'; vite_assets('auth/acceso'); ?>
-    <title>Acceso</title>
+<title>Acceso</title>
 </head>
 <body>
 
