@@ -110,6 +110,7 @@ function actualizarPerfil(): void {
     $direccion = trim((string) filter_input(INPUT_POST, 'direccion',     FILTER_UNSAFE_RAW));
 
     if (!$nombre || !$apellidos || !$email) responderError(400, 'Faltan campos obligatorios');
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) responderError(400, 'El email no es válido.');
 
     $con = conexionPDO();
     $modelo = new Usuario($con);

@@ -72,15 +72,26 @@ nifInput.addEventListener('blur', function() {
     }
 })
 
-emailInput.addEventListener('input', debounce(
-    () => verificarCampo('email', emailInput.value, emailInput), 500
-));
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+emailInput.addEventListener('input', debounce(() => {
+    if (emailRegex.test(emailInput.value.trim())) {
+        verificarCampo('email', emailInput.value, emailInput);
+    }
+}, 500));
 emailInput.addEventListener('blur', function() {
-    if (!this.value.trim()) {
+    const feedback = this.nextElementSibling;
+    const valor = this.value.trim();
+    if (!valor) {
         this.classList.add('is-invalid');
-        const feedback = this.nextElementSibling;
         if (feedback && feedback.classList.contains('invalid-feedback')) {
             feedback.textContent = 'Campo obligatorio.';
+        }
+    } else if (!emailRegex.test(valor)) {
+        this.classList.add('is-invalid');
+        this.classList.remove('is-valid');
+        if (feedback && feedback.classList.contains('invalid-feedback')) {
+            feedback.textContent = 'El email no es válido.';
         }
     }
 })
@@ -118,6 +129,15 @@ form.addEventListener('submit', function(event) {
         const feedback = nifInput.nextElementSibling;
         if (feedback?.classList.contains('invalid-feedback')) {
             feedback.textContent = 'El NIF introducido no es válido.'
+        }
+        hayErrores = true
+    }
+
+    if (emailInput && emailInput.value.trim() && !emailRegex.test(emailInput.value.trim())) {
+        emailInput.classList.add('is-invalid');
+        const feedback = emailInput.nextElementSibling;
+        if (feedback?.classList.contains('invalid-feedback')) {
+            feedback.textContent = 'El email no es válido.'
         }
         hayErrores = true
     }
