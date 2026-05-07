@@ -1,17 +1,17 @@
 fetch('/cwu/Controladores/AdminControlador.php?action=dashboard')
-    .then(r => r.json())
+    .then(resultado => resultado.json())
     .then(data => {
-        if (!data.ok) return
-        const d = data.data
+        if (!data.ok) return;
+        const d = data.data;
 
-        document.getElementById('kpi-solicitudes').textContent = d.solicitudes_pendientes
-        document.getElementById('kpi-reservas').textContent    = d.reservas_proximas
-        document.getElementById('kpi-clientes').textContent    = d.total_clientes
-        document.getElementById('kpi-ingresos').textContent    = d.ingresos_mes.toFixed(2) + ' €'
+        document.getElementById('kpi-solicitudes').textContent = d.solicitudes_pendientes;
+        document.getElementById('kpi-reservas').textContent = d.reservas_proximas;
+        document.getElementById('kpi-clientes').textContent = d.total_clientes;
+        document.getElementById('kpi-ingresos').textContent = d.ingresos_mes.toFixed(2) + ' €';
 
-        const alerta = document.getElementById('alerta-sin-empleado')
+        const alerta = document.getElementById('alerta-sin-empleado');
         if (d.reservas_sin_empleado > 0) {
-            alerta.className = 'alert alert-warning d-flex align-items-center gap-2 mb-4'
+            alerta.className = 'alert alert-warning d-flex align-items-center gap-2 mb-4';
             alerta.innerHTML = `
                 <i class="bi bi-exclamation-triangle-fill fs-5"></i>
                 <span>
@@ -23,12 +23,12 @@ fetch('/cwu/Controladores/AdminControlador.php?action=dashboard')
         document.getElementById('tabla-solicitudes').innerHTML =
             d.ultimas_solicitudes.length
                 ? renderSolicitudes(d.ultimas_solicitudes)
-                : '<p class="text-muted">No hay solicitudes pendientes.</p>'
+                : '<p class="text-muted">No hay solicitudes pendientes.</p>';
 
         document.getElementById('tabla-reservas').innerHTML =
             d.proximas_reservas.length
                 ? renderReservas(d.proximas_reservas)
-                : '<p class="text-muted">No hay reservas próximas.</p>'
+                : '<p class="text-muted">No hay reservas próximas.</p>';
     })
     .catch(() => {
         document.getElementById('kpis').innerHTML = '<p class="text-danger">Error al cargar los datos.</p>'
@@ -43,7 +43,7 @@ function renderSolicitudes(items) {
             <td>${s.num_participantes}</td>
             <td><span class="badge bg-warning text-dark">Pendiente</span></td>
         </tr>
-    `).join('')
+    `).join('');
 
     return `
         <div class="table-responsive">
@@ -63,14 +63,14 @@ function renderSolicitudes(items) {
 }
 
 function renderReservas(items) {
-    const filas = items.map(r => `
+    const filas = items.map(resultado => `
         <tr>
-            <td>${r.cliente} ${r.apellidos}</td>
-            <td>${r.servicio}</td>
-            <td>${r.fecha_evento}</td>
-            <td>${r.hora_inicio.slice(0,5)} – ${r.hora_fin.slice(0,5)}</td>
+            <td>${resultado.cliente} ${resultado.apellidos}</td>
+            <td>${resultado.servicio}</td>
+            <td>${resultado.fecha_evento}</td>
+            <td>${resultado.hora_inicio.slice(0,5)} – ${resultado.hora_fin.slice(0,5)}</td>
         </tr>
-    `).join('')
+    `).join('');
 
     return `
         <div class="table-responsive">

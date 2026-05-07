@@ -1,14 +1,15 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) session_start();
+﻿<?php
+require_once __DIR__ . '/../../inc/sesion.php';
+iniciarSesion();
 if (empty($_SESSION['cliente'])) {
     header('Location: /cwu/Vistas/auth/AccesoView.php');
     exit;
 }
 
 require_once '../../inc/helpers.php';
-$layoutTitle = 'Nueva solicitud';
-$layoutEntry = 'cliente/solEvento';
-$layoutMenu  = menuCliente('solEvento');
+$tituloPagina = 'Nueva solicitud';
+$entradaVite = 'cliente/solEvento';
+$menuLateral  = menuCliente('solEvento');
 
 ob_start();
 ?>
@@ -55,35 +56,39 @@ ob_start();
                     <div class="invalid-feedback">Campo obligatorio.</div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Sala Escape Room</label>
-                    <select class="form-select" name="sala" id="sala" required>
-                        <option value="" selected disabled>Selecciona sala</option>
-                        <option value="1">Clínica</option>
-                        <option value="2">Librería</option>
-                        <option value="3">Clínica y Librería</option>
-                    </select>
-                    <div class="invalid-feedback">Campo obligatorio.</div>
+                <div id="campos-escape" class="d-none">
+                    <div class="mb-3">
+                        <label class="form-label">Sala Escape Room <span class="text-danger">*</span></label>
+                        <select class="form-select" name="sala" id="sala">
+                            <option value="" selected disabled>Selecciona sala</option>
+                            <option value="1">Clínica</option>
+                            <option value="2">Librería</option>
+                            <option value="3">Clínica y Librería</option>
+                        </select>
+                        <div class="invalid-feedback">Campo obligatorio.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Realidad Virtual <span class="text-danger">*</span></label>
+                        <select class="form-select" name="realidad_virtual" id="realidad_virtual">
+                            <option value="" selected disabled>Selecciona opción</option>
+                            <option value="1">Con Realidad Virtual</option>
+                            <option value="2">Sin Realidad Virtual</option>
+                        </select>
+                        <div class="invalid-feedback">Campo obligatorio.</div>
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Realidad Virtual</label>
-                    <select class="form-select" name="realidad_virtual" id="realidad_virtual" required>
-                        <option value="" selected disabled>Selecciona opción</option>
-                        <option value="1">Con Realidad Virtual</option>
-                        <option value="2">Sin Realidad Virtual</option>
-                    </select>
-                    <div class="invalid-feedback">Campo obligatorio.</div>
-                </div>
-
-                <div class="mb-4">
-                    <label class="form-label">Tarta</label>
-                    <select class="form-select" name="tarta" id="tarta" required>
-                        <option value="" selected disabled>Selecciona opción</option>
-                        <option value="1">Con tarta (gratis en cumpleaños)</option>
-                        <option value="2">Sin tarta</option>
-                    </select>
-                    <div class="invalid-feedback">Campo obligatorio.</div>
+                <div id="campos-cumple" class="d-none">
+                    <div class="mb-4">
+                        <label class="form-label">Tarta</label>
+                        <select class="form-select" name="tarta" id="tarta" required>
+                            <option value="" selected disabled>Selecciona opción</option>
+                            <option value="1">Con tarta (gratis en cumpleaños)</option>
+                            <option value="2">Sin tarta</option>
+                        </select>
+                        <div class="invalid-feedback">Campo obligatorio.</div>
+                    </div>
                 </div>
 
                 <div class="mb-4">

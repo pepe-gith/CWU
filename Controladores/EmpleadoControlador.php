@@ -2,8 +2,9 @@
 require_once("../Modelos/conexion.php");
 require_once("../Modelos/Empleado.php");
 require_once("../inc/helpers.php");
+require_once("../inc/sesion.php");
 
-if (session_status() === PHP_SESSION_NONE) session_start();
+iniciarSesion();
 
 header('Content-Type: application/json');
 
@@ -16,12 +17,12 @@ $idUsuario = (int) $_SESSION['cliente']['id'];
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
 match($action) {
-    'agenda'                => agenda($idUsuario),
-    'historial'             => historial($idUsuario),
-    'responderAsignacion'   => responderAsignacion($idUsuario),
+    'agenda'  => agenda($idUsuario),
+    'historial' => historial($idUsuario),
+    'responderAsignacion' => responderAsignacion($idUsuario),
     'obtenerPerfilEmpleado' => obtenerPerfilEmpleado($idUsuario),
     'guardarPerfilEmpleado' => guardarPerfilEmpleado($idUsuario),
-    default                 => responderError(400, 'Acción no válida.')
+    default => responderError(400, 'Acción no válida.')
 };
 
 function obtenerPerfilEmpleado(int $idUsuario): void {
@@ -44,7 +45,7 @@ function guardarPerfilEmpleado(int $idUsuario): void {
 }
 
 function agenda(int $idUsuario): void {
-    $modelo     = new Empleado(conexionPDO());
+    $modelo  = new Empleado(conexionPDO());
     $idEmpleado = $modelo->obtenerIdPorUsuario($idUsuario);
     if (!$idEmpleado) responderError(404, 'No tienes perfil de empleado.');
     echo json_encode(['ok' => true, 'data' => $modelo->agenda($idEmpleado)]);
@@ -60,7 +61,7 @@ function historial(int $idUsuario): void {
 }
 
 function responderAsignacion(int $idUsuario): void {
-    $id     = (int) filter_input(INPUT_POST, 'id',     FILTER_SANITIZE_NUMBER_INT);
+    $id  = (int) filter_input(INPUT_POST, 'id',     FILTER_SANITIZE_NUMBER_INT);
     $estado = trim((string) filter_input(INPUT_POST, 'estado', FILTER_UNSAFE_RAW));
     if (!$id || !in_array($estado, ['aceptada', 'rechazada'])) responderError(400, 'Datos no válidos');
 

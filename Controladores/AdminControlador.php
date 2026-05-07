@@ -6,8 +6,9 @@ require_once("../Modelos/Reserva.php");
 require_once("../Modelos/SolicitudEvento.php");
 require_once("../Modelos/Servicio.php");
 require_once("../inc/helpers.php");
+require_once("../inc/sesion.php");
 
-if (session_status() === PHP_SESSION_NONE) session_start();
+iniciarSesion();
 
 header('Content-Type: application/json');
 
@@ -18,46 +19,46 @@ if (empty($_SESSION['cliente']['id_rol']) || (int)$_SESSION['cliente']['id_rol']
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
 match($action) {
-    'dashboard'            => dashboard(),
-    'solicitudes'          => solicitudes(),
-    'cambiarEstado'        => cambiarEstado(),
-    'reservas'             => reservas(),
+    'dashboard' => dashboard(),
+    'solicitudes' => solicitudes(),
+    'cambiarEstado' => cambiarEstado(),
+    'reservas' => reservas(),
     'cambiarEstadoReserva' => cambiarEstadoReserva(),
-    'gestionarCambio'      => gestionarCambio(),
-    'editarReserva'        => editarReserva(),
-    'empleados'            => empleados(),
-    'guardarEmpleado'      => guardarEmpleado(),
-    'asignacionesReserva'  => asignacionesReserva(),
-    'asignarEmpleado'      => asignarEmpleado(),
-    'eliminarAsignacion'   => eliminarAsignacion(),
-    'obtenerServicios'     => obtenerServicios(),
-    'crearReserva'         => crearReserva(),
-    'usuarios'             => usuarios(),
-    'cambiarRol'           => cambiarRol(),
-    'roles'                => roles(),
-    'editarUsuario'        => editarUsuario(),
-    'toggleActivo'         => toggleActivo(),
-    'confirmarDesactivar'  => confirmarDesactivar(),
-    'historialUsuario'     => historialUsuario(),
-    'crearUsuario'         => crearUsuario(),
-    'eventosCalendario'    => eventosCalendario(),
-    default                => responderError(400, 'Acción no válida.')
+    'gestionarCambio' => gestionarCambio(),
+    'editarReserva' => editarReserva(),
+    'empleados' => empleados(),
+    'guardarEmpleado' => guardarEmpleado(),
+    'asignacionesReserva' => asignacionesReserva(),
+    'asignarEmpleado' => asignarEmpleado(),
+    'eliminarAsignacion' => eliminarAsignacion(),
+    'obtenerServicios' => obtenerServicios(),
+    'crearReserva' => crearReserva(),
+    'usuarios' => usuarios(),
+    'cambiarRol' => cambiarRol(),
+    'roles' => roles(),
+    'editarUsuario' => editarUsuario(),
+    'toggleActivo' => toggleActivo(),
+    'confirmarDesactivar' => confirmarDesactivar(),
+    'historialUsuario' => historialUsuario(),
+    'crearUsuario' => crearUsuario(),
+    'eventosCalendario' => eventosCalendario(),
+    default => responderError(400, 'Acción no válida.')
 };
 
 function dashboard(): void {
-    $con      = conexionPDO();
-    $solModel = new SolicitudEvento($con);
-    $resModel = new Reserva($con);
-    $usrModel = new Usuario($con);
+    $conexion  = conexionPDO();
+    $solModel = new SolicitudEvento($conexion);
+    $resModel = new Reserva($conexion);
+    $usrModel = new Usuario($conexion);
 
     echo json_encode(['ok' => true, 'data' => [
         'solicitudes_pendientes' => $solModel->contarPendientes(),
-        'reservas_proximas'      => $resModel->statsProximas(),
-        'total_clientes'         => $usrModel->totalClientes(),
-        'ingresos_mes'           => $resModel->ingresosMes(),
-        'reservas_sin_empleado'  => $resModel->statsSinEmpleado(),
-        'ultimas_solicitudes'    => $solModel->ultimasPendientes(5),
-        'proximas_reservas'      => $resModel->proximasLista(5),
+        'reservas_proximas' => $resModel->statsProximas(),
+        'total_clientes' => $usrModel->totalClientes(),
+        'ingresos_mes' => $resModel->ingresosMes(),
+        'reservas_sin_empleado' => $resModel->statsSinEmpleado(),
+        'ultimas_solicitudes' => $solModel->ultimasPendientes(5),
+        'proximas_reservas' => $resModel->proximasLista(5),
     ]]);
     exit;
 }
@@ -152,8 +153,8 @@ function obtenerServicios(): void {
 }
 
 function crearReserva(): void {
-    $idUsuario   = (int) filter_input(INPUT_POST, 'id_usuario',    FILTER_SANITIZE_NUMBER_INT);
-    $idServicio  = (int) filter_input(INPUT_POST, 'id_servicio',   FILTER_SANITIZE_NUMBER_INT);
+    $idUsuario = (int) filter_input(INPUT_POST, 'id_usuario',    FILTER_SANITIZE_NUMBER_INT);
+    $idServicio = (int) filter_input(INPUT_POST, 'id_servicio',   FILTER_SANITIZE_NUMBER_INT);
     $fechaEvento = trim((string) filter_input(INPUT_POST, 'fecha_evento',  FILTER_UNSAFE_RAW));
     $horaInicio  = trim((string) filter_input(INPUT_POST, 'hora_inicio',   FILTER_UNSAFE_RAW));
     $horaFin     = trim((string) filter_input(INPUT_POST, 'hora_fin',      FILTER_UNSAFE_RAW));
@@ -218,16 +219,16 @@ function roles(): void {
 }
 
 function cambiarRol(): void {
-    $id     = (int) filter_input(INPUT_POST, 'id',  FILTER_SANITIZE_NUMBER_INT);
-    $rol    = (int) filter_input(INPUT_POST, 'rol', FILTER_SANITIZE_NUMBER_INT);
+    $id  = (int) filter_input(INPUT_POST, 'id',  FILTER_SANITIZE_NUMBER_INT);
+    $rol = (int) filter_input(INPUT_POST, 'rol', FILTER_SANITIZE_NUMBER_INT);
     $forzar = !empty($_POST['forzar']);
 
     if (!$id || !in_array($rol, [1, 2, 3])) responderError(400, 'Datos no válidos');
     if ($id === (int) $_SESSION['cliente']['id']) responderError(403, 'No puedes cambiar tu propio rol.');
 
-    $con      = conexionPDO();
-    $usrModel = new Usuario($con);
-    $empModel = new Empleado($con);
+    $conexion  = conexionPDO();
+    $usrModel = new Usuario($conexion);
+    $empModel = new Empleado($conexion);
 
     $rolActual = $usrModel->getRol($id);
 
@@ -253,10 +254,10 @@ function cambiarRol(): void {
 }
 
 function editarUsuario(): void {
-    $id        = (int) filter_input(INPUT_POST, 'id',        FILTER_SANITIZE_NUMBER_INT);
-    $nombre    = trim((string) filter_input(INPUT_POST, 'nombre',    FILTER_UNSAFE_RAW));
+    $id = (int) filter_input(INPUT_POST, 'id',        FILTER_SANITIZE_NUMBER_INT);
+    $nombre = trim((string) filter_input(INPUT_POST, 'nombre',    FILTER_UNSAFE_RAW));
     $apellidos = trim((string) filter_input(INPUT_POST, 'apellidos', FILTER_UNSAFE_RAW));
-    $email     = trim((string) filter_input(INPUT_POST, 'email',     FILTER_SANITIZE_EMAIL));
+    $email = trim((string) filter_input(INPUT_POST, 'email',     FILTER_SANITIZE_EMAIL));
     $telefono  = trim((string) filter_input(INPUT_POST, 'telefono',  FILTER_UNSAFE_RAW));
 
     if (!$id || !$nombre || !$apellidos || !$email) responderError(400, 'Faltan campos obligatorios');
@@ -274,9 +275,9 @@ function toggleActivo(): void {
     if (!$id) responderError(400, 'Datos no válidos');
     if ($id === (int) $_SESSION['cliente']['id']) responderError(403, 'No puedes desactivarte a ti mismo');
 
-    $con      = conexionPDO();
-    $usrModel = new Usuario($con);
-    $empModel = new Empleado($con);
+    $conexion  = conexionPDO();
+    $usrModel = new Usuario($conexion);
+    $empModel = new Empleado($conexion);
 
     if ($usrModel->getActivo($id)) {
         $idEmpleado = $empModel->obtenerIdPorUsuario($id);
@@ -299,12 +300,12 @@ function confirmarDesactivar(): void {
     if (!$id) responderError(400, 'Datos no válidos');
     if ($id === (int) $_SESSION['cliente']['id']) responderError(403, 'No puedes desactivarte a ti mismo');
 
-    $con        = conexionPDO();
-    $empModel   = new Empleado($con);
+    $conexion  = conexionPDO();
+    $empModel   = new Empleado($conexion);
     $idEmpleado = $empModel->obtenerIdPorUsuario($id);
     if ($idEmpleado) $empModel->eliminarAsignacionesFuturas($idEmpleado);
 
-    (new Usuario($con))->desactivar($id);
+    (new Usuario($conexion))->desactivar($id);
     echo json_encode(['ok' => true, 'activo' => false, 'mensaje' => 'Usuario desactivado y asignaciones futuras eliminadas']);
     exit;
 }
@@ -313,19 +314,19 @@ function historialUsuario(): void {
     $id = (int) ($_GET['id'] ?? 0);
     if (!$id) responderError(400, 'ID requerido');
 
-    $con      = conexionPDO();
-    $usrModel = new Usuario($con);
+    $conexion  = conexionPDO();
+    $usrModel = new Usuario($conexion);
     $rol      = $usrModel->getRol($id);
 
     if ($rol === 3) {
         echo json_encode([
             'ok'          => true,
             'rol'         => 'cliente',
-            'solicitudes' => (new SolicitudEvento($con))->historialPorCliente($id),
-            'reservas'    => (new Reserva($con))->historialPorCliente($id),
+            'solicitudes' => (new SolicitudEvento($conexion))->historialPorCliente($id),
+            'reservas'    => (new Reserva($conexion))->historialPorCliente($id),
         ]);
     } elseif ($rol === 2) {
-        $empModel   = new Empleado($con);
+        $empModel   = new Empleado($conexion);
         $idEmpleado = $empModel->obtenerIdPorUsuario($id);
         echo json_encode([
             'ok'           => true,
@@ -370,11 +371,11 @@ function eliminarAsignacion(): void {
 
 function eventosCalendario(): void {
     $start = $_GET['start'] ?? '';
-    $end   = $_GET['end']   ?? '';
+    $end = $_GET['end']   ?? '';
 
-    $con      = conexionPDO();
-    $resModel = new Reserva($con);
-    $solModel = new SolicitudEvento($con);
+    $conexion  = conexionPDO();
+    $resModel = new Reserva($conexion);
+    $solModel = new SolicitudEvento($conexion);
 
     $eventos = [];
 
@@ -386,30 +387,30 @@ function eventosCalendario(): void {
             'start' => $r['fecha_evento'],
             'color' => $color,
             'extendedProps' => [
-                'tipo'           => 'reserva',
-                'cliente'        => $r['cliente'] . ' ' . $r['apellidos'],
-                'servicio'       => $r['servicio'],
-                'hora_inicio'    => substr($r['hora_inicio'], 0, 5),
-                'hora_fin'       => substr($r['hora_fin'], 0, 5),
+                'tipo'  => 'reserva',
+                'cliente' => $r['cliente'] . ' ' . $r['apellidos'],
+                'servicio' => $r['servicio'],
+                'hora_inicio' => substr($r['hora_inicio'], 0, 5),
+                'hora_fin' => substr($r['hora_fin'], 0, 5),
                 'num_asistentes' => $r['num_asistentes'],
-                'estado'         => $r['estado'],
-                'empleados'      => $resModel->empleadosPorReserva($r['id']),
+                'estado' => $r['estado'],
+                'empleados' => $resModel->empleadosPorReserva($r['id']),
             ],
         ];
     }
 
-    foreach ($solModel->solicitudesCalendario($start, $end) as $s) {
+    foreach ($solModel->solicitudesCalendario($start, $end) as $solicitud) {
         $eventos[] = [
-            'id'        => 's-' . $s['id'],
-            'title'     => $s['cliente'] . ' ' . $s['apellidos'] . ' — ' . $s['tipo_evento'],
-            'start'     => $s['fecha_evento'],
-            'color'     => '#ffc107',
+            'id'  => 's-' . $solicitud['id'],
+            'title' => $solicitud['cliente'] . ' ' . $solicitud['apellidos'] . ' — ' . $solicitud['tipo_evento'],
+            'start' => $solicitud['fecha_evento'],
+            'color' => '#ffc107',
             'textColor' => '#000',
             'extendedProps' => [
-                'tipo'             => 'solicitud',
-                'cliente'          => $s['cliente'] . ' ' . $s['apellidos'],
-                'tipo_evento'      => $s['tipo_evento'],
-                'num_participantes'=> $s['num_participantes'],
+                'tipo' => 'solicitud',
+                'cliente' => $solicitud['cliente'] . ' ' . $solicitud['apellidos'],
+                'tipo_evento' => $solicitud['tipo_evento'],
+                'num_participantes' => $solicitud['num_participantes'],
             ],
         ];
     }
@@ -419,25 +420,25 @@ function eventosCalendario(): void {
 }
 
 function crearUsuario(): void {
-    $nombre    = trim((string) filter_input(INPUT_POST, 'nombre',    FILTER_UNSAFE_RAW));
+    $nombre = trim((string) filter_input(INPUT_POST, 'nombre',    FILTER_UNSAFE_RAW));
     $apellidos = trim((string) filter_input(INPUT_POST, 'apellidos', FILTER_UNSAFE_RAW));
-    $nif       = trim((string) filter_input(INPUT_POST, 'nif',       FILTER_UNSAFE_RAW));
-    $telefono  = trim((string) filter_input(INPUT_POST, 'telefono',  FILTER_UNSAFE_RAW));
-    $email     = trim((string) filter_input(INPUT_POST, 'email',     FILTER_SANITIZE_EMAIL));
-    $password  = trim((string) filter_input(INPUT_POST, 'password',  FILTER_UNSAFE_RAW));
-    $idRol     = (int) filter_input(INPUT_POST, 'id_rol', FILTER_SANITIZE_NUMBER_INT);
+    $nif = trim((string) filter_input(INPUT_POST, 'nif',       FILTER_UNSAFE_RAW));
+    $telefono = trim((string) filter_input(INPUT_POST, 'telefono',  FILTER_UNSAFE_RAW));
+    $email = trim((string) filter_input(INPUT_POST, 'email',     FILTER_SANITIZE_EMAIL));
+    $password = trim((string) filter_input(INPUT_POST, 'password',  FILTER_UNSAFE_RAW));
+    $idRol = (int) filter_input(INPUT_POST, 'id_rol', FILTER_SANITIZE_NUMBER_INT);
 
     if (!$nombre || !$nif || !$email || !$password || !$idRol) responderError(400, 'Faltan campos obligatorios');
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) responderError(400, 'Email no válido');
 
-    $con       = conexionPDO();
-    $usrModel  = new Usuario($con);
-    $idEmpresa = (int) ($_SESSION['cliente']['id_empresa'] ?? 1);
+    $conexion = conexionPDO();
+    $usrModel  = new Usuario($conexion); 
+    $idEmpresa = (int) ($_SESSION['cliente']['id_empresa'] ?? 1);   
 
-    try {
+    try {   
         $idNuevo = $usrModel->crearAdmin($nif, $nombre, $apellidos ?: null, $telefono ?: null, $email, password_hash($password, PASSWORD_BCRYPT), $idRol, $idEmpresa);
         if ($idRol === 2) {
-            (new Empleado($con))->crear($idNuevo, $idEmpresa, 0.0);
+            (new Empleado($conexion))->crear($idNuevo, $idEmpresa, 0.0);
         }
         echo json_encode(['ok' => true, 'mensaje' => 'Usuario creado correctamente']);
     } catch (\PDOException $e) {

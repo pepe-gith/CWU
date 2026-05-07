@@ -1,5 +1,6 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) session_start();
+﻿<?php
+require_once __DIR__ . '/../../inc/sesion.php';
+iniciarSesion();
 if (empty($_SESSION['cliente'])) {
     header('Location: /cwu/Vistas/auth/AccesoView.php');
     exit;
@@ -7,15 +8,15 @@ if (empty($_SESSION['cliente'])) {
 
 require_once '../../inc/helpers.php';
 
-$idRol = (int) ($_SESSION['cliente']['id_rol'] ?? 3);
-$layoutMenu = match($idRol) {
+$idRol = (int) ($_SESSION['cliente']['id_rol']);
+$menuLateral = match($idRol) {
     1       => menuAdmin('perfil'),
     2       => menuEmpleado('perfil'),
     default => menuCliente('perfil'),
 };
 
-$layoutTitle = 'Mi perfil';
-$layoutEntry = 'perfil/perfil';
+$tituloPagina = 'Mi perfil';
+$entradaVite = 'perfil/perfil';
 
 ob_start();
 ?>
@@ -115,7 +116,7 @@ ob_start();
                         <div class="row g-3">
                             <div class="col-12">
                                 <label class="form-label">Especialidad</label>
-                                <input type="text" class="form-control" id="especialidad" name="especialidad" placeholder="Ej: Animación infantil, Escape room...">
+                                <input type="text" class="form-control" id="especialidad" name="especialidad" placeholder="Animación infantil, Escape room...">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Precio por hora (€)</label>

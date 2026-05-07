@@ -1,14 +1,15 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) session_start();
+﻿<?php
+require_once __DIR__ . '/../../inc/sesion.php';
+iniciarSesion();
 if (empty($_SESSION['cliente']) || (int)($_SESSION['cliente']['id_rol'] ?? 0) !== 1) {
     header('Location: /cwu/Vistas/auth/AccesoView.php');
     exit;
 }
 
 require_once '../../inc/helpers.php';
-$layoutTitle = 'Solicitudes';
-$layoutEntry = 'admin/solicitudes';
-$layoutMenu  = menuAdmin('solicitudes');
+$tituloPagina = 'Solicitudes';
+$entradaVite = 'admin/solicitudes';
+$menuLateral  = menuAdmin('solicitudes');
 
 ob_start();
 ?>
@@ -62,7 +63,8 @@ ob_start();
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Fecha límite para aceptar</label>
-                        <input type="date" class="form-control" name="fecha_limite_presupuesto">
+                        <input type="date" class="form-control" name="fecha_limite_presupuesto" id="fecha-limite-presupuesto">
+                        <div class="form-text" id="ref-fecha-evento"></div>
                     </div>
                 </div>
                 <div class="modal-footer">

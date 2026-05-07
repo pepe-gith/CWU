@@ -8,19 +8,23 @@ INSERT INTO Rol (nombre_rol) VALUES
 ('empleado'),
 ('cliente');
 
-INSERT INTO Categoria (nombre) VALUES
-('Extraescolar'),
-('Escape Room'),
-('Cumpleaños'),
-('Eventos');
+INSERT INTO Categoria (nombre, requiere_sala_vr, requiere_tarta) VALUES
+('Extraescolar', 0, 0),
+('Escape Room',  1, 0),
+('Cumpleaños',   0, 1),
+('Eventos',      0, 0);
 
 ---
 
+-- Contraseñas de prueba (bcrypt PASSWORD_DEFAULT):
+--   admin@aventurakids.com    → admin1234
+--   monitor1@aventurakids.com → empleado1234
+--   cliente1@gmail.com        → cliente1234
 INSERT INTO Usuario (nif, nombre, apellidos, telefono, otro_telefono, email, password_hash, direccion, como_conoce, id_rol, id_empresa)
 VALUES
-('12345678A', 'Laura', 'Gómez', '600111111', NULL, 'admin@aventurakids.com', 'hash_admin', 'Madrid', 'web', 1, 1),
-('87654321B', 'Carlos', 'Pérez', '600222222', NULL, 'monitor1@aventurakids.com', 'hash_monitor', 'Madrid', 'instagram', 2, 1),
-('11223344C', 'Marta', 'López', '600333333', NULL, 'cliente1@gmail.com', 'hash_cliente', 'Madrid', 'amigo', 3, 1);
+('12345678Z', 'Laura', 'Gómez', '600111111', NULL, 'admin@aventurakids.com',    '$2y$10$pDZHK9SHkx37i9mhbcLtpecvG.GiIw6I2spOijJpa35.774LUIbzC', 'Madrid', 'web',       1, 1),
+('87654321X', 'Carlos', 'Pérez', '600222222', NULL, 'monitor1@aventurakids.com', '$2y$10$m0yBaeZh6gXtZTAHKfhb.uozfZWdpYJiPblSPsFNKkwsJXvdx6dHC', 'Madrid', 'instagram', 2, 1),
+('11223344B', 'Marta', 'López', '600333333', NULL, 'cliente1@gmail.com',         '$2y$10$Ya4egCEm3K0s1b/CLmk4feRm5Y0YitZCQx2dwBCglRoLf9u8RxV2a', 'Madrid', 'amigo',     3, 1);
 
 INSERT INTO Servicio (nombre, descripcion, precio_base, capacidad, id_categoria, id_empresa)
 VALUES
@@ -35,9 +39,9 @@ INSERT INTO Reserva (fecha_reserva, fecha_evento, hora_inicio, hora_fin, num_asi
 VALUES
 ('2026-03-23', '2026-04-05', '17:00:00', '19:00:00', 10, 'confirmada', 'Cumpleaños de Ana', 3, 2, 1);
 
-INSERT INTO Pago_Cliente (monto, fecha, metodo, estado, id_reserva)
+INSERT INTO Pago_Cliente (monto, fecha, metodo, estado, referencia, id_reserva)
 VALUES
-(200.00, '2026-03-23', 'tarjeta', 'pagado', 1);
+(200.00, '2026-03-23', 'tarjeta', 'confirmado', NULL, 1);
 
 INSERT INTO Asignacion_Empleado (rol_evento, id_reserva, id_empleado)
 VALUES

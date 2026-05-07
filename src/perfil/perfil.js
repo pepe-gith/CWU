@@ -1,117 +1,135 @@
-const CONTROLADOR = '/cwu/Controladores/UsuarioControlador.php'
+const pathControlador = '/cwu/Controladores/UsuarioControlador.php';
 
 // Cargar datos al inicio
-fetch(`${CONTROLADOR}?action=obtenerPerfil`)
+fetch(`${pathControlador}?action=obtenerPerfil`)
     .then(r => r.json())
-    .then(data => {
-        if (!data.ok) return mostrarAlerta('danger', data.error)
-        const u = data.data
-        document.getElementById('nombre').value       = u.nombre        ?? ''
-        document.getElementById('apellidos').value    = u.apellidos     ?? ''
-        document.getElementById('nif').value          = u.nif           ?? ''
-        document.getElementById('email').value        = u.email         ?? ''
-        document.getElementById('telefono').value     = u.telefono      ?? ''
-        document.getElementById('otro_telefono').value= u.otro_telefono ?? ''
-        document.getElementById('direccion').value    = u.direccion     ?? ''
+    .then(datos => {
+        if (!datos.ok) return mostrarAlerta('danger', datos.error);
+
+        const usuario = datos.data;
+        document.getElementById('nombre').value = usuario.nombre ?? '';
+        document.getElementById('apellidos').value = usuario.apellidos ?? '';
+        document.getElementById('nif').value = usuario.nif ?? '';
+        document.getElementById('email').value = usuario.email ?? '';
+        document.getElementById('telefono').value = usuario.telefono ?? '';
+        document.getElementById('otro_telefono').value = usuario.otro_telefono ?? '';
+        document.getElementById('direccion').value = usuario.direccion ?? '';
+
     })
-    .catch(() => mostrarAlerta('danger', 'Error al cargar los datos del perfil'))
+    .catch(
+        function() { 
+            mostrarAlerta('danger', 'Error al cargar los datos del perfil'); 
+        }
+    );
 
 // Guardar datos personales
-document.getElementById('form-perfil').addEventListener('submit', async e => {
-    e.preventDefault()
-    const spinner = document.getElementById('spinner-perfil')
-    const btn     = document.getElementById('btn-guardar')
-    spinner.classList.remove('d-none')
-    btn.disabled = true
+document.getElementById('form-perfil').addEventListener('submit', async evento => {
+    evento.preventDefault();
+    const spinner = document.getElementById('spinner-perfil');
+    const btn     = document.getElementById('btn-guardar');
+    spinner.classList.remove('d-none');
+    btn.disabled = true;
 
     try {
-        const body = new FormData(e.target)
-        body.append('action', 'actualizarPerfil')
-        const res  = await fetch(CONTROLADOR, { method: 'POST', body })
-        const data = await res.json()
-        if (data.ok) mostrarAlerta('success', data.mensaje)
-        else         mostrarAlerta('danger',  data.error)
+        const body = new FormData(evento.target);
+        body.append('action', 'actualizarPerfil');
+        const res  = await fetch(pathControlador, { method: 'POST', body });
+        const data = await res.json();
+        if (data.ok) {
+            mostrarAlerta('success', data.mensaje);
+        } else  {
+
+            mostrarAlerta('danger',  data.error);
+        }   
     } catch {
-        mostrarAlerta('danger', 'Error de conexión')
+        mostrarAlerta('danger', 'Error de conexión');
     } finally {
-        spinner.classList.add('d-none')
-        btn.disabled = false
+        spinner.classList.add('d-none');
+        btn.disabled = false;
     }
-})
+});
 
 // Cambiar contraseña
-document.getElementById('form-password').addEventListener('submit', async e => {
-    e.preventDefault()
-    const spinner = document.getElementById('spinner-password')
-    const btn     = document.getElementById('btn-password')
+document.getElementById('form-password').addEventListener('submit', async evento => {
+    evento.preventDefault();
+    const spinner = document.getElementById('spinner-password');
+    const btn     = document.getElementById('btn-password');
 
-    const nueva     = e.target.password_nueva.value
-    const confirmar = e.target.password_confirmar.value
+    const nueva     = evento.target.password_nueva.value;
+    const confirmar = evento.target.password_confirmar.value;
+
     if (nueva !== confirmar) {
-        mostrarAlerta('danger', 'Las contraseñas no coinciden')
-        return
+        mostrarAlerta('danger', 'Las contraseñas no coinciden');
+        return;
     }
 
-    spinner.classList.remove('d-none')
-    btn.disabled = true
+    spinner.classList.remove('d-none');
+    btn.disabled = true;
 
     try {
-        const body = new FormData(e.target)
-        body.append('action', 'cambiarPassword')
-        const res  = await fetch(CONTROLADOR, { method: 'POST', body })
-        const data = await res.json()
-        if (data.ok) {
-            mostrarAlerta('success', data.mensaje)
-            e.target.reset()
+        const body = new FormData(evento.target);
+        body.append('action', 'cambiarPassword');
+
+        const respuesta  = await fetch(pathControlador, { method: 'POST', body });
+        const dato = await respuesta.json();
+        if (dato.ok) {
+            mostrarAlerta('success', dato.mensaje);
+            evento.target.reset();
         } else {
-            mostrarAlerta('danger', data.error)
+            mostrarAlerta('danger', dato.error);
         }
     } catch {
-        mostrarAlerta('danger', 'Error de conexión')
+        mostrarAlerta('danger', 'Error de conexión');
     } finally {
-        spinner.classList.add('d-none')
-        btn.disabled = false
+        spinner.classList.add('d-none');
+        btn.disabled = false;
     }
-})
+});
 
 // Datos laborales (solo empleados)
 if (window.ID_ROL === 2) {
     fetch('/cwu/Controladores/EmpleadoControlador.php?action=obtenerPerfilEmpleado')
-        .then(r => r.json())
-        .then(data => {
-            if (!data.ok) return
-            document.getElementById('especialidad').value    = data.data.especialidad    ?? ''
-            document.getElementById('precio_por_hora').value = data.data.precio_por_hora ?? ''
+        .then(respuesta => respuesta.json())
+        .then(datos => {
+            if (!datos.ok) return;
+            document.getElementById('especialidad').value    = datos.data.especialidad    ?? '';
+            document.getElementById('precio_por_hora').value = datos.data.precio_por_hora ?? '';
         })
 
-    document.getElementById('form-empleado').addEventListener('submit', async e => {
-        e.preventDefault()
-        const spinner = document.getElementById('spinner-empleado')
-        const btn     = document.getElementById('btn-guardar-empleado')
-        spinner.classList.remove('d-none')
-        btn.disabled = true
+    document.getElementById('form-empleado').addEventListener('submit', async evento => {
+        evento.preventDefault();
+        const spinner = document.getElementById('spinner-empleado');
+        const btn     = document.getElementById('btn-guardar-empleado');
+        spinner.classList.remove('d-none');
+        btn.disabled = true;
 
         try {
-            const body = new FormData(e.target)
-            body.append('action', 'guardarPerfilEmpleado')
-            const res  = await fetch('/cwu/Controladores/EmpleadoControlador.php', { method: 'POST', body })
-            const data = await res.json()
-            if (data.ok) mostrarAlerta('success', data.mensaje)
-            else         mostrarAlerta('danger',  data.error)
+            const body = new FormData(evento.target);
+            body.append('action', 'guardarPerfilEmpleado');
+
+            const respuesta  = await fetch('/cwu/Controladores/EmpleadoControlador.php', { method: 'POST', body });
+            const dato = await respuesta.json();
+
+            if (dato.ok) { 
+                mostrarAlerta('success', dato.mensaje);
+            } else {
+                mostrarAlerta('danger',  dato.error);
+            }
+
         } catch {
-            mostrarAlerta('danger', 'Error de conexión')
+            mostrarAlerta('danger', 'Error de conexión');
         } finally {
-            spinner.classList.add('d-none')
-            btn.disabled = false
+            spinner.classList.add('d-none');
+            btn.disabled = false;
         }
-    })
+    });
 }
 
 function mostrarAlerta(tipo, mensaje) {
-    const el = document.getElementById('perfil-alert')
-    el.innerHTML = `<div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+    const alert = document.getElementById('perfil-alert');
+    alert.innerHTML = `<div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
         ${mensaje}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>`
-    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    </div>`;
+    alert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }

@@ -1,17 +1,18 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) session_start();
+﻿<?php
+require_once __DIR__ . '/../../inc/sesion.php';
+iniciarSesion();
 if (empty($_SESSION['cliente'])) {
     header('Location: /cwu/Vistas/auth/AccesoView.php');
     exit;
 }
 
 require_once '../../inc/helpers.php';
-$layoutTitle = 'Mi área';
-$layoutEntry = 'cliente/inicio';
-$layoutMenu  = menuCliente('resumen');
+$tituloPagina = 'Mi área';
+$entradaVite = 'cliente/inicio';
+$menuLateral  = menuCliente('resumen');
 
 ob_start();
-$nombre = htmlspecialchars($_SESSION['cliente']['nombre'] ?? 'Cliente', ENT_QUOTES, 'UTF-8');
+$nombre = htmlspecialchars($_SESSION['cliente']['nombre']);
 ?>
 <div class="area-page">
 

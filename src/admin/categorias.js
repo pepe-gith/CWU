@@ -1,4 +1,4 @@
-const CONTROLADOR = '/cwu/Controladores/CategoriaControlador.php';
+const pathControlador = '/cwu/Controladores/CategoriaControlador.php';
 let eliminarPendiente = null;
 
 cargar();
@@ -7,13 +7,13 @@ document.getElementById('btn-nueva-categoria').addEventListener('click', () => {
     abrirModal(null);
 })
 
-document.getElementById('form-categoria').addEventListener('submit', e => {
-    e.preventDefault();
-    const fd = new FormData(e.target);
+document.getElementById('form-categoria').addEventListener('submit', evento => {
+    evento.preventDefault();
+    const fd = new FormData(evento.target);
     fd.append('action', fd.get('id') ? 'editar' : 'crear');
 
-    fetch(CONTROLADOR, { method: 'POST', body: fd })
-        .then(r => r.json())
+    fetch(pathControlador, { method: 'POST', body: fd })
+        .then(resultado => resultado.json())
         .then(data => {
             if (!data.ok) { window.mostrarToast(data.error, 'danger'); return }
             window.bootstrap.Modal.getInstance(document.getElementById('modalCategoria')).hide();
@@ -33,7 +33,7 @@ document.getElementById('btn-confirmar-eliminar-categoria').addEventListener('cl
     window.bootstrap.Modal.getInstance(document.getElementById('modalEliminarCategoria')).hide();
     eliminarPendiente = null;
 
-    fetch(CONTROLADOR, { method: 'POST', body: fd })
+    fetch(pathControlador, { method: 'POST', body: fd })
         .then(r => r.json())
         .then(data => {
             if (!data.ok) { window.mostrarToast(data.error, 'danger'); return }
@@ -47,7 +47,7 @@ function cargar() {
     const contenedor = document.getElementById('tabla-categorias')
     contenedor.innerHTML = '<p class="text-muted p-4">Cargando...</p>'
 
-    fetch(`${CONTROLADOR}?action=listar`)
+    fetch(`${pathControlador}?action=listar`)
         .then(r => r.json())
         .then(data => {
             if (!data.ok || !data.categorias.length) {
@@ -70,13 +70,19 @@ function cargar() {
                                     <td class="text-muted">${categoria.id}</td>
                                     <td>
                                         <span class="fw-medium">${categoria.nombre}</span>
+                                        ${categoria.requiere_sala_vr == 1
+                                            ? '<span class="badge bg-info text-dark ms-2">Sala + RV</span>'
+                                            : ''}
+                                        ${categoria.requiere_tarta == 1
+                                            ? '<span class="badge bg-warning text-dark ms-2">Tarta</span>'
+                                            : ''}
                                         ${categoria.num_solicitudes > 0
                                             ? `<span class="badge bg-primary ms-2">${categoria.num_solicitudes} ${categoria.num_solicitudes === 1 ? 'solicitud' : 'solicitudes'}</span>`
                                             : ''}
                                     </td>
                                     <td class="text-end">
                                         <div class="d-flex gap-1 justify-content-end">
-                                            <button class="btn btn-sm btn-outline-secondary btn-editar-cat" data-id="${categoria.id}" data-nombre="${categoria.nombre}">
+                                            <button class="btn btn-sm btn-outline-secondary btn-editar-cat" data-id="${categoria.id}" data-nombre="${categoria.nombre}" data-sala-vr="${categoria.requiere_sala_vr}" data-tarta="${categoria.requiere_tarta}">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
                                             <button class="btn btn-sm btn-outline-danger btn-eliminar-cat" data-id="${categoria.id}" data-nombre="${categoria.nombre}"
@@ -91,7 +97,7 @@ function cargar() {
                 </div>`;
 
             contenedor.querySelectorAll('.btn-editar-cat').forEach(btn =>
-                btn.addEventListener('click', () => abrirModal({ id: btn.dataset.id, nombre: btn.dataset.nombre }))
+                btn.addEventListener('click', () => abrirModal({ id: btn.dataset.id, nombre: btn.dataset.nombre, requiere_sala_vr: btn.dataset.salaVr, requiere_tarta: btn.dataset.tarta }))
             );
             contenedor.querySelectorAll('.btn-eliminar-cat').forEach(btn =>
                 btn.addEventListener('click', () => {
@@ -112,9 +118,13 @@ function abrirModal(cat) {
     if (cat) {
         form.elements['id'].value     = cat.id;
         form.elements['nombre'].value = cat.nombre;
+        document.getElementById('chk-sala-vr').checked = cat.requiere_sala_vr == 1;
+        document.getElementById('chk-tarta').checked   = cat.requiere_tarta == 1;
         document.getElementById('modal-categoria-titulo').textContent = 'Editar categoría';
     } else {
         form.elements['id'].value = '';
+        document.getElementById('chk-sala-vr').checked = false;
+        document.getElementById('chk-tarta').checked   = false;
         document.getElementById('modal-categoria-titulo').textContent = 'Nueva categoría';
     }
     window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCategoria')).show();

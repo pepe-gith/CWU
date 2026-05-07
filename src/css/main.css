@@ -1,7 +1,4 @@
-/* ============================================
-   FUENTE LOCAL - POPPINS
-   ============================================ */
-
+/* Fuente Local - Poppins */
 @font-face {
     font-family: 'Poppins';
     src: url('../../public/assets/fonts/Poppins/Poppins-Regular.ttf') format('truetype');
@@ -37,10 +34,7 @@
     font-style: italic;
 }
 
-/* ============================================
-   RESET GLOBAL
-   ============================================ */
-
+/*  Resetear estilos globales */
 *, *::before, *::after {
     margin: 0;
     padding: 0;
@@ -72,11 +66,7 @@ a {
     text-decoration: none;
 }
 
-/* ============================================
-   VIDEO DE FONDO
-   ============================================ */
-   
-
+/* Estilos del video de fondo */
 .video-fondo {
     position: fixed;
     top: 0;
@@ -88,9 +78,7 @@ a {
     opacity: 0.5;
 }
 
-/* ============================================
-   CABECERA / NAVEGACIÓN
-   ============================================ */
+/* Cabecera / Navegación */
 
 /* Header antiguo (AccesoView, RegistroView, SolEventoView) */
 .cabecera {
@@ -206,10 +194,7 @@ nav {
     background-size: cover;
 }
 
-/* ============================================
-   FORMULARIOS
-   ============================================ */
-
+/* Estilos para los Formularios */
 .users-form {
     margin-top: 250px;
 }
@@ -257,10 +242,7 @@ nav {
     color: white;
 }
 
-/* ============================================
-   TABLAS
-   ============================================ */
-
+/* Estilos para las tablas */
 .users-table table {
     border: 1px solid #ccc;
     border-collapse: collapse;
@@ -297,10 +279,7 @@ table th {
     text-align: center;
 }
 
-/* ============================================
-   SECCIONES COMPARTIDAS (Sala1View, Sala2View)
-   ============================================ */
-
+/* Secciones compartidas (Sala1View, Sala2View) */
 .section-title {
     font-size: 2.5rem;
     font-weight: 700;
@@ -401,9 +380,7 @@ table th {
     background-color: rgb(255, 77, 77);
 }
 
-/* ============================================
-   INICIO (InicioView legacy)
-   ============================================ */
+/* Inicio (InicioView Antiguo) */
 
 .contenedor {
     display: flex;
@@ -430,9 +407,7 @@ table th {
     margin-bottom: 100px;
 }
 
-/* ============================================
-   FOOTER
-   ============================================ */
+/* Footer */
 
 footer {
     background: linear-gradient(90deg, #0052CC 0%, #0066FF 100%);
@@ -465,7 +440,7 @@ footer p {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
+    background: #ffffff33;
 }
 
 #iconos a:hover {
@@ -474,10 +449,7 @@ footer p {
     transform: translateY(-3px);
 }
 
-/* ============================================
-   ÁREA DE CLIENTE / ADMIN / MONITOR
-   ============================================ */
-
+/* Área de Cliente / Admin / Monitor */
 .area-wrapper {
     display: flex;
     min-height: calc(100vh - 120px);
@@ -583,15 +555,31 @@ footer p {
     cursor: pointer;
 }
 
-.badge-pendiente     { background: #fff3cd; color: #856404; }
-.badge-presupuestada { background: #cff4fc; color: #055160; }
-.badge-aceptada      { background: #d1e7dd; color: #0a3622; }
-.badge-reservada     { background: #e2d9f3; color: #3d1a78; }
-.badge-rechazada     { background: #f8d7da; color: #58151c; }
+.badge-pendiente     { 
+    background: #fff3cd; color: #856404; 
+}
+.badge-presupuestada { 
+    background: #cff4fc; color: #055160; 
+}
+.badge-aceptada      { 
+    background: #d1e7dd; color: #0a3622; 
+}
+.badge-reservada     { 
+    background: #e2d9f3; color: #3d1a78; 
+}
+.badge-rechazada     { 
+    background: #f8d7da; color: #58151c; 
+}
 
-.badge-reserva-pendiente  { background: #fff3cd; color: #856404; }
-.badge-reserva-confirmada { background: #d1e7dd; color: #0a3622; }
-.badge-reserva-cancelada  { background: #f8d7da; color: #58151c; }
+.badge-reserva-pendiente  { 
+    background: #fff3cd; color: #856404; 
+}
+.badge-reserva-confirmada { 
+    background: #d1e7dd; color: #0a3622; 
+}
+.badge-reserva-cancelada  { 
+    background: #f8d7da; color: #58151c; 
+}
 
 /* KPIs del dashboard admin */
 .admin-kpi-icon {
@@ -617,10 +605,7 @@ footer p {
     margin-top: .2rem;
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-
+/* Estilos Responsivos */
 @media (max-width: 800px) {
     .descSala-card {
         width: 96%;

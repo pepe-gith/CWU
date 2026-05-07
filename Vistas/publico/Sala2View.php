@@ -12,7 +12,8 @@
     
     <!-- Header -->
     <?php include('../../inc/header.php') ?>
-    <!-- MOTIVOS -->
+
+    <!-- Motivos -->
     <section class="cards">
         <div class="card">
             <img src="/cwu/public/assets/img/thr.png">
@@ -32,29 +33,26 @@
             <p>Hay que darle al coco. Habrán acertijos que te son familiares o que, gracias a tus habilidades, se te dan bien. 
               Hallarás pruebas de todo tipo, confia en tu ingenio, creatividad y lógica.</p>
         </div>
-    </section>
-    <!-- END MOTIVOS -->        
-    <!-- BANNER -->    
+    </section>  
+
+    <!-- Banner -->    
     <section class="banner">
         <div class="banner-content">
           <image class="header-img" src="/cwu/public/assets/img/libreria.jpg" width="588" heigt="245" />
         </div>
     </section>
-    <!-- END BANNER -->    
-    <!-- DESCRIPCIÓN SALA -->
+
+    <!-- Descripción -->
     <section class="descSala">
         <h3 class="section-title">LA BIBLIOTECA</h3>
         <div class="descSala-card">
             <h5>Menores a partir de 8 años</h5>
-            <p>"Victoria Valiente, la librera aventurera, descubre un antiguo escarabajo maldito que consume las letras de libros.
-                 Tras décadas de lucha, sella el libro y atrapa al escarabajo, pero la maldición persiste. Con el tiempo, el insecto
-                 intenta escapar, consumiendo las últimas letras. Victoria, ahora anciana, busca equipos de aventureros para separar
-                 el libro mágico del escarabajo y salvar su librería y el mundo de la maldición. El tiempo apremia, con solo una hora
-                 antes de que el libro pierda su última letra y la maldición se desate</p>
+            <p>Victoria es una librera que lleva años custodiando un escarabajo maldito encerrado en un libro antiguo.
+               El bicho se está escapando y si lo consigue las letras de todos los libros desaparecerán. Tienes una hora
+               para separar el escarabajo del libro antes de que sea demasiado tarde. ¿Podrás hacerlo?</p>
             <a href="/cwu/Vistas/auth/RegistroView.php" class="btn-primary-full">Para vivir la aventura REGISTRATE YA</a>  
         </div>
     </section>
-    <!-- END DESCRIPCIÓN SALA -->
 
     <!-- Footer -->
     <?php include('../../inc/footer.php') ?>

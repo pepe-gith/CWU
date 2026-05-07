@@ -1,14 +1,15 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) session_start();
+﻿<?php
+require_once __DIR__ . '/../../inc/sesion.php';
+iniciarSesion();
 if (empty($_SESSION['cliente']) || (int)($_SESSION['cliente']['id_rol'] ?? 0) !== 2) {
     header('Location: /cwu/Vistas/auth/AccesoView.php');
     exit;
 }
 
 require_once '../../inc/helpers.php';
-$layoutTitle = 'Mi agenda';
-$layoutEntry = 'empleado/agenda';
-$layoutMenu  = menuEmpleado('agenda');
+$tituloPagina = 'Mi agenda';
+$entradaVite = 'empleado/agenda';
+$menuLateral  = menuEmpleado('agenda');
 
 ob_start();
 ?>

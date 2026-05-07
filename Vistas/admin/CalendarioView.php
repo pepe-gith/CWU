@@ -1,14 +1,15 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) session_start();
+﻿<?php
+require_once __DIR__ . '/../../inc/sesion.php';
+iniciarSesion();
 if (empty($_SESSION['cliente']) || (int)($_SESSION['cliente']['id_rol'] ?? 0) !== 1) {
     header('Location: /cwu/Vistas/auth/AccesoView.php');
     exit;
 }
 
 require_once '../../inc/helpers.php';
-$layoutTitle = 'Calendario';
-$layoutEntry = 'admin/calendario';
-$layoutMenu  = menuAdmin('calendario');
+$tituloPagina = 'Calendario';
+$entradaVite = 'admin/calendario';
+$menuLateral  = menuAdmin('calendario');
 
 ob_start();
 ?>

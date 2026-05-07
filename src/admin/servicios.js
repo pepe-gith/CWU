@@ -91,17 +91,17 @@ function cargar() {
                                     </td>
                                     <td class="text-end">
                                         <div class="d-flex gap-1 justify-content-end">
-                                            <button class="btn btn-sm btn-outline-secondary btn-editar-srv"
-                                                data-id="${s.id}"
-                                                data-nombre="${s.nombre}"
-                                                data-descripcion="${s.descripcion ?? ''}"
-                                                data-precio="${s.precio_base}"
-                                                data-capacidad="${s.capacidad}"
+                                            <button class="btn btn-sm btn-outline-secondary btn-editar-srv";
+                                                data-id="${s.id}";
+                                                data-nombre="${s.nombre}";
+                                                data-descripcion="${s.descripcion ?? ''}";
+                                                data-precio="${s.precio_base}";
+                                                data-capacidad="${s.capacidad}";
                                                 data-categoria="${s.id_categoria}">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
-                                            <button class="btn btn-sm btn-outline-danger btn-eliminar-srv"
-                                                data-id="${s.id}" data-nombre="${s.nombre}"
+                                            <button class="btn btn-sm btn-outline-danger btn-eliminar-srv";
+                                                data-id="${s.id}" data-nombre="${s.nombre}";
                                                 ${s.num_reservas > 0 ? 'disabled title="Tiene reservas asociadas"' : ''}
                                                 style="${s.num_reservas > 0 ? 'opacity:.35' : ''}">
                                                 <i class="bi bi-trash"></i>

@@ -1,12 +1,11 @@
 <?php
+require_once __DIR__ . '/sesion.php';
+
 $clienteLogueado = false;
 $nombreCliente = '';
 
 if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) {
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
-
+    iniciarSesion();
     $clienteLogueado = isset($_SESSION['cliente']) && !empty($_SESSION['cliente']);
     $nombreCliente = $clienteLogueado ? (string) ($_SESSION['cliente']['nombre'] ?? '') : '';
 }
@@ -20,6 +19,8 @@ if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) 
     <!-- Navegación -->
     <nav>
         <?php
+
+        /* Mostrar enlace de inicio solo para roles que no sean admin ni empleado */
         $rolNav = (int) ($_SESSION['cliente']['id_rol'] ?? 0);
         if ($rolNav !== 1 && $rolNav !== 2):
         ?>
@@ -31,14 +32,19 @@ if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) 
 
         <!-- <a href="/cwu/index.php">Inicio</a> | -->
         <?php if ($clienteLogueado): ?>
+
             <?php
-            $rol = (int) ($_SESSION['cliente']['id_rol'] ?? 0);
-            $areaHref = match($rol) {
-                1       => '/cwu/Vistas/admin/DashboardView.php',
-                2       => '/cwu/Vistas/empleado/AgendaView.php',
-                default => '/cwu/Vistas/cliente/InicioView.php',
-            };
+
+                $rol = (int) ($_SESSION['cliente']['id_rol'] ?? 0);
+                
+                $areaHref = match($rol) {
+                    1       => '/cwu/Vistas/admin/DashboardView.php',
+                    2       => '/cwu/Vistas/empleado/AgendaView.php',
+                    default => '/cwu/Vistas/cliente/InicioView.php',
+                };
+
             ?>
+
             <a href="<?= $areaHref ?>" class="nav-link">
                 <i class="bi bi-grid"></i> Mi área
             </a>
@@ -46,7 +52,7 @@ if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) 
             <div class="dropdown">
                 <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-person-circle"></i>
-                    Hola, <?php echo htmlspecialchars($nombreCliente, ENT_QUOTES, 'UTF-8'); ?>
+                    Hola, <?php echo htmlspecialchars($nombreCliente); ?>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
@@ -64,13 +70,18 @@ if (session_status() === PHP_SESSION_ACTIVE || isset($_COOKIE[session_name()])) 
             </div>
             <script>
                 document.getElementById('btn-logout').addEventListener('click', function(e) {
-                    e.preventDefault()
-                    const fd = new FormData()
-                    fd.append('action', 'cerrarSesion')
+                    e.preventDefault();
+
+                    const fd = new FormData();
+                    fd.append('action', 'cerrarSesion');
+
                     fetch('/cwu/Controladores/UsuarioControlador.php', { method: 'POST', body: fd })
                         .then(res => res.json())
-                        .then(data => { if (data.redirect) location.href = data.redirect })
-                })
+                        .then(data => { 
+                            if (data.redirect) 
+                                location.href = data.redirect   ;
+                        })
+                });
             </script>
 
         <?php else: ?>

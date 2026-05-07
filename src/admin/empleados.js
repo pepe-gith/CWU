@@ -1,28 +1,28 @@
-const CONTROLADOR = '/cwu/Controladores/AdminControlador.php'
-const contenedor  = document.getElementById('tabla-empleados')
+const pathControlador = '/cwu/Controladores/AdminControlador.php';
+const contenedor  = document.getElementById('tabla-empleados');
 
-cargar()
+cargar();
 
-document.getElementById('mostrar-inactivos').addEventListener('change', cargar)
+document.getElementById('mostrar-inactivos').addEventListener('change', cargar);
 
 function cargar() {
-    const inactivos = document.getElementById('mostrar-inactivos').checked ? '&inactivos=1' : ''
-    contenedor.innerHTML = '<p class="text-muted p-4">Cargando...</p>'
-    fetch(`${CONTROLADOR}?action=empleados${inactivos}`)
-        .then(r => r.json())
+    const inactivos = document.getElementById('mostrar-inactivos').checked ? '&inactivos=1' : '';
+    contenedor.innerHTML = '<p class="text-muted p-4">Cargando...</p>';
+    fetch(`${pathControlador}?action=empleados${inactivos}`)
+        .then(respuesta => respuesta.json())
         .then(data => {
             if (!data.ok) { contenedor.innerHTML = '<p class="text-danger p-4">Error al cargar.</p>'; return }
-            const inactivos = document.getElementById('mostrar-inactivos').checked
+            const inactivos = document.getElementById('mostrar-inactivos').checked;
             if (!data.data.length) {
                 contenedor.innerHTML = `<p class="text-muted p-4">${inactivos ? 'No hay empleados inactivos.' : 'No hay empleados registrados.'}</p>`
-                return
+                return;
             }
-            contenedor.innerHTML = renderTabla(data.data)
+            contenedor.innerHTML = renderTabla(data.data);
             contenedor.querySelectorAll('.btn-editar').forEach(btn =>
                 btn.addEventListener('click', () => abrirEditar(JSON.parse(btn.dataset.e)))
             )
         })
-        .catch(() => { contenedor.innerHTML = '<p class="text-danger p-4">Error de conexión.</p>' })
+        .catch(() => { contenedor.innerHTML = '<p class="text-danger p-4">Error de conexión.</p>' });
 }
 
 function renderTabla(empleados) {
@@ -42,7 +42,7 @@ function renderTabla(empleados) {
                 </button>
             </td>
         </tr>
-    `).join('')
+    `).join('');
 
     return `
         <div class="table-responsive">
@@ -63,26 +63,26 @@ function renderTabla(empleados) {
 
 function abrirEditar(e) {
     document.getElementById('modal-empleado-titulo').textContent = `${e.nombre} ${e.apellidos}`
-    const form = document.getElementById('form-empleado')
-    form.elements['id'].value              = e.id
-    form.elements['especialidad'].value    = e.especialidad ?? ''
-    form.elements['precio_por_hora'].value = e.precio_por_hora
+    const form = document.getElementById('form-empleado');
+    form.elements['id'].value              = e.id;
+    form.elements['especialidad'].value    = e.especialidad ?? '';
+    form.elements['precio_por_hora'].value = e.precio_por_hora;
 
-    window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEmpleado')).show()
+    window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEmpleado')).show();
 }
 
 document.getElementById('form-empleado').addEventListener('submit', e => {
-    e.preventDefault()
-    const fd = new FormData(e.target)
-    fd.append('action', 'guardarEmpleado')
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    fd.append('action', 'guardarEmpleado');
 
-    fetch(CONTROLADOR, { method: 'POST', body: fd })
+    fetch(pathControlador, { method: 'POST', body: fd })
         .then(r => r.json())
         .then(data => {
             if (!data.ok) { window.mostrarToast(data.error, 'danger'); return }
-            window.bootstrap.Modal.getInstance(document.getElementById('modalEmpleado')).hide()
-            window.mostrarToast(data.mensaje, 'success')
-            cargar()
+            window.bootstrap.Modal.getInstance(document.getElementById('modalEmpleado')).hide();
+            window.mostrarToast(data.mensaje, 'success');
+            cargar();
         })
-        .catch(() => window.mostrarToast('Error de conexión', 'danger'))
-})
+        .catch(() => window.mostrarToast('Error de conexión', 'danger'));
+});

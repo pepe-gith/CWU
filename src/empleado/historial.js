@@ -1,18 +1,18 @@
-const CONTROLADOR = '/cwu/Controladores/EmpleadoControlador.php'
-const contenedor  = document.getElementById('tabla-historial')
+const CONTROLADOR = '/cwu/Controladores/EmpleadoControlador.php';
+const contenedor  = document.getElementById('tabla-historial');
 
-cargar()
+cargar();
 
 function cargar() {
-    contenedor.innerHTML = '<p class="text-muted p-4">Cargando...</p>'
+    contenedor.innerHTML = '<p class="text-muted p-4">Cargando...</p>';
     fetch(`${CONTROLADOR}?action=historial`)
         .then(r => r.json())
         .then(data => {
             if (!data.ok) { contenedor.innerHTML = '<p class="text-danger p-4">Error al cargar.</p>'; return }
             if (!data.data.length) { contenedor.innerHTML = '<p class="text-muted p-4">No hay eventos pasados.</p>'; return }
-            contenedor.innerHTML = renderTabla(data.data)
+            contenedor.innerHTML = renderTabla(data.data);
         })
-        .catch(() => { contenedor.innerHTML = '<p class="text-danger p-4">Error de conexión.</p>' })
+        .catch(() => { contenedor.innerHTML = '<p class="text-danger p-4">Error de conexión.</p>' });
 }
 
 const badgesAsignacion = {
@@ -23,8 +23,8 @@ const badgesAsignacion = {
 
 function estadoBadge(a) {
     if (a.estado_reserva === 'cancelada')
-        return '<span class="badge bg-secondary">Reserva cancelada</span>'
-    return badgesAsignacion[a.estado] ?? ''
+        return '<span class="badge bg-secondary">Reserva cancelada</span>';
+    return badgesAsignacion[a.estado] ?? '';
 }
 
 function renderTabla(items) {
@@ -39,7 +39,7 @@ function renderTabla(items) {
             <td>${a.rol_evento ?? '—'}</td>
             <td>${estadoBadge(a)}</td>
         </tr>
-    `).join('')
+    `).join('');
 
     return `
         <div class="table-responsive">

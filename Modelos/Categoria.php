@@ -9,15 +9,15 @@ class Categoria {
     }
 
     public function mostrarCategorias(): array {
-        $stmt = $this->conexion->query("SELECT id, nombre FROM Categoria ORDER BY nombre");
+        $stmt = $this->conexion->query("SELECT id, nombre, requiere_sala_vr, requiere_tarta FROM Categoria ORDER BY nombre");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function listarConConteo(): array {
         $stmt = $this->conexion->query("
-            SELECT c.id, c.nombre,
-                   (SELECT COUNT(*) 
-                    FROM Solicitud_Evento se 
+            SELECT c.id, c.nombre, c.requiere_sala_vr, c.requiere_tarta,
+                   (SELECT COUNT(*)
+                    FROM Solicitud_Evento se
                     WHERE se.tipo_evento = c.id) AS num_solicitudes
             FROM Categoria c
             ORDER BY c.nombre ASC
@@ -36,14 +36,14 @@ class Categoria {
         return (bool) $stmt->fetch();
     }
 
-    public function crear(string $nombre): void {
-        $this->conexion->prepare("INSERT INTO Categoria (nombre) VALUES (:nombre)")
-            ->execute([':nombre' => $nombre]);
+    public function crear(string $nombre, int $requiereSalaVr, int $requiereTarta): void {
+        $this->conexion->prepare("INSERT INTO Categoria (nombre, requiere_sala_vr, requiere_tarta) VALUES (:nombre, :requiere_sala_vr, :requiere_tarta)")
+            ->execute([':nombre' => $nombre, ':requiere_sala_vr' => $requiereSalaVr, ':requiere_tarta' => $requiereTarta]);
     }
 
-    public function editar(int $id, string $nombre): void {
-        $this->conexion->prepare("UPDATE Categoria SET nombre = :nombre WHERE id = :id")
-            ->execute([':nombre' => $nombre, ':id' => $id]);
+    public function editar(int $id, string $nombre, int $requiereSalaVr, int $requiereTarta): void {
+        $this->conexion->prepare("UPDATE Categoria SET nombre = :nombre, requiere_sala_vr = :requiere_sala_vr, requiere_tarta = :requiere_tarta WHERE id = :id")
+            ->execute([':nombre' => $nombre, ':requiere_sala_vr' => $requiereSalaVr, ':requiere_tarta' => $requiereTarta, ':id' => $id]);
     }
 
     public function tieneSolicitudes(int $id): bool {

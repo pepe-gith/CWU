@@ -1,165 +1,175 @@
-const CONTROLADOR = '/cwu/Controladores/AdminControlador.php'
-let estadoActivo  = ''
-let modalReserva  = null
+const CONTROLADOR = '/cwu/Controladores/AdminControlador.php';
+let estadoActivo  = '';
+let modalReserva  = null;
 
-cargarSolicitudes('')
-cargarServicios()
+cargarSolicitudes('');
+cargarServicios();
 
 // Filtros
 document.querySelectorAll('.filtro-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.filtro-btn').forEach(b => {
-            b.classList.remove('active', 'btn-primary', 'btn-warning', 'btn-info', 'btn-success', 'btn-danger')
-            b.classList.add('btn-outline-' + (colorEstado(b.dataset.estado) || 'primary'))
-        })
-        btn.classList.remove('btn-outline-' + (colorEstado(btn.dataset.estado) || 'primary'))
-        btn.classList.add('active', 'btn-' + (colorEstado(btn.dataset.estado) || 'primary'))
-        estadoActivo = btn.dataset.estado
-        cargarSolicitudes(estadoActivo)
-    })
-})
+            b.classList.remove('active', 'btn-primary', 'btn-warning', 'btn-info', 'btn-success', 'btn-danger');
+            b.classList.add('btn-outline-' + (colorEstado(b.dataset.estado) || 'primary'));
+        });
+        btn.classList.remove('btn-outline-' + (colorEstado(btn.dataset.estado) || 'primary'));
+        btn.classList.add('active', 'btn-' + (colorEstado(btn.dataset.estado) || 'primary'));
+        estadoActivo = btn.dataset.estado;
+        cargarSolicitudes(estadoActivo);
+    });
+});
 
 // Modal presupuesto
-let selectPendiente = null
+let selectPendiente = null;
 document.getElementById('modalPresupuesto').addEventListener('hidden.bs.modal', () => {
     if (selectPendiente) {
-        selectPendiente.value = selectPendiente.dataset.estadoAnterior
+        selectPendiente.value = selectPendiente.dataset.estadoAnterior;
         selectPendiente.className = `select-estado badge-estado badge-${selectPendiente.dataset.estadoAnterior}`
-        selectPendiente = null
+        selectPendiente = null;
     }
-})
+});
 
 document.getElementById('form-presupuesto').addEventListener('submit', async e => {
-    e.preventDefault()
-    const fd = new FormData(e.target)
-    fd.append('action', 'cambiarEstado')
-    fd.append('estado', 'presupuestada')
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    fd.append('action', 'cambiarEstado');
+    fd.append('estado', 'presupuestada');
 
     try {
-        const res  = await fetch(CONTROLADOR, { method: 'POST', body: fd })
-        const data = await res.json()
+        const res  = await fetch(CONTROLADOR, { method: 'POST', body: fd });
+        const data = await res.json();
         if (data.ok) {
             if (selectPendiente) {
-                selectPendiente.className = 'select-estado badge-estado badge-presupuestada'
-                selectPendiente.dataset.estadoAnterior = 'presupuestada'
-                selectPendiente = null
+                selectPendiente.className = 'select-estado badge-estado badge-presupuestada';
+                selectPendiente.dataset.estadoAnterior = 'presupuestada';
+                selectPendiente = null;
             }
-            window.bootstrap.Modal.getInstance(document.getElementById('modalPresupuesto')).hide()
-            cargarSolicitudes(estadoActivo)
+            window.bootstrap.Modal.getInstance(document.getElementById('modalPresupuesto')).hide();
+            cargarSolicitudes(estadoActivo);
         } else {
-            alert(data.error)
+            alert(data.error);
         }
     } catch {
-        window.mostrarToast('Error de conexión')
+        window.mostrarToast('Error de conexión');
     }
-})
+});
 
 // Modal reserva
 document.getElementById('modalReserva').addEventListener('shown.bs.modal', () => {
-    document.getElementById('modal-alert').innerHTML = ''
-})
+    document.getElementById('modal-alert').innerHTML = '';
+});
 
 document.getElementById('form-reserva').addEventListener('submit', async e => {
-    e.preventDefault()
-    const spinner = document.getElementById('spinner-reserva')
-    const btn     = document.getElementById('btn-crear-reserva')
-    spinner.classList.remove('d-none')
-    btn.disabled = true
+    e.preventDefault();
+    const spinner = document.getElementById('spinner-reserva');
+    const btn     = document.getElementById('btn-crear-reserva');
+    spinner.classList.remove('d-none');
+    btn.disabled = true;
 
     try {
-        const fd = new FormData(e.target)
-        fd.append('action', 'crearReserva')
-        const res  = await fetch(CONTROLADOR, { method: 'POST', body: fd })
-        const data = await res.json()
+        const fd = new FormData(e.target);
+        fd.append('action', 'crearReserva');
+        const res  = await fetch(CONTROLADOR, { method: 'POST', body: fd });
+        const data = await res.json();
         if (data.ok) {
-            window.bootstrap.Modal.getInstance(document.getElementById('modalReserva')).hide()
-            cargarSolicitudes(estadoActivo)
+            window.bootstrap.Modal.getInstance(document.getElementById('modalReserva')).hide();
+            cargarSolicitudes(estadoActivo);
         } else {
             document.getElementById('modal-alert').innerHTML =
                 `<div class="alert alert-danger">${data.error}</div>`
         }
     } catch {
         document.getElementById('modal-alert').innerHTML =
-            '<div class="alert alert-danger">Error de conexión</div>'
+            '<div class="alert alert-danger">Error de conexión</div>';
     } finally {
-        spinner.classList.add('d-none')
-        btn.disabled = false
+        spinner.classList.add('d-none');
+        btn.disabled = false;
     }
-})
+});
 
 function cargarSolicitudes(estado) {
     const url = `${CONTROLADOR}?action=solicitudes${estado ? '&estado=' + estado : ''}`
-    document.getElementById('tabla-solicitudes').innerHTML = '<p class="text-muted p-4">Cargando...</p>'
+    document.getElementById('tabla-solicitudes').innerHTML = '<p class="text-muted p-4">Cargando...</p>';
 
     fetch(url)
         .then(r => r.json())
         .then(data => {
-            if (!data.ok) return
-            const contenedor = document.getElementById('tabla-solicitudes')
+            if (!data.ok) return;
+            const contenedor = document.getElementById('tabla-solicitudes');
             contenedor.innerHTML = data.data.length
                 ? renderTabla(data.data)
-                : '<p class="text-muted p-4">No hay solicitudes.</p>'
+                : '<p class="text-muted p-4">No hay solicitudes.</p>';
 
             contenedor.querySelectorAll('.select-estado').forEach(sel => {
-                sel.addEventListener('change', () => cambiarEstado(sel.dataset.id, sel.value, sel))
-            })
+                sel.addEventListener('change', () => cambiarEstado(sel.dataset.id, sel.value, sel));
+            });
 
             contenedor.querySelectorAll('.btn-crear-reserva').forEach(btn => {
-                btn.addEventListener('click', () => abrirModalReserva(btn))
-            })
+                btn.addEventListener('click', () => abrirModalReserva(btn));
+            });
         })
         .catch(() => {
-            document.getElementById('tabla-solicitudes').innerHTML = '<p class="text-danger p-4">Error al cargar.</p>'
-        })
+            document.getElementById('tabla-solicitudes').innerHTML = '<p class="text-danger p-4">Error al cargar.</p>';
+        });
 }
 
 function cargarServicios() {
     fetch(`${CONTROLADOR}?action=obtenerServicios`)
         .then(r => r.json())
         .then(data => {
-            if (!data.ok) return
-            const select = document.getElementById('select-servicio')
+            if (!data.ok) return;
+            const select = document.getElementById('select-servicio');
             select.innerHTML = '<option value="">Selecciona un servicio</option>' +
-                data.data.map(s => `<option value="${s.id}">${s.nombre} (${parseFloat(s.precio_base).toFixed(2)} €)</option>`).join('')
-        })
+                data.data.map(s => `<option value="${s.id}">${s.nombre} (${parseFloat(s.precio_base).toFixed(2)} €)</option>`).join('');
+        });
 }
 
 function abrirModalReserva(btn) {
-    const form = document.getElementById('form-reserva')
-    form.querySelector('[name="id_usuario"]').value     = btn.dataset.idUsuario
-    form.querySelector('[name="id_solicitud"]').value   = btn.dataset.idSolicitud
-    form.querySelector('[name="fecha_evento"]').value   = btn.dataset.fechaEvento
-    form.querySelector('[name="num_asistentes"]').value = btn.dataset.participantes
-    form.querySelector('[name="observaciones"]').value  = btn.dataset.observaciones ?? ''
-    if (!modalReserva) modalReserva = new window.bootstrap.Modal(document.getElementById('modalReserva'))
-    modalReserva.show()
+    const form = document.getElementById('form-reserva');
+    form.querySelector('[name="id_usuario"]').value     = btn.dataset.idUsuario;
+    form.querySelector('[name="id_solicitud"]').value   = btn.dataset.idSolicitud;
+    form.querySelector('[name="fecha_evento"]').value   = btn.dataset.fechaEvento;
+    form.querySelector('[name="num_asistentes"]').value = btn.dataset.participantes;
+    form.querySelector('[name="observaciones"]').value  = btn.dataset.observaciones ?? '';
+    if (!modalReserva) modalReserva = new window.bootstrap.Modal(document.getElementById('modalReserva'));
+    modalReserva.show();
 }
 
 function cambiarEstado(id, estado, selectEl) {
     if (estado === 'presupuestada') {
-        selectPendiente = selectEl
-        selectEl.dataset.estadoAnterior = selectEl.dataset.estadoAnterior || [...selectEl.options].find(o => o.defaultSelected)?.value || 'pendiente'
-        const form = document.getElementById('form-presupuesto')
-        form.querySelector('[name="id"]').value      = id
-        form.querySelector('[name="importe"]').value = ''
-        const modal = new window.bootstrap.Modal(document.getElementById('modalPresupuesto'))
-        modal.show()
-        return
+        selectPendiente = selectEl;
+        selectEl.dataset.estadoAnterior = selectEl.dataset.estadoAnterior || [...selectEl.options].find(o => o.defaultSelected)?.value || 'pendiente';
+        const form = document.getElementById('form-presupuesto');
+        form.querySelector('[name="id"]').value      = id;
+        form.querySelector('[name="importe"]').value = '';
+        form.querySelector('[name="notas_presupuesto"]').value = '';
+
+        const fechaEvento = selectEl.dataset.fechaEvento;
+        const inputLimite = document.getElementById('fecha-limite-presupuesto');
+        const refEvento   = document.getElementById('ref-fecha-evento');
+        inputLimite.value = '';
+        inputLimite.min   = new Date().toISOString().split('T')[0];
+        inputLimite.max   = fechaEvento;
+        refEvento.innerHTML = `Evento del cliente: <strong>${formatearFecha(fechaEvento)}</strong>. La fecha límite no puede ser posterior.`;
+
+        const modal = new window.bootstrap.Modal(document.getElementById('modalPresupuesto'));
+        modal.show();
+        return;
     }
 
-    const fd = new FormData()
-    fd.append('action', 'cambiarEstado')
-    fd.append('id', id)
-    fd.append('estado', estado)
-    selectEl.disabled = true
+    const fd = new FormData();
+    fd.append('action', 'cambiarEstado');
+    fd.append('id', id);
+    fd.append('estado', estado);
+    selectEl.disabled = true;
 
     fetch(CONTROLADOR, { method: 'POST', body: fd })
         .then(r => r.json())
         .then(data => {
             if (data.ok) selectEl.className = `select-estado badge-estado badge-${estado}`
-            else window.mostrarToast(data.error)
+            else window.mostrarToast(data.error);
         })
-        .finally(() => { selectEl.disabled = false })
+        .finally(() => { selectEl.disabled = false });
 }
 
 function renderTabla(items) {
@@ -187,23 +197,23 @@ function renderTabla(items) {
                 ${s.tarta ? '<i class="bi bi-check-circle-fill text-success"></i>' : '<i class="bi bi-x-circle text-muted"></i>'}
             </td>
             <td>
-                <select class="select-estado badge-estado badge-${s.estado}" data-id="${s.id}" ${s.estado === 'reservada' ? 'disabled' : ''}>
+                <select class="select-estado badge-estado badge-${s.estado}" data-id="${s.id}" data-fecha-evento="${s.fecha_evento}" ${s.estado === 'reservada' ? 'disabled' : ''}>
                     ${opcionesEstado(s.estado)}
                 </select>
             </td>
             <td>
                 ${s.estado === 'aceptada' ? `
-                    <button class="btn btn-sm btn-success btn-crear-reserva"
-                        data-id-solicitud="${s.id}"
-                        data-id-usuario="${s.id_usuario ?? ''}"
-                        data-fecha-evento="${s.fecha_evento}"
-                        data-participantes="${s.num_participantes}"
+                    <button class="btn btn-sm btn-success btn-crear-reserva";
+                        data-id-solicitud="${s.id}";
+                        data-id-usuario="${s.id_usuario ?? ''}";
+                        data-fecha-evento="${s.fecha_evento}";
+                        data-participantes="${s.num_participantes}";
                         data-observaciones="${s.observaciones ?? ''}">
-                        <i class="bi bi-calendar-plus"></i> Crear reserva
+                        <i class="bi bi-calendar-plus"></i> Crear reserva;
                     </button>` : ''}
             </td>
         </tr>
-    `).join('')
+    `).join('');
 
     return `
         <div class="table-responsive">
@@ -229,7 +239,13 @@ function renderTabla(items) {
 }
 
 function colorEstado(estado) {
-    return { pendiente: 'warning', presupuestada: 'info', aceptada: 'success', rechazada: 'danger' }[estado] || ''
+    return { pendiente: 'warning', presupuestada: 'info', aceptada: 'success', rechazada: 'danger' }[estado] || '';
+}
+
+function formatearFecha(iso) {
+    if (!iso) return '';
+    const [y, m, d] = iso.split('-');
+    return `${d}/${m}/${y}`;
 }
 
 function opcionesEstado(estado) {
@@ -246,5 +262,5 @@ function opcionesEstado(estado) {
     }
     return (transiciones[estado] ?? [estado]).map(e =>
         `<option value="${e}" ${e === estado ? 'selected' : ''}>${nombres[e]}</option>`
-    ).join('')
+    ).join('');
 }

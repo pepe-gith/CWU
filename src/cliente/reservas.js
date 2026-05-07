@@ -1,28 +1,29 @@
-const contenedor = document.getElementById('lista-reservas')
-const PAGO_CONTROLADOR = '/cwu/Controladores/PagoControlador.php'
+const contenedor = document.getElementById('lista-reservas');
+const pathControlador = '/cwu/Controladores/PagoControlador.php';
 
 function cargar() {
     fetch('/cwu/Controladores/SolicitudControlador.php?action=misReservas')
         .then(r => r.json())
         .then(data => {
             if (!data.ok || !data.data.length) {
-                contenedor.innerHTML = '<p class="text-muted">Aún no tienes reservas.</p>'
-                return
+                contenedor.innerHTML = '<p class="text-muted">Aún no tienes reservas.</p>';
+                return;
             }
-            contenedor.innerHTML = renderTabla(data.data)
+
+            contenedor.innerHTML = renderTabla(data.data);
             contenedor.querySelectorAll('.btn-cancelar').forEach(btn =>
                 btn.addEventListener('click', () => cancelar(btn.dataset.id))
-            )
+            );
             contenedor.querySelectorAll('.btn-cambio').forEach(btn =>
                 btn.addEventListener('click', () => abrirCambio(btn.dataset.id))
-            )
+            );
             contenedor.querySelectorAll('.btn-notificar-pago').forEach(btn =>
                 btn.addEventListener('click', () => abrirNotificarPago(btn.dataset.id))
-            )
+            );
         })
         .catch(() => {
-            contenedor.innerHTML = '<p class="text-danger">Error al cargar las reservas.</p>'
-        })
+            contenedor.innerHTML = '<p class="text-danger">Error al cargar las reservas.</p>';
+        });
 }
 
 const BADGES = {
@@ -31,14 +32,14 @@ const BADGES = {
     cancelada:  '<span class="badge bg-danger">Cancelada</span>',
 }
 
-function puedeCancel(r) {
-    if (!['pendiente', 'confirmada'].includes(r.estado)) return false
-    const horasRestantes = (new Date(r.fecha_evento) - new Date()) / 36e5
-    return horasRestantes >= 24
+function puedeCancel(reserva) {
+    if (!['pendiente', 'confirmada'].includes(reserva.estado)) return false;
+    const horasRestantes = (new Date(reserva.fecha_evento) - new Date()) / 36e5;
+    return horasRestantes >= 24;
 }
 
 function renderPago(total) {
-    const n = parseFloat(total)
+    const n = parseFloat(total);
     return n > 0
         ? `<span class="badge bg-success">Pagado ${n.toFixed(2)} €</span>`
         : `<span class="badge bg-secondary">Sin pagos</span>`
@@ -61,7 +62,7 @@ function renderTabla(reservas) {
                 <div class="d-flex gap-1 flex-wrap">
                 ${r.estado !== 'cancelada'
                 ? `<button class="btn btn-sm btn-outline-success btn-notificar-pago" data-id="${r.id}">
-                       <i class="bi bi-cash"></i> Notificar pago
+                       <i class="bi bi-cash"></i> Notificar pago;
                    </button>`
                 : ''}
                 ${puedeCancel(r)
@@ -74,7 +75,7 @@ function renderTabla(reservas) {
                 </div>
             </td>
         </tr>
-    `).join('')
+    `).join('');
 
     return `
         <div class="table-responsive">
@@ -97,88 +98,88 @@ function renderTabla(reservas) {
         </div>`
 }
 
-let reservaACancelar = null
-let reservaACambiar  = null
+let reservaACancelar = null;
+let reservaACambiar  = null;
 
 function abrirCambio(id) {
-    reservaACambiar = id
-    document.getElementById('motivo-cambio').value = ''
-    window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCambio')).show()
+    reservaACambiar = id;
+    document.getElementById('motivo-cambio').value = '';
+    window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCambio')).show();
 }
 
 document.getElementById('btn-confirmar-cambio').addEventListener('click', () => {
-    if (!reservaACambiar) return
-    const motivo = document.getElementById('motivo-cambio').value.trim()
+    if (!reservaACambiar) return;
+    const motivo = document.getElementById('motivo-cambio').value.trim();
     if (!motivo) { window.mostrarToast('El motivo es obligatorio.', 'warning'); return }
 
-    const fd = new FormData()
-    fd.append('action', 'solicitarCambio')
-    fd.append('id', reservaACambiar)
-    fd.append('motivo', motivo)
+    const fd = new FormData();
+    fd.append('action', 'solicitarCambio');
+    fd.append('id', reservaACambiar);
+    fd.append('motivo', motivo);
 
-    window.bootstrap.Modal.getInstance(document.getElementById('modalCambio')).hide()
+    window.bootstrap.Modal.getInstance(document.getElementById('modalCambio')).hide();
 
     fetch('/cwu/Controladores/SolicitudControlador.php', { method: 'POST', body: fd })
         .then(r => r.json())
         .then(data => {
             if (!data.ok) { window.mostrarToast(data.error, 'danger'); return }
-            window.mostrarToast(data.mensaje, 'success')
-            cargar()
+            window.mostrarToast(data.mensaje, 'success');
+            cargar();
         })
-        .catch(() => window.mostrarToast('Error de conexión', 'danger'))
-})
+        .catch(() => window.mostrarToast('Error de conexión', 'danger'));
+});
 
 function cancelar(id) {
-    reservaACancelar = id
-    window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCancelar')).show()
+    reservaACancelar = id;
+    window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCancelar')).show();
 }
 
 document.getElementById('btn-confirmar-cancelar').addEventListener('click', () => {
-    if (!reservaACancelar) return
+    if (!reservaACancelar) return;
 
-    const motivo = document.getElementById('motivo-cancelacion').value.trim()
+    const motivo = document.getElementById('motivo-cancelacion').value.trim();
 
-    const fd = new FormData()
-    fd.append('action', 'cancelarReserva')
-    fd.append('id', reservaACancelar)
-    if (motivo) fd.append('motivo', motivo)
+    const fd = new FormData();
+    fd.append('action', 'cancelarReserva');
+    fd.append('id', reservaACancelar);
+    if (motivo) fd.append('motivo', motivo);
 
-    window.bootstrap.Modal.getInstance(document.getElementById('modalCancelar')).hide()
-    document.getElementById('motivo-cancelacion').value = ''
+    window.bootstrap.Modal.getInstance(document.getElementById('modalCancelar')).hide();
+    document.getElementById('motivo-cancelacion').value = '';
 
     fetch('/cwu/Controladores/SolicitudControlador.php', { method: 'POST', body: fd })
         .then(r => r.json())
         .then(data => {
             if (!data.ok) { window.mostrarToast(data.error, 'danger'); return }
-            window.mostrarToast(data.mensaje, 'success')
-            cargar()
+            window.mostrarToast(data.mensaje, 'success');
+            cargar();
         })
-        .catch(() => window.mostrarToast('Error de conexión', 'danger'))
-})
+        .catch(() => window.mostrarToast('Error de conexión', 'danger'));
+});
 
 // --- Notificar pago ---
 
 function abrirNotificarPago(id) {
-    const form = document.getElementById('form-notificar-pago')
-    form.reset()
-    form.elements['id_reserva'].value = id
-    window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNotificarPago')).show()
+    const form = document.getElementById('form-notificar-pago');
+    form.reset();
+    form.elements['id_reserva'].value = id;
+    window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNotificarPago')).show();
 }
 
 document.getElementById('form-notificar-pago').addEventListener('submit', e => {
-    e.preventDefault()
-    const fd = new FormData(e.target)
-    fd.append('action', 'solicitarPago')
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    fd.append('action', 'solicitarPago');
 
-    fetch(PAGO_CONTROLADOR, { method: 'POST', body: fd })
+    fetch(pathControlador, { method: 'POST', body: fd })
         .then(r => r.json())
         .then(data => {
             if (!data.ok) { window.mostrarToast(data.error, 'danger'); return }
-            window.bootstrap.Modal.getInstance(document.getElementById('modalNotificarPago')).hide()
-            window.mostrarToast(data.mensaje, 'success')
-            cargar()
+            window.bootstrap.Modal.getInstance(document.getElementById('modalNotificarPago')).hide();
+            window.mostrarToast(data.mensaje, 'success');
+            cargar();
         })
-        .catch(() => window.mostrarToast('Error de conexión', 'danger'))
-})
+        .catch(() => window.mostrarToast('Error de conexión', 'danger'));
+});
 
-cargar()
+cargar();

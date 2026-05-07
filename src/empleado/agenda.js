@@ -1,37 +1,37 @@
-const CONTROLADOR = '/cwu/Controladores/EmpleadoControlador.php'
-const contenedor  = document.getElementById('tabla-agenda')
+const CONTROLADOR = '/cwu/Controladores/EmpleadoControlador.php';
+const contenedor  = document.getElementById('tabla-agenda');
 
-cargar()
+cargar();
 
 function cargar() {
-    contenedor.innerHTML = '<p class="text-muted p-4">Cargando...</p>'
+    contenedor.innerHTML = '<p class="text-muted p-4">Cargando...</p>';
     fetch(`${CONTROLADOR}?action=agenda`)
         .then(r => r.json())
         .then(data => {
             if (!data.ok) { contenedor.innerHTML = '<p class="text-danger p-4">Error al cargar.</p>'; return }
             if (!data.data.length) { contenedor.innerHTML = '<p class="text-muted p-4">No tienes eventos asignados.</p>'; return }
-            contenedor.innerHTML = renderTabla(data.data)
+            contenedor.innerHTML = renderTabla(data.data);
             contenedor.querySelectorAll('.btn-responder').forEach(btn =>
                 btn.addEventListener('click', () => responder(btn.dataset.id, btn.dataset.estado))
-            )
+            );
         })
-        .catch(() => { contenedor.innerHTML = '<p class="text-danger p-4">Error de conexión.</p>' })
+        .catch(() => { contenedor.innerHTML = '<p class="text-danger p-4">Error de conexión.</p>' });
 }
 
 function responder(id, estado) {
-    const fd = new FormData()
-    fd.append('action', 'responderAsignacion')
-    fd.append('id', id)
-    fd.append('estado', estado)
+    const fd = new FormData();
+    fd.append('action', 'responderAsignacion');
+    fd.append('id', id);
+    fd.append('estado', estado);
 
     fetch(CONTROLADOR, { method: 'POST', body: fd })
         .then(r => r.json())
         .then(data => {
             if (!data.ok) { window.mostrarToast(data.error, 'danger'); return }
-            window.mostrarToast(data.mensaje, 'success')
-            cargar()
+            window.mostrarToast(data.mensaje, 'success');
+            cargar();
         })
-        .catch(() => window.mostrarToast('Error de conexión', 'danger'))
+        .catch(() => window.mostrarToast('Error de conexión', 'danger'));
 }
 
 const badges = {
@@ -55,15 +55,15 @@ function renderTabla(items) {
                 ${a.estado === 'pendiente' ? `
                     <div class="d-flex gap-1">
                         <button class="btn btn-sm btn-success btn-responder" data-id="${a.id}" data-estado="aceptada">
-                            <i class="bi bi-check-lg"></i> Aceptar
+                            <i class="bi bi-check-lg"></i> Aceptar;
                         </button>
                         <button class="btn btn-sm btn-outline-danger btn-responder" data-id="${a.id}" data-estado="rechazada">
-                            <i class="bi bi-x-lg"></i> Rechazar
+                            <i class="bi bi-x-lg"></i> Rechazar;
                         </button>
                     </div>` : '—'}
             </td>
         </tr>
-    `).join('')
+    `).join('');
 
     return `
         <div class="table-responsive">

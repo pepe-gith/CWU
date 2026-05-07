@@ -1,14 +1,15 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) session_start();
+﻿<?php
+require_once __DIR__ . '/../../inc/sesion.php';
+iniciarSesion();
 if (empty($_SESSION['cliente']) || (int)($_SESSION['cliente']['id_rol'] ?? 0) !== 1) {
     header('Location: /cwu/Vistas/auth/AccesoView.php');
     exit;
 }
 
 require_once '../../inc/helpers.php';
-$layoutTitle = 'Categorías';
-$layoutEntry = 'admin/categorias';
-$layoutMenu  = menuAdmin('categorias');
+$tituloPagina = 'Categorías';
+$entradaVite = 'admin/categorias';
+$menuLateral  = menuAdmin('categorias');
 
 ob_start();
 ?>
@@ -47,6 +48,14 @@ ob_start();
                     <div class="mb-3">
                         <label class="form-label">Nombre <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" name="nombre" maxlength="50" required>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="requiere_sala_vr" id="chk-sala-vr" value="1">
+                        <label class="form-check-label" for="chk-sala-vr">Pide sala y realidad virtual</label>
+                    </div>
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" name="requiere_tarta" id="chk-tarta" value="1">
+                        <label class="form-check-label" for="chk-tarta">Pide tarta</label>
                     </div>
                 </div>
                 <div class="modal-footer">

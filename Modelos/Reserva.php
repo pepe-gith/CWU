@@ -10,12 +10,12 @@ class Reserva {
 
     public function listar(string $filtro = '', string $estado = '', string $cliente = ''): array {
         $where  = [];
-        $params = [];
+        $parametros = [];
 
         if ($filtro === 'proximas')     $where[] = "r.fecha_evento >= CURDATE()";
         elseif ($filtro === 'pasadas')  $where[] = "r.fecha_evento < CURDATE()";
-        if ($estado)  { $where[] = "r.estado = :estado";                               $params[':estado']  = $estado; }
-        if ($cliente) { $where[] = "CONCAT(u.nombre, ' ', u.apellidos) LIKE :cliente"; $params[':cliente'] = "%$cliente%"; }
+        if ($estado)  { $where[] = "r.estado = :estado";                               $parametros[':estado']  = $estado; }
+        if ($cliente) { $where[] = "CONCAT(u.nombre, ' ', u.apellidos) LIKE :cliente"; $parametros[':cliente'] = "%$cliente%"; }
 
         $sql = "
             SELECT r.id, r.fecha_reserva, r.fecha_evento, r.hora_inicio, r.hora_fin,
@@ -35,7 +35,7 @@ class Reserva {
         $sql .= " ORDER BY r.fecha_evento ASC";
 
         $stmt = $this->conexion->prepare($sql);
-        $stmt->execute($params);
+        $stmt->execute($parametros);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -101,14 +101,14 @@ class Reserva {
             INSERT INTO Reserva (fecha_reserva, fecha_evento, hora_inicio, hora_fin, num_asistentes, estado, observaciones, id_usuario, id_servicio, id_empresa)
             VALUES (CURDATE(), :fecha_evento, :hora_inicio, :hora_fin, :asistentes, 'pendiente', :observaciones, :id_usuario, :id_servicio, :id_empresa)
         ")->execute([
-            ':fecha_evento'  => $fechaEvento,
-            ':hora_inicio'   => $horaInicio,
-            ':hora_fin'      => $horaFin,
-            ':asistentes'    => $asistentes,
+            ':fecha_evento' => $fechaEvento,
+            ':hora_inicio' => $horaInicio,
+            ':hora_fin' => $horaFin,
+            ':asistentes' => $asistentes,
             ':observaciones' => $observaciones,
-            ':id_usuario'    => $idUsuario,
-            ':id_servicio'   => $idServicio,
-            ':id_empresa'    => $idEmpresa,
+            ':id_usuario' => $idUsuario,
+            ':id_servicio' => $idServicio,
+            ':id_empresa' => $idEmpresa,
         ]);
     }
 

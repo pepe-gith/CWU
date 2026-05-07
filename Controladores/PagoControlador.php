@@ -3,21 +3,22 @@ require_once("../Modelos/conexion.php");
 require_once("../Modelos/Pago.php");
 require_once("../Modelos/Reserva.php");
 require_once("../inc/helpers.php");
+require_once("../inc/sesion.php");
 
-if (session_status() === PHP_SESSION_NONE) session_start();
+iniciarSesion();
 
 header('Content-Type: application/json');
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
 match($action) {
-    'obtener'       => obtener(),
-    'crear'         => crearAdmin(),
-    'eliminar'      => eliminarPago(),
-    'confirmar'     => confirmarPago(),
-    'rechazar'      => rechazarPago(),
+    'obtener' => obtener(),
+    'crear' => crearAdmin(),
+    'eliminar' => eliminarPago(),
+    'confirmar' => confirmarPago(),
+    'rechazar' => rechazarPago(),
     'solicitarPago' => solicitarPago(),
-    default         => responderError(400, 'Acción no válida.')
+    default => responderError(400, 'Acción no válida.')
 };
 
 function esAdmin(): bool {
@@ -35,7 +36,7 @@ function obtener(): void {
 
     $modelo = new Pago(conexionPDO());
     echo json_encode([
-        'ok'    => true,
+        'ok' => true,
         'pagos' => $modelo->obtenerPorReserva($idReserva),
         'total' => $modelo->totalPagado($idReserva),
     ]);
@@ -100,16 +101,16 @@ function solicitarPago(): void {
     $metodo     = trim((string) filter_input(INPUT_POST, 'metodo', FILTER_UNSAFE_RAW));
     $referencia = trim((string) filter_input(INPUT_POST, 'referencia', FILTER_UNSAFE_RAW)) ?: null;
 
-    if (!$idReserva)                     responderError(400, 'ID de reserva inválido');
+    if (!$idReserva) responderError(400, 'ID de reserva inválido');
     if ($monto === false || $monto <= 0) responderError(400, 'El monto debe ser mayor que 0');
     if (!in_array($metodo, ['bizum', 'transferencia', 'efectivo', 'tarjeta'])) responderError(400, 'Método de pago no válido');
 
-    $con     = conexionPDO();
-    $reserva = (new Reserva($con))->obtenerParaCliente($idReserva, $idUsuario);
+    $conexion = conexionPDO();
+    $reserva = (new Reserva($conexion))->obtenerParaCliente($idReserva, $idUsuario);
     if (!$reserva) responderError(404, 'Reserva no encontrada');
     if ($reserva['estado'] === 'cancelada') responderError(400, 'No puedes registrar pagos en una reserva cancelada');
 
-    $modelo = new Pago($con);
+    $modelo = new Pago($conexion);
     $modelo->crearPorCliente($idReserva, $monto, $metodo, $referencia);
     $modelo->notificarAdmins($idReserva);
 

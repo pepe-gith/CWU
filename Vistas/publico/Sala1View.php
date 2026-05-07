@@ -13,7 +13,7 @@
     <!-- Header -->
     <?php include('../../inc/header.php') ?>
     
-    <!-- MOTIVOS -->
+    <!-- Motivos -->
     <section class="cards">
         <div class="card">
             <img src="/cwu/public/assets/img/thr.png">
@@ -34,15 +34,15 @@
               Hallarás pruebas de todo tipo, confia en tu ingenio, creatividad y lógica.</p>
         </div>
     </section>
-    <!-- END MOTIVOS -->        
-    <!-- BANNER -->    
+
+    <!-- Banner -->    
     <section class="banner">
         <div class="banner-content">
           <image class="header-img" src="/cwu/public/assets/img/clinica.jpg" width="588" heigt="245" />
         </div>
     </section>
-    <!-- END BANNER -->    
-    <!-- DESCRIPCIÓN SALA -->
+
+    <!-- Descripción -->
     <section class="descSala">
         <h3 class="section-title">LA CLÍNICA</h3>
         <div class="descSala-card">
@@ -53,7 +53,6 @@
             <a href="/cwu/Vistas/auth/RegistroView.php" class="btn-primary-full">Para vivir la aventura REGISTRATE YA</a>  
         </div>
     </section>
-    <!-- END DESCRIPCIÓN SALA -->
 
     <!-- Footer -->
     <?php include('../../inc/footer.php') ?>

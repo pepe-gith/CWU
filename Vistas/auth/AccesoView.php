@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once __DIR__ . '/../../inc/sesion.php';
+iniciarSesion();
 if (!empty($_SESSION['cliente'])) {
     $rol = (int)($_SESSION['cliente']['id_rol'] ?? 3);
     $redirect = match($rol) {
@@ -34,12 +35,12 @@ if (!empty($_SESSION['cliente'])) {
                 <form id="formComprobarAcceso" novalidate>
                     <div class="mb-3">
                         <label for="nif" class="form-label">NIF</label>
-                        <input type="text" class="form-control" name="nif" id="nif" placeholder="12345678A" required>
+                        <input type="text" class="form-control" name="nif" id="nif" required>
                         <div class="invalid-feedback">Campo obligatorio.</div>
                     </div>
                     <div class="mb-4">
                         <label for="contra" class="form-label">Contraseña</label>
-                        <input type="password" class="form-control" name="contra" id="contra" placeholder="Contraseña" required>
+                        <input type="password" class="form-control" name="contra" id="contra" required>
                         <div class="invalid-feedback">Campo obligatorio.</div>
                     </div>
                     <div class="d-grid">

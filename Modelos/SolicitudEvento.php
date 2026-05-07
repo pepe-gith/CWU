@@ -18,16 +18,16 @@ class SolicitudEvento {
                  :num_participantes, :sala, :realidad_virtual, :tarta, :observaciones, :id_usuario, :id_empresa)
         ");
         $stmt->execute([
-            ':fecha_evento'        => $datos['fecha_evento'],
-            ':tipo_evento'         => $datos['tipo_evento'],
+            ':fecha_evento' => $datos['fecha_evento'],
+            ':tipo_evento' => $datos['tipo_evento'],
             ':nombre_protagonista' => $datos['nombre_protagonista'] ?? null,
-            ':num_participantes'   => $datos['num_participantes'],
-            ':sala'                => $datos['sala'] ?? null,
-            ':realidad_virtual'    => $datos['realidad_virtual'] ?? null,
-            ':tarta'               => $datos['tarta'] ?? null,
-            ':observaciones'       => $datos['observaciones'] ?? null,
-            ':id_usuario'          => $idUsuario,
-            ':id_empresa'          => $idEmpresa,
+            ':num_participantes' => $datos['num_participantes'],
+            ':sala' => $datos['sala'] ?? null,
+            ':realidad_virtual' => $datos['realidad_virtual'] ?? null,
+            ':tarta' => $datos['tarta'] ?? null,
+            ':observaciones' => $datos['observaciones'] ?? null,
+            ':id_usuario' => $idUsuario,
+            ':id_empresa' => $idEmpresa,
         ]);
         return (int) $this->conexion->lastInsertId();
     }
@@ -109,8 +109,8 @@ class SolicitudEvento {
     public function notificarCliente(int $id, string $estado): void {
         $textos = [
             'presupuestada' => "Tienes un presupuesto listo para tu solicitud del %s (%s). Revísalo en Mis solicitudes.",
-            'aceptada'      => "Tu solicitud del %s (%s) ha sido aceptada. En breve recibirás los detalles de tu reserva.",
-            'rechazada'     => "Tu solicitud del %s (%s) ha sido rechazada.",
+            'aceptada' => "Tu solicitud del %s (%s) ha sido aceptada. En breve recibirás los detalles de tu reserva.",
+            'rechazada' => "Tu solicitud del %s (%s) ha sido rechazada.",
         ];
         if (!isset($textos[$estado])) return;
 

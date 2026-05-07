@@ -2,14 +2,15 @@
 require_once("../Modelos/conexion.php");
 require_once("../Modelos/Usuario.php");
 require_once("../inc/helpers.php");
+require_once("../inc/sesion.php");
 
-if (session_status() === PHP_SESSION_NONE) session_start();
+iniciarSesion();
 
 header('Content-Type: application/json');
 
-$action = $_POST['action'] ?? $_GET['action'] ?? '';
+$accion = $_POST['action'] ?? $_GET['action'] ?? '';
 
-match($action) {
+match($accion) {
     'iniciarSession'          => iniciarSession(),
     'cerrarSesion'            => cerrarSession(),
     'registrar'               => registrar(),
@@ -43,17 +44,17 @@ function iniciarSession(): void {
     session_regenerate_id(true);
 
     $_SESSION['cliente'] = [
-        'id'         => $usuario['id']         ?? null,
-        'NIF'        => $usuario['nif']        ?? null,
-        'nombre'     => $usuario['nombre']     ?? null,
-        'email'      => $usuario['email']      ?? null,
-        'id_empresa' => $usuario['id_empresa'] ?? null,
-        'id_rol'     => $usuario['id_rol']     ?? null,
+        'id' => $usuario['id'],
+        'NIF' => $usuario['nif'],
+        'nombre' => $usuario['nombre'],
+        'email' => $usuario['email'],
+        'id_empresa' => $usuario['id_empresa'],
+        'id_rol' => $usuario['id_rol']
     ];
 
     $redirect = match((int)($usuario['id_rol'] ?? 3)) {
-        1       => '/cwu/Vistas/admin/DashboardView.php',
-        2       => '/cwu/Vistas/empleado/AgendaView.php',
+        1 => '/cwu/Vistas/admin/DashboardView.php',
+        2 => '/cwu/Vistas/empleado/AgendaView.php',
         default => '/cwu/Vistas/cliente/InicioView.php',
     };
 
@@ -84,6 +85,7 @@ function cerrarSession(): void {
 }
 
 function obtenerPerfil(): void {
+    // Solo usuarios autenticados
     if (empty($_SESSION['cliente']['id'])) responderError(401, 'No autenticado');
 
     $con = conexionPDO();
@@ -97,14 +99,15 @@ function obtenerPerfil(): void {
 }
 
 function actualizarPerfil(): void {
+    // Solo usuarios autenticados
     if (empty($_SESSION['cliente']['id'])) responderError(401, 'No autenticado');
 
-    $nombre       = trim((string) filter_input(INPUT_POST, 'nombre',        FILTER_UNSAFE_RAW));
-    $apellidos    = trim((string) filter_input(INPUT_POST, 'apellidos',     FILTER_UNSAFE_RAW));
-    $telefono     = trim((string) filter_input(INPUT_POST, 'telefono',      FILTER_UNSAFE_RAW));
+    $nombre = trim((string) filter_input(INPUT_POST, 'nombre',        FILTER_UNSAFE_RAW));
+    $apellidos = trim((string) filter_input(INPUT_POST, 'apellidos',     FILTER_UNSAFE_RAW));
+    $telefono = trim((string) filter_input(INPUT_POST, 'telefono',      FILTER_UNSAFE_RAW));
     $otroTelefono = trim((string) filter_input(INPUT_POST, 'otro_telefono', FILTER_UNSAFE_RAW));
-    $email        = trim((string) filter_input(INPUT_POST, 'email',         FILTER_SANITIZE_EMAIL));
-    $direccion    = trim((string) filter_input(INPUT_POST, 'direccion',     FILTER_UNSAFE_RAW));
+    $email = trim((string) filter_input(INPUT_POST, 'email',         FILTER_SANITIZE_EMAIL));
+    $direccion = trim((string) filter_input(INPUT_POST, 'direccion',     FILTER_UNSAFE_RAW));
 
     if (!$nombre || !$apellidos || !$email) responderError(400, 'Faltan campos obligatorios');
 
@@ -124,15 +127,15 @@ function actualizarPerfil(): void {
 }
 
 function registrar(): void {
-    $nif       = trim((string) ($_POST['nif']       ?? ''));
-    $nombre    = trim((string) ($_POST['nombre']    ?? ''));
+    $nif = trim((string) ($_POST['nif']       ?? ''));
+    $nombre = trim((string) ($_POST['nombre']    ?? ''));
     $apellidos = trim((string) ($_POST['apellidos'] ?? ''));
-    $movil1    = trim((string) ($_POST['movil1']    ?? ''));
-    $movil2    = trim((string) ($_POST['movil2']    ?? ''));
-    $email     = trim((string) ($_POST['email1']    ?? ''));
-    $password  = trim((string) ($_POST['password']  ?? ''));
+    $movil1 = trim((string) ($_POST['movil1']    ?? ''));
+    $movil2 = trim((string) ($_POST['movil2']    ?? ''));
+    $email = trim((string) ($_POST['email1']    ?? ''));
+    $password = trim((string) ($_POST['password']  ?? ''));
     $direccion = trim((string) ($_POST['direccion'] ?? ''));
-    $como      = trim((string) ($_POST['como']      ?? ''));
+    $como = trim((string) ($_POST['como']      ?? ''));
 
     if (!$nif || !$nombre || !$apellidos || !$movil1 || !$email || !$password || !$direccion)
         responderError(400, 'Faltan datos obligatorios.');
@@ -178,7 +181,10 @@ function verificarCampo(): void {
 }
 
 function obtenerNotificaciones(): void {
+
+    // Solo usuarios autenticados
     if (empty($_SESSION['cliente']['id'])) responderError(401, 'No autenticado');
+
     $con  = conexionPDO();
     $stmt = $con->prepare("SELECT id, mensaje, fecha FROM Notificacion WHERE id_usuario = :id AND leida = 0 ORDER BY fecha DESC");
     $stmt->execute([':id' => $_SESSION['cliente']['id']]);
@@ -187,8 +193,11 @@ function obtenerNotificaciones(): void {
 }
 
 function marcarNotificacionLeida(): void {
+    // Solo usuarios autenticados
     if (empty($_SESSION['cliente']['id'])) responderError(401, 'No autenticado');
+
     $id = (int) filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+
     if (!$id) responderError(400, 'Datos no válidos');
     $con  = conexionPDO();
     $stmt = $con->prepare("UPDATE Notificacion SET leida = 1 WHERE id = :id AND id_usuario = :uid");
@@ -198,15 +207,24 @@ function marcarNotificacionLeida(): void {
 }
 
 function cambiarPassword(): void {
+    // Solo usuarios autenticados
     if (empty($_SESSION['cliente']['id'])) responderError(401, 'No autenticado');
 
-    $actual    = (string) filter_input(INPUT_POST, 'password_actual',    FILTER_UNSAFE_RAW);
-    $nueva     = (string) filter_input(INPUT_POST, 'password_nueva',     FILTER_UNSAFE_RAW);
+    $actual = (string) filter_input(INPUT_POST, 'password_actual',    FILTER_UNSAFE_RAW);
+    $nueva = (string) filter_input(INPUT_POST, 'password_nueva',     FILTER_UNSAFE_RAW);
     $confirmar = (string) filter_input(INPUT_POST, 'password_confirmar', FILTER_UNSAFE_RAW);
 
-    if (!$actual || !$nueva || !$confirmar) responderError(400, 'Faltan campos');
-    if ($nueva !== $confirmar)              responderError(400, 'Las contraseñas no coinciden');
-    if (strlen($nueva) < 8)                responderError(400, 'La contraseña debe tener al menos 8 caracteres');
+    if (!$actual || !$nueva || !$confirmar) {
+        responderError(400, 'Faltan campos');
+    }
+
+    if ($nueva !== $confirmar) {
+        responderError(400, 'Las contraseñas no coinciden');
+    }         
+
+    if (strlen($nueva) < 8) {
+        responderError(400, 'La contraseña debe tener al menos 8 caracteres');
+    }
 
     $con = conexionPDO();
     $modelo = new Usuario($con);

@@ -1,8 +1,8 @@
-import { Calendar } from '@fullcalendar/core'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import esLocale from '@fullcalendar/core/locales/es'
+import { Calendar } from '@fullcalendar/core';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import esLocale from '@fullcalendar/core/locales/es';
 
-const CONTROLADOR = '/cwu/Controladores/AdminControlador.php'
+const pathControlador = '/cwu/Controladores/AdminControlador.php';
 
 const calendar = new Calendar(document.getElementById('calendario'), {
     plugins: [dayGridPlugin],
@@ -15,21 +15,16 @@ const calendar = new Calendar(document.getElementById('calendario'), {
     },
     height: 'auto',
     events: function (info, successCallback, failureCallback) {
-        const params = new URLSearchParams({
-            action: 'eventosCalendario',
-            start:  info.startStr,
-            end:    info.endStr,
-        })
-        fetch(`${CONTROLADOR}?${params}`)
+        fetch(`${pathControlador}?action=eventosCalendario&start=${info.startStr}&end=${info.endStr}`)
             .then(r => r.json())
             .then(data => successCallback(data.ok ? data.data : []))
-            .catch(() => failureCallback())
+            .catch(() => failureCallback());
     },
     eventClick: function (info) {
-        const e = info.event
-        const p = e.extendedProps
+        const e = info.event;
+        const p = e.extendedProps;
 
-        document.getElementById('detalle-titulo').textContent = e.title
+        document.getElementById('detalle-titulo').textContent = e.title;
 
         let html = `
             <dl class="row mb-0">
@@ -64,15 +59,15 @@ const calendar = new Calendar(document.getElementById('calendario'), {
                 <dd class="col-7">Pendiente</dd>`
         }
 
-        html += '</dl>'
-        document.getElementById('detalle-cuerpo').innerHTML = html
-        window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDetalleEvento')).show()
+        html += '</dl>';
+        document.getElementById('detalle-cuerpo').innerHTML = html;
+        window.bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDetalleEvento')).show();
     },
     eventDisplay: 'block',
     displayEventTime: false,
     eventDidMount: function (info) {
-        info.el.style.cursor = 'pointer'
+        info.el.style.cursor = 'pointer';
     },
-})
+});
 
-calendar.render()
+calendar.render();

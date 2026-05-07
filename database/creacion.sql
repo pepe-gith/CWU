@@ -27,7 +27,9 @@ CREATE TABLE Rol (
 
 CREATE TABLE Categoria (
 	id int AUTO_INCREMENT PRIMARY KEY,
-	nombre varchar(50) NOT NULL UNIQUE
+	nombre varchar(50) NOT NULL UNIQUE,
+	requiere_sala_vr TINYINT(1) NOT NULL DEFAULT 0,
+	requiere_tarta TINYINT(1) NOT NULL DEFAULT 0
 );
 
 --- 2. TABLAS PRINCIPALES

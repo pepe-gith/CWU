@@ -3,10 +3,11 @@ require_once("../Modelos/conexion.php");
 require_once("../Modelos/SolicitudEvento.php");
 require_once("../Modelos/Reserva.php");
 require_once("../inc/helpers.php");
+require_once("../inc/sesion.php");
 
 header('Content-Type: application/json');
 
-if (session_status() === PHP_SESSION_NONE) session_start();
+iniciarSesion();
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 

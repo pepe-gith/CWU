@@ -13,7 +13,7 @@
     <!-- Header -->
     <?php include('../../inc/header.php') ?>
 
-    <!-- MOTIVOS -->
+    <!-- Motivos -->
     <section class="cards">
         <div class="card">
             <img src="/cwu/public/assets/img/thr.png">
@@ -34,17 +34,15 @@
                la animación y las actividades para que tu evento salga a la perfección.</p>
         </div>
     </section>
-    <!-- END MOTIVOS -->
 
-    <!-- BANNER -->
+    <!-- Banner -->
     <section class="banner">
         <div class="banner-content">
             <img class="header-img" src="/cwu/public/assets/img/fiesta.png" width="588" height="245" />
         </div>
     </section>
-    <!-- END BANNER -->
 
-    <!-- DESCRIPCIÓN -->
+    <!-- Descripción -->
     <section class="descSala">
         <h3 class="section-title">EVENTOS Y FIESTAS</h3>
         <div class="descSala-card">
@@ -55,7 +53,6 @@
             <a href="/cwu/Vistas/auth/RegistroView.php" class="btn-primary-full">¡Organiza tu evento!</a>
         </div>
     </section>
-    <!-- END DESCRIPCIÓN -->
 
     <!-- Footer -->
     <?php include('../../inc/footer.php') ?>

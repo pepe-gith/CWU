@@ -1,7 +1,7 @@
-<?php
-$layoutTitle = $layoutTitle ?? 'Mi área';
-$layoutEntry = $layoutEntry ?? 'main';
-$layoutMenu  = $layoutMenu  ?? [];
+﻿<?php
+$tituloPagina = $tituloPagina ?? 'Mi área';
+$entradaVite = $entradaVite ?? 'main';
+$menuLateral  = $menuLateral  ?? [];
 $content     = $content     ?? '';
 ?>
 <!DOCTYPE html>
@@ -9,8 +9,8 @@ $content     = $content     ?? '';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php include __DIR__ . '/vite.php'; vite_assets($layoutEntry ?? 'main'); ?>
-<title><?php echo htmlspecialchars($layoutTitle ?? 'Mi área') ?></title>
+    <?php include __DIR__ . '/vite.php'; vite_assets($entradaVite ?? 'main'); ?>
+<title><?php echo htmlspecialchars($tituloPagina ?? 'Mi área') ?></title>
 </head>
 <body>
 
@@ -21,7 +21,7 @@ $content     = $content     ?? '';
 
         <aside class="area-sidebar">
             <nav class="area-nav">
-                <?php foreach ($layoutMenu as $item): ?>
+                <?php foreach ($menuLateral as $item): ?>
                     <a href="<?php echo htmlspecialchars($item['href']) ?>"
                        class="area-nav__item<?php echo !empty($item['active']) ? ' area-nav__item--active' : '' ?>">
                         <i class="bi <?php echo htmlspecialchars($item['icon']) ?>"></i>

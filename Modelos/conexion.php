@@ -1,5 +1,5 @@
 <?php
-require_once '../config.php';
+require_once __DIR__ . '/../config.php';
 
 function conexionMysqli(){
     $connect = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
@@ -10,7 +10,7 @@ function conexionMysqli(){
     
     mysqli_set_charset($connect, "utf8mb4");
     return $connect;
-};
+}
 
 // Mantiene compatibilidad con el codigo legacy que usa mysqli.
 function conexion() {

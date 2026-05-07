@@ -25,12 +25,12 @@ class Servicio {
             INSERT INTO Servicio (nombre, descripcion, precio_base, capacidad, id_categoria, id_empresa)
             VALUES (:nombre, :descripcion, :precio, :capacidad, :id_cat, :id_empresa)
         ")->execute([
-            ':nombre'      => $nombre,
+            ':nombre' => $nombre,
             ':descripcion' => $descripcion,
-            ':precio'      => $precio,
-            ':capacidad'   => $capacidad,
-            ':id_cat'      => $idCategoria,
-            ':id_empresa'  => $idEmpresa,
+            ':precio' => $precio,
+            ':capacidad' => $capacidad,
+            ':id_cat' => $idCategoria,
+            ':id_empresa' => $idEmpresa,
         ]);
     }
 
@@ -41,12 +41,12 @@ class Servicio {
                 capacidad = :capacidad, id_categoria = :id_cat
             WHERE id = :id
         ")->execute([
-            ':nombre'      => $nombre,
+            ':nombre' => $nombre,
             ':descripcion' => $descripcion,
-            ':precio'      => $precio,
-            ':capacidad'   => $capacidad,
-            ':id_cat'      => $idCategoria,
-            ':id'          => $id,
+            ':precio' => $precio,
+            ':capacidad' => $capacidad,
+            ':id_cat' => $idCategoria,
+            ':id' => $id,
         ]);
     }
 

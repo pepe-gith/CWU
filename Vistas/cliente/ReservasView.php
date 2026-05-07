@@ -1,14 +1,15 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) session_start();
+﻿<?php
+require_once __DIR__ . '/../../inc/sesion.php';
+iniciarSesion();
 if (empty($_SESSION['cliente'])) {
     header('Location: /cwu/Vistas/auth/AccesoView.php');
     exit;
 }
 
 require_once '../../inc/helpers.php';
-$layoutTitle = 'Mis reservas';
-$layoutEntry = 'cliente/reservas';
-$layoutMenu  = menuCliente('reservas');
+$tituloPagina = 'Mis reservas';
+$entradaVite = 'cliente/reservas';
+$menuLateral  = menuCliente('reservas');
 
 ob_start();
 ?>

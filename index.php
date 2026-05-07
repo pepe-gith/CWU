@@ -26,7 +26,7 @@
 
                 <div class="cards-container">
 
-                    <!-- Tarjeta 1: La Clínica -->
+                    <!-- Tarjeta 1 La Clínica -->
                     <div class="card-opcion">
 
                         <a class="card-link" href="./Vistas/publico/Sala1View.php">
@@ -48,7 +48,7 @@
 
                     </div>
 
-                    <!-- Tarjeta 2: ¡Feliz Cumpleaños! -->
+                    <!-- Tarjeta 2 Feliz Cumpleaños -->
                     <div class="card-opcion">
                         <a href="./Vistas/publico/CumpleView.php" class="card-link">
                             <div class="card-image">
@@ -64,7 +64,7 @@
                         </a>
                     </div>
  
-                    <!-- Tarjeta 3: La Biblioteca -->
+                    <!-- Tarjeta 3 La Biblioteca -->
                     <div class="card-opcion">
                         <a href="./Vistas/publico/Sala2View.php" class="card-link">
                             <div class="card-image">
@@ -80,7 +80,7 @@
                         </a>
                     </div>
 
-                    <!-- Tarjeta 4: Eventos y Fiestas -->
+                    <!-- Tarjeta 4 Eventos y Fiestas -->
                     <div class="card-opcion">
                         <a href="./Vistas/publico/FiestaView.php" class="card-link">
                             <div class="card-image">

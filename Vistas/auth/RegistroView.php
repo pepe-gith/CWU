@@ -1,6 +1,8 @@
 <?php
-session_start();
+require_once __DIR__ . '/../../inc/sesion.php';
+iniciarSesion();
 if (!empty($_SESSION['cliente'])) {
+
     $rol = (int)($_SESSION['cliente']['id_rol'] ?? 3);
     $redirect = match($rol) {
         1 => '/cwu/Vistas/admin/DashboardView.php',
@@ -39,7 +41,7 @@ if (!empty($_SESSION['cliente'])) {
                             <span class="text-danger">*</span>
                         </label>
                         <input type="text" class="form-control" name="nif" id="nif"
-                            placeholder="12345678A" pattern="[0-9]{8}[A-Z]{1}" maxlength="9" required>
+                            pattern="[0-9]{8}[A-Z]{1}" maxlength="9" required>
                         <div class="invalid-feedback">Campo obligatorio.</div>
                     </div>
 
@@ -47,13 +49,13 @@ if (!empty($_SESSION['cliente'])) {
                         <div class="col">
                             <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" name="nombre" id="nombre"
-                                placeholder="Nombre" maxlength="100" required>
+                                maxlength="100" required>
                             <div class="invalid-feedback">Campo obligatorio.</div>
                         </div>
                         <div class="col">
                             <label for="apellidos" class="form-label">Apellidos <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" name="apellidos" id="apellidos"
-                                placeholder="Apellidos" maxlength="150" required>
+                                maxlength="150" required>
                             <div class="invalid-feedback">Campo obligatorio.</div>
                         </div>
                     </div>
@@ -62,27 +64,27 @@ if (!empty($_SESSION['cliente'])) {
                         <div class="col">
                             <label for="movil1" class="form-label">Teléfono <span class="text-danger">*</span></label>
                             <input type="tel" class="form-control" name="movil1" id="movil1"
-                                placeholder="612345678" pattern="[0-9]{9}" maxlength="9" required>
+                                pattern="[0-9]{9}" maxlength="9" required>
                             <div class="invalid-feedback">Campo obligatorio.</div>
                         </div>
                         <div class="col">
                             <label for="movil2" class="form-label">Otro teléfono</label>
                             <input type="tel" class="form-control" name="movil2" id="movil2"
-                                placeholder="612345678" pattern="[0-9]{9}" maxlength="9">
+                                 pattern="[0-9]{9}" maxlength="9">
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="email1" class="form-label">Email <span class="text-danger">*</span></label>
                         <input type="email" class="form-control" name="email1" id="email1"
-                            placeholder="correo@ejemplo.com" maxlength="100" required>
+                            maxlength="100" required>
                         <div class="invalid-feedback">Campo obligatorio.</div>
                     </div>
 
                     <div class="mb-3">
                         <label for="password" class="form-label">Contraseña <span class="text-danger">*</span></label>
                         <input type="password" class="form-control" name="password" id="password"
-                            placeholder="Contraseña" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                             minlength="8" required>
                         <div class="form-text">Mínimo 8 caracteres, una mayúscula y un número.</div>
                         <div class="invalid-feedback">La contraseña no cumple los requisitos.</div>
@@ -92,14 +94,14 @@ if (!empty($_SESSION['cliente'])) {
                     <div class="mb-3">
                         <label for="direccion" class="form-label">Dirección <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" name="direccion" id="direccion"
-                            placeholder="Calle, número, ciudad" maxlength="255" required>
+                            maxlength="255" required>
                         <div class="invalid-feedback">Campo obligatorio.</div>
                     </div>
 
                     <div class="mb-4">
                         <label for="como" class="form-label">¿Cómo nos has conocido?</label>
                         <input type="text" class="form-control" name="como" id="como"
-                            placeholder="Redes sociales, amigos..." maxlength="100">
+                            maxlength="100">
                     </div>
 
                     <div class="d-grid">
