@@ -8,17 +8,17 @@ USE gestion_eventos;
 -- Desactiva comprobaciones de claves foraneas para permitir borrado en bloque
 SET FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE IF EXISTS Notificacion;
-DROP TABLE IF EXISTS Asignacion_Empleado;
-DROP TABLE IF EXISTS Pago_Cliente;
-DROP TABLE IF EXISTS Reserva;
-DROP TABLE IF EXISTS Solicitud_Evento;
-DROP TABLE IF EXISTS Empleado;
-DROP TABLE IF EXISTS Servicio;
-DROP TABLE IF EXISTS Usuario;
-DROP TABLE IF EXISTS Categoria;
-DROP TABLE IF EXISTS Rol;
-DROP TABLE IF EXISTS Empresa;
+DROP TABLE IF EXISTS notificacion;
+DROP TABLE IF EXISTS asignacion_empleado;
+DROP TABLE IF EXISTS pago_cliente;
+DROP TABLE IF EXISTS reserva;
+DROP TABLE IF EXISTS solicitud_evento;
+DROP TABLE IF EXISTS empleado;
+DROP TABLE IF EXISTS servicio;
+DROP TABLE IF EXISTS usuario;
+DROP TABLE IF EXISTS categoria;
+DROP TABLE IF EXISTS rol;
+DROP TABLE IF EXISTS empresa;
 
 SET FOREIGN_KEY_CHECKS = 1;
 

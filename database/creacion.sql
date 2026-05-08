@@ -11,7 +11,7 @@ USE gestion_eventos;
 --- CREACION DE TABLAS ---
 --- 1. Creacion de tabla de Empresa, Rol, Categoria
 -- Despues de crear estas 3 tablas se inserta datos porque se necesita para las demás.
-CREATE TABLE Empresa (
+CREATE TABLE empresa (
 	id int AUTO_INCREMENT PRIMARY KEY,
 	nombre_empresa varchar(150) NOT NULL,
 	cif varchar(20) NOT NULL UNIQUE,
@@ -20,12 +20,12 @@ CREATE TABLE Empresa (
 	direccion varchar(255)
 );
 
-CREATE TABLE Rol (
+CREATE TABLE rol (
 	id int AUTO_INCREMENT PRIMARY KEY,
 	nombre_rol varchar(20) NOT NULL UNIQUE
 );
 
-CREATE TABLE Categoria (
+CREATE TABLE categoria (
 	id int AUTO_INCREMENT PRIMARY KEY,
 	nombre varchar(50) NOT NULL UNIQUE,
 	requiere_sala_vr TINYINT(1) NOT NULL DEFAULT 0,
@@ -33,7 +33,7 @@ CREATE TABLE Categoria (
 );
 
 --- 2. TABLAS PRINCIPALES
-CREATE TABLE Usuario (
+CREATE TABLE usuario (
     id int AUTO_INCREMENT PRIMARY KEY,
     nif VARCHAR(20) NOT NULL UNIQUE,
     nombre VARCHAR(100) NOT NULL,
@@ -47,11 +47,11 @@ CREATE TABLE Usuario (
     activo TINYINT(1) NOT NULL DEFAULT 1,
     id_rol INT NOT NULL,
     id_empresa INT NOT NULL,
-    FOREIGN KEY (id_rol) REFERENCES Rol(id),
-    FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
+    FOREIGN KEY (id_rol) REFERENCES rol(id),
+    FOREIGN KEY (id_empresa) REFERENCES empresa(id)
 );
 
-CREATE TABLE Servicio (
+CREATE TABLE servicio (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(150) NOT NULL,
     descripcion TEXT,
@@ -59,25 +59,25 @@ CREATE TABLE Servicio (
     capacidad INT NOT NULL,
     id_categoria INT NOT NULL,
     id_empresa INT NOT NULL,
-    FOREIGN KEY (id_categoria) REFERENCES Categoria(id),
-    FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
+    FOREIGN KEY (id_categoria) REFERENCES categoria(id),
+    FOREIGN KEY (id_empresa) REFERENCES empresa(id)
 );
 
-CREATE TABLE Empleado (
+CREATE TABLE empleado (
     id INT AUTO_INCREMENT PRIMARY KEY,
     precio_por_hora DECIMAL(10,2) NOT NULL,
     especialidad VARCHAR(100),
     id_usuario INT NOT NULL,
     id_empresa INT NOT NULL,
-    FOREIGN KEY (id_usuario) REFERENCES Usuario(id),
-    FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id),
+    FOREIGN KEY (id_empresa) REFERENCES empresa(id)
 );
 
 
 --- 3. TABLAS DEL NÚCLEO
 
 -- Primero la solicitud del evento
-CREATE TABLE Solicitud_Evento (
+CREATE TABLE solicitud_evento (
     id INT AUTO_INCREMENT PRIMARY KEY,
     fecha_solicitud DATE NOT NULL,
     fecha_evento DATE NOT NULL,
@@ -95,12 +95,12 @@ CREATE TABLE Solicitud_Evento (
     motivo_revision TEXT,
     id_usuario INT NOT NULL,
     id_empresa INT NOT NULL,
-    FOREIGN KEY (tipo_evento) REFERENCES Categoria(id),
-    FOREIGN KEY (id_usuario) REFERENCES Usuario(id),
-    FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
+    FOREIGN KEY (tipo_evento) REFERENCES categoria(id),
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id),
+    FOREIGN KEY (id_empresa) REFERENCES empresa(id)
 );
 
-CREATE TABLE Reserva (
+CREATE TABLE reserva (
     id INT AUTO_INCREMENT PRIMARY KEY,
     fecha_reserva DATE NOT NULL,
     fecha_evento DATE NOT NULL,
@@ -115,12 +115,12 @@ CREATE TABLE Reserva (
     id_usuario INT NOT NULL,
     id_servicio INT NOT NULL,
     id_empresa INT NOT NULL,
-    FOREIGN KEY (id_usuario) REFERENCES Usuario(id),
-    FOREIGN KEY (id_servicio) REFERENCES Servicio(id),
-    FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id),
+    FOREIGN KEY (id_servicio) REFERENCES servicio(id),
+    FOREIGN KEY (id_empresa) REFERENCES empresa(id)
 );
 
-CREATE TABLE Pago_Cliente (
+CREATE TABLE pago_cliente (
     id INT AUTO_INCREMENT PRIMARY KEY,
     monto DECIMAL(10,2) NOT NULL,
     fecha DATE NOT NULL,
@@ -128,25 +128,25 @@ CREATE TABLE Pago_Cliente (
     estado VARCHAR(50) NOT NULL DEFAULT 'pendiente',
     referencia VARCHAR(255) NULL,
     id_reserva INT NOT NULL,
-    FOREIGN KEY (id_reserva) REFERENCES Reserva(id)
+    FOREIGN KEY (id_reserva) REFERENCES reserva(id)
 );
 
-CREATE TABLE Asignacion_Empleado (
+CREATE TABLE asignacion_empleado (
     id INT AUTO_INCREMENT PRIMARY KEY,
     rol_evento VARCHAR(100),
     estado ENUM('pendiente','aceptada','rechazada') NOT NULL DEFAULT 'pendiente',
     id_reserva INT NOT NULL,
     id_empleado INT NOT NULL,
-    FOREIGN KEY (id_reserva) REFERENCES Reserva(id),
-    FOREIGN KEY (id_empleado) REFERENCES Empleado(id)
+    FOREIGN KEY (id_reserva) REFERENCES reserva(id),
+    FOREIGN KEY (id_empleado) REFERENCES empleado(id)
 );
 
-CREATE TABLE Notificacion (
+CREATE TABLE notificacion (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT NOT NULL,
     mensaje VARCHAR(500) NOT NULL,
     leida TINYINT(1) NOT NULL DEFAULT 0,
     fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_usuario) REFERENCES Usuario(id) ON DELETE CASCADE
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id) ON DELETE CASCADE
 );
 

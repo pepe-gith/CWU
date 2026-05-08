@@ -6,7 +6,7 @@ CREATE DATABASE IF NOT EXISTS gestion_eventos;
 USE gestion_eventos;
 
 
-CREATE TABLE Empresa (
+CREATE TABLE empresa (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre_empresa VARCHAR(150) NOT NULL,
     cif VARCHAR(20) NOT NULL UNIQUE,
@@ -15,12 +15,12 @@ CREATE TABLE Empresa (
     direccion VARCHAR(255)
 );
 
-CREATE TABLE Rol (
+CREATE TABLE rol (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre_rol VARCHAR(20) NOT NULL UNIQUE
 );
 
-CREATE TABLE Categoria (
+CREATE TABLE categoria (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL UNIQUE,
     requiere_sala_vr TINYINT(1) NOT NULL DEFAULT 0,
@@ -28,22 +28,22 @@ CREATE TABLE Categoria (
 );
 
 
-INSERT INTO Empresa (nombre_empresa, cif, telefono, email, direccion)
+INSERT INTO empresa (nombre_empresa, cif, telefono, email, direccion)
 VALUES ('Aventura Kids SL', 'B12345678', '600123123', 'info@aventurakids.com', 'Calle Mayor 10, Madrid');
 
-INSERT INTO Rol (nombre_rol) VALUES
+INSERT INTO rol (nombre_rol) VALUES
 ('admin'),
 ('empleado'),
 ('cliente');
 
-INSERT INTO Categoria (nombre, requiere_sala_vr, requiere_tarta) VALUES
+INSERT INTO categoria (nombre, requiere_sala_vr, requiere_tarta) VALUES
 ('Extraescolar', 0, 0),
 ('Escape Room',  1, 0),
 ('Cumpleaños',   0, 1),
 ('Eventos',      0, 0);
 
 -- Tablas Principales
-CREATE TABLE Usuario (
+CREATE TABLE usuario (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nif VARCHAR(20) NOT NULL UNIQUE,
     nombre VARCHAR(100) NOT NULL,
@@ -57,11 +57,11 @@ CREATE TABLE Usuario (
     activo TINYINT(1) NOT NULL DEFAULT 1,
     id_rol INT NOT NULL,
     id_empresa INT NOT NULL,
-    FOREIGN KEY (id_rol) REFERENCES Rol(id),
-    FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
+    FOREIGN KEY (id_rol) REFERENCES rol(id),
+    FOREIGN KEY (id_empresa) REFERENCES empresa(id)
 );
 
-CREATE TABLE Servicio (
+CREATE TABLE servicio (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(150) NOT NULL,
     descripcion TEXT,
@@ -69,22 +69,22 @@ CREATE TABLE Servicio (
     capacidad INT NOT NULL,
     id_categoria INT NOT NULL,
     id_empresa INT NOT NULL,
-    FOREIGN KEY (id_categoria) REFERENCES Categoria(id),
-    FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
+    FOREIGN KEY (id_categoria) REFERENCES categoria(id),
+    FOREIGN KEY (id_empresa) REFERENCES empresa(id)
 );
 
-CREATE TABLE Empleado (
+CREATE TABLE empleado (
     id INT AUTO_INCREMENT PRIMARY KEY,
     precio_por_hora DECIMAL(10,2) NOT NULL,
     especialidad VARCHAR(100),
     id_usuario INT NOT NULL,
     id_empresa INT NOT NULL,
-    FOREIGN KEY (id_usuario) REFERENCES Usuario(id),
-    FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id),
+    FOREIGN KEY (id_empresa) REFERENCES empresa(id)
 );
 
 -- Tabla Nucleo
-CREATE TABLE Solicitud_Evento (
+CREATE TABLE solicitud_evento (
     id INT AUTO_INCREMENT PRIMARY KEY,
     fecha_solicitud DATE NOT NULL,
     fecha_evento DATE NOT NULL,
@@ -102,12 +102,12 @@ CREATE TABLE Solicitud_Evento (
     motivo_revision TEXT,
     id_usuario INT NOT NULL,
     id_empresa INT NOT NULL,
-    FOREIGN KEY (tipo_evento) REFERENCES Categoria(id),
-    FOREIGN KEY (id_usuario) REFERENCES Usuario(id),
-    FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
+    FOREIGN KEY (tipo_evento) REFERENCES categoria(id),
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id),
+    FOREIGN KEY (id_empresa) REFERENCES empresa(id)
 );
 
-CREATE TABLE Reserva (
+CREATE TABLE reserva (
     id INT AUTO_INCREMENT PRIMARY KEY,
     fecha_reserva DATE NOT NULL,
     fecha_evento DATE NOT NULL,
@@ -122,12 +122,12 @@ CREATE TABLE Reserva (
     id_usuario INT NOT NULL,
     id_servicio INT NOT NULL,
     id_empresa INT NOT NULL,
-    FOREIGN KEY (id_usuario) REFERENCES Usuario(id),
-    FOREIGN KEY (id_servicio) REFERENCES Servicio(id),
-    FOREIGN KEY (id_empresa) REFERENCES Empresa(id)
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id),
+    FOREIGN KEY (id_servicio) REFERENCES servicio(id),
+    FOREIGN KEY (id_empresa) REFERENCES empresa(id)
 );
 
-CREATE TABLE Pago_Cliente (
+CREATE TABLE pago_cliente (
     id INT AUTO_INCREMENT PRIMARY KEY,
     monto DECIMAL(10,2) NOT NULL,
     fecha DATE NOT NULL,
@@ -135,26 +135,26 @@ CREATE TABLE Pago_Cliente (
     estado VARCHAR(50) NOT NULL DEFAULT 'pendiente',
     referencia VARCHAR(255) NULL,
     id_reserva INT NOT NULL,
-    FOREIGN KEY (id_reserva) REFERENCES Reserva(id)
+    FOREIGN KEY (id_reserva) REFERENCES reserva(id)
 );
 
-CREATE TABLE Asignacion_Empleado (
+CREATE TABLE asignacion_empleado (
     id INT AUTO_INCREMENT PRIMARY KEY,
     rol_evento VARCHAR(100),
     estado ENUM('pendiente','aceptada','rechazada') NOT NULL DEFAULT 'pendiente',
     id_reserva INT NOT NULL,
     id_empleado INT NOT NULL,
-    FOREIGN KEY (id_reserva) REFERENCES Reserva(id),
-    FOREIGN KEY (id_empleado) REFERENCES Empleado(id)
+    FOREIGN KEY (id_reserva) REFERENCES reserva(id),
+    FOREIGN KEY (id_empleado) REFERENCES empleado(id)
 );
 
-CREATE TABLE Notificacion (
+CREATE TABLE notificacion (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT NOT NULL,
     mensaje VARCHAR(500) NOT NULL,
     leida TINYINT(1) NOT NULL DEFAULT 0,
     fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_usuario) REFERENCES Usuario(id) ON DELETE CASCADE
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id) ON DELETE CASCADE
 );
 
 -- Datos de prueba
@@ -162,30 +162,30 @@ CREATE TABLE Notificacion (
 --   admin@aventurakids.com    → admin1234
 --   monitor1@aventurakids.com → empleado1234
 --   cliente1@gmail.com        → cliente1234
-INSERT INTO Usuario (nif, nombre, apellidos, telefono, otro_telefono, email, password_hash, direccion, como_conoce, id_rol, id_empresa)
+INSERT INTO usuario (nif, nombre, apellidos, telefono, otro_telefono, email, password_hash, direccion, como_conoce, id_rol, id_empresa)
 VALUES
 ('12345678Z', 'Laura', 'Gómez', '600111111', NULL, 'admin@aventurakids.com',    '$2y$10$pDZHK9SHkx37i9mhbcLtpecvG.GiIw6I2spOijJpa35.774LUIbzC', 'Madrid', 'web',       1, 1),
 ('87654321X', 'Carlos', 'Pérez', '600222222', NULL, 'monitor1@aventurakids.com', '$2y$10$m0yBaeZh6gXtZTAHKfhb.uozfZWdpYJiPblSPsFNKkwsJXvdx6dHC', 'Madrid', 'instagram', 2, 1),
 ('11223344B', 'Marta', 'López', '600333333', NULL, 'cliente1@gmail.com',         '$2y$10$Ya4egCEm3K0s1b/CLmk4feRm5Y0YitZCQx2dwBCglRoLf9u8RxV2a', 'Madrid', 'amigo',     3, 1);
 
-INSERT INTO Servicio (nombre, descripcion, precio_base, capacidad, id_categoria, id_empresa)
+INSERT INTO servicio (nombre, descripcion, precio_base, capacidad, id_categoria, id_empresa)
 VALUES
 ('Escape Room Piratas', 'Juego temático para grupos infantiles', 150.00, 12, 2, 1),
 ('Cumpleaños Básico', 'Celebración de cumpleaños con monitor', 200.00, 15, 3, 1);
 
-INSERT INTO Empleado (precio_por_hora, especialidad, id_usuario, id_empresa)
+INSERT INTO empleado (precio_por_hora, especialidad, id_usuario, id_empresa)
 VALUES
 (15.00, 'Animación infantil', 2, 1);
 
-INSERT INTO Reserva (fecha_reserva, fecha_evento, hora_inicio, hora_fin, num_asistentes, estado, observaciones, id_usuario, id_servicio, id_empresa)
+INSERT INTO reserva (fecha_reserva, fecha_evento, hora_inicio, hora_fin, num_asistentes, estado, observaciones, id_usuario, id_servicio, id_empresa)
 VALUES
 ('2026-03-23', '2026-04-05', '17:00:00', '19:00:00', 10, 'confirmada', 'Cumpleaños de Ana', 3, 2, 1);
 
-INSERT INTO Pago_Cliente (monto, fecha, metodo, estado, referencia, id_reserva)
+INSERT INTO pago_cliente (monto, fecha, metodo, estado, referencia, id_reserva)
 VALUES
 (200.00, '2026-03-23', 'tarjeta', 'confirmado', NULL, 1);
 
-INSERT INTO Asignacion_Empleado (rol_evento, id_reserva, id_empleado)
+INSERT INTO asignacion_empleado (rol_evento, id_reserva, id_empleado)
 VALUES
 ('Monitor principal', 1, 1);
 

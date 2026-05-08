@@ -12,9 +12,9 @@ class Servicio {
         $stmt = $this->conexion->query("
             SELECT s.id, s.nombre, s.descripcion, s.precio_base, s.capacidad,
                    s.id_categoria, c.nombre AS categoria,
-                   (SELECT COUNT(*) FROM Reserva r WHERE r.id_servicio = s.id) AS num_reservas
-            FROM Servicio s
-            JOIN Categoria c ON c.id = s.id_categoria
+                   (SELECT COUNT(*) FROM reserva r WHERE r.id_servicio = s.id) AS num_reservas
+            FROM servicio s
+            JOIN categoria c ON c.id = s.id_categoria
             ORDER BY c.nombre, s.nombre
         ");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -22,7 +22,7 @@ class Servicio {
 
     public function crear(string $nombre, ?string $descripcion, float $precio, int $capacidad, int $idCategoria, int $idEmpresa): void {
         $this->conexion->prepare("
-            INSERT INTO Servicio (nombre, descripcion, precio_base, capacidad, id_categoria, id_empresa)
+            INSERT INTO servicio (nombre, descripcion, precio_base, capacidad, id_categoria, id_empresa)
             VALUES (:nombre, :descripcion, :precio, :capacidad, :id_cat, :id_empresa)
         ")->execute([
             ':nombre' => $nombre,
@@ -36,7 +36,7 @@ class Servicio {
 
     public function editar(int $id, string $nombre, ?string $descripcion, float $precio, int $capacidad, int $idCategoria): void {
         $this->conexion->prepare("
-            UPDATE Servicio
+            UPDATE servicio
             SET nombre = :nombre, descripcion = :descripcion, precio_base = :precio,
                 capacidad = :capacidad, id_categoria = :id_cat
             WHERE id = :id
@@ -51,12 +51,12 @@ class Servicio {
     }
 
     public function tieneReservas(int $id): bool {
-        $stmt = $this->conexion->prepare("SELECT COUNT(*) FROM Reserva WHERE id_servicio = :id");
+        $stmt = $this->conexion->prepare("SELECT COUNT(*) FROM reserva WHERE id_servicio = :id");
         $stmt->execute([':id' => $id]);
         return (int) $stmt->fetchColumn() > 0;
     }
 
     public function eliminar(int $id): void {
-        $this->conexion->prepare("DELETE FROM Servicio WHERE id = :id")->execute([':id' => $id]);
+        $this->conexion->prepare("DELETE FROM servicio WHERE id = :id")->execute([':id' => $id]);
     }
 }
